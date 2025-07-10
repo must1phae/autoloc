@@ -12,9 +12,11 @@ session_start();
 require_once '../config/db.php';
 require_once '../models/User.php';
 require_once '../models/Car.php';
-
+require_once '../models/Reservation.php';
 $userModel = new User($pdo);
 $carModel = new Car($pdo);
+// Initialiser le nouveau modèle
+$reservationModel = new Reservation($pdo);
 
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 $method = $_SERVER['REQUEST_METHOD'];
@@ -86,6 +88,48 @@ case 'login':
     break;
 
 // ...
+case 'createReservation':
+        // On vérifie d'abord si l'utilisateur est connecté. C'est une route protégée.
+        if ($method == 'POST' && isset($_SESSION['user_id'])) {
+            
+            // On récupère les données envoyées par le formulaire JS
+            $id_user = $_SESSION['user_id'];
+            $id_voiture = $data['id_voiture'];
+            $date_debut = $data['date_debut'];
+            $date_fin = $data['date_fin'];
+
+            // SÉCURITÉ : Ne jamais faire confiance au prix envoyé par le client.
+            // On le recalcule côté serveur.
+            $carModel = new Car($pdo);
+            $car = $carModel->getById($id_voiture);
+
+            if (!$car) {
+                echo json_encode(['success' => false, 'message' => 'Voiture non valide.']);
+                exit();
+            }
+
+            // Calcul du nombre de jours
+            $start = new DateTime($date_debut);
+            $end = new DateTime($date_fin);
+            $interval = $start->diff($end);
+            $days = $interval->days + 1; // +1 pour inclure le premier jour
+
+            $montant_total = $days * $car['prix_par_jour'];
+
+            // On tente de créer la réservation
+            $success = $reservationModel->create($id_user, $id_voiture, $date_debut, $date_fin, $montant_total);
+
+            if ($success) {
+                echo json_encode(['success' => true, 'message' => 'Réservation enregistrée avec succès !']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Erreur lors de l\'enregistrement de la réservation.']);
+            }
+        } else {
+            // Si l'utilisateur n'est pas connecté
+            http_response_code(403); // Forbidden
+            echo json_encode(['success' => false, 'message' => 'Accès refusé. Veuillez vous connecter.']);
+        }
+        break;
 
     case 'logout':
         session_destroy();
@@ -100,6 +144,7 @@ case 'login':
             echo json_encode(['success' => true, 'isLoggedIn' => false]);
         }
         break;
+        
 
     default:
         http_response_code(404);

@@ -1,1 +1,40 @@
-// reservation-form.html - fichier de structure pour AutoLoc
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmer votre réservation - AutoLoc</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header>
+        <h1><a href="cars-list.html">AutoLoc</a></h1>
+    </header>
+
+    <main id="reservation-container">
+        <h2>Votre Réservation</h2>
+        <div id="car-info">
+            <!-- Les infos de la voiture seront chargées ici -->
+        </div>
+
+        <form id="reservation-form">
+            <input type="hidden" id="id_voiture">
+            
+            <label for="date_debut">Date de début :</label>
+            <input type="date" id="date_debut" required>
+
+            <label for="date_fin">Date de fin :</label>
+            <input type="date" id="date_fin" required>
+
+            <div class="price-summary">
+                Prix total estimé : <strong id="total-price">0.00 €</strong>
+            </div>
+
+            <button type="submit">Confirmer la réservation</button>
+        </form>
+        <div id="message"></div>
+    </main>
+    
+    <!-- On crée un nouveau JS dédié à la réservation -->
+    <script src="../js/reservation.js"></script>
+</body>
+</html>

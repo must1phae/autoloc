@@ -1,1 +1,26 @@
-// car-details.html - fichier de structure pour AutoLoc
+<!-- car-details.html -->
+<!-- Ce fichier affiche les détails d'une voiture spécifique. Il sera rempli par JavaScript avec les données de l'API. -->
+<!-- On suppose que l'ID de la voiture est passé dans l'URL, par exemple: car-details.html?id=123 -->
+<!-- On utilisera fetch pour récupérer les données de l'API et les afficher dans cette page. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Détails de la voiture - AutoLoc</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header>
+        <h1><a href="cars-list.html">Retour à la liste</a></h1>
+        <!-- On ajoutera plus tard des liens de connexion/dashboard ici -->
+    </header>
+
+    <main id="car-details-container">
+        <!-- Le contenu sera injecté ici par JavaScript -->
+        <p>Chargement des détails de la voiture...</p>
+    </main>
+    
+    <!-- On peut créer un JS dédié ou utiliser main.js -->
+    <script src="../js/car-details.js"></script> 
+</body>
+</html>
