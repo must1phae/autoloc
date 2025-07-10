@@ -24,10 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     const carCard = document.createElement('div');
                     carCard.className = 'car-card';
                     
-                    carCard.innerHTML = `
-                        <img src="../../uploads/cars/${car.image ? car.image : 'default.jpg'}" alt="${car.marque} ${car.modele}">
+                    // Ce code est maintenant CORRECT car car.image = "img.jpg"
+carCard.innerHTML = `
+    <img src="../../uploads/cars/${car.image || 'default.jpg'}" alt="${car.marque} ${car.modele}">
+    ...
 
-                        <h3>${car.marque} ${car.modele}</h3>
                         <p>Type : ${car.type}</p>
                         <p class="price"><strong>${car.prix_par_jour} €</strong> / jour</p>
                         <a href="car-details.html?id=${car.id_voiture}" class="btn">Voir les détails & Réserver</a>

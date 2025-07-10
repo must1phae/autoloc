@@ -1,6 +1,6 @@
-// db.php - fichier de structure pour AutoLoc
-<?php
-// backend/config/db.php
+<?php // Le fichier DOIT commencer ici.
+
+// db.php - Fichier de connexion <-- Le commentaire est maintenant à l'intérieur, en sécurité.
 
 $host = 'localhost';
 $dbname = 'autoloc';
@@ -19,7 +19,7 @@ try {
     $pdo = new PDO($dsn, $user, $pass, $options);
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Erreur de connexion à la base de données.']);
+    echo json_encode(['success' => false, 'message' => 'Erreur de connexion BDD: ' . $e->getMessage()]);
     exit();
 }
 ?>

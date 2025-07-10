@@ -1,5 +1,5 @@
-// User.php - fichier de structure pour AutoLoc
-<?php
+
+<?php // User.php - fichier de structure pour AutoLoc
 // backend/models/User.php
 
 class User {
