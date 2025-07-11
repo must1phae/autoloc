@@ -1,1 +1,34 @@
-// dashboard-client.html - fichier de structure pour AutoLoc
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Mon Tableau de Bord - AutoLoc</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header>
+        <h1><a href="cars-list.html">AutoLoc</a></h1>
+        <nav>
+            <a href="cars-list.html">Louer une voiture</a>
+            <button id="logout-btn">Déconnexion</button>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Mon Tableau de Bord</h2>
+        
+        <section id="user-info">
+            <!-- Les infos de l'utilisateur seront chargées ici -->
+            <p>Chargement de vos informations...</p>
+        </section>
+
+        <h3>Mes Réservations</h3>
+        <section id="reservations-list">
+            <!-- La liste des réservations sera chargée ici -->
+        </section>
+    </main>
+    
+    <!-- On utilise le fichier JS dédié au dashboard client -->
+    <script src="../js/dashboard-client.js"></script>
+</body>
+</html>

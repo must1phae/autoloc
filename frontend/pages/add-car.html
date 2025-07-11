@@ -1,1 +1,38 @@
-// add-car.html - fichier de structure pour AutoLoc
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <title>Ajouter une Voiture - Admin</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header>
+        <h1><a href="dashboard-admin.html">Retour au Tableau de Bord</a></h1>
+    </header>
+    <main>
+        <h2>Ajouter une nouvelle voiture</h2>
+        <form action="../../backend/routes/api.php?action=adminAddCar" method="POST" enctype="multipart/form-data">
+            <input type="text" name="marque" placeholder="Marque" required>
+            <input type="text" name="modele" placeholder="Modele" required>
+            <input type="text" name="type" placeholder="Type (SUV, Berline...)" required>
+            <input type="number" name="prix_par_jour" placeholder="Prix par jour" step="0.01" required>
+            <input type="number" name="annee" placeholder="Annee" required>
+
+            <!-- ============================================= -->
+            <!-- ==  AJOUTEZ CE BLOC POUR LE CHAMP STATUT   == -->
+            <!-- ============================================= -->
+            <label for="statut">Statut initial :</label>
+            <select name="statut" id="statut" required>
+                <option value="disponible" selected>Disponible</option>
+                <option value="maintenance">En maintenance</option>
+                <option value="désactivée">Désactivee</option>
+            </select>
+            <!-- ============================================= -->
+            
+            <label for="image">Image de la voiture :</label>
+            <input type="file" name="image" accept="image/*" required>
+
+            <button type="submit">Ajouter la voiture</button>
+        </form>
+    </main>
+</body>
+</html>

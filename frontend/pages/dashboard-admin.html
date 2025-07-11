@@ -1,1 +1,42 @@
-// dashboard-admin.html - fichier de structure pour AutoLoc
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Tableau de Bord Admin - AutoLoc</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Tableau de Bord Administrateur</h1>
+        <nav>
+            <!-- Liens vers les autres pages de gestion -->
+            <a href="user-list.html">Gérer les Utilisateurs</a>
+            <a href="verify-documents.html">Valider les Documents</a>
+            <button id="logout-btn">Déconnexion</button>
+        </nav>
+    </header>
+
+    <main>
+        <h3>Gestion du Parc Automobile</h3>
+        <a href="add-car.html" class="btn btn-primary">Ajouter une nouvelle voiture</a>
+        
+        <table id="admin-cars-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Image</th>
+                    <th>Marque & Modèle</th>
+                    <th>Prix/jour</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Les voitures seront chargées ici par JS -->
+            </tbody>
+        </table>
+    </main>
+    
+    <script src="../js/dashboard-admin.js"></script>
+</body>
+</html>

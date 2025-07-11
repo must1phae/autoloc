@@ -2,6 +2,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const carsContainer = document.getElementById('cars-container');
     const API_URL = 'http://localhost/autoloc/backend/routes/api.php';
+    
 
     async function fetchAndDisplayCars() {
         try {

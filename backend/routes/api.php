@@ -21,7 +21,9 @@ $reservationModel = new Reservation($pdo);
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 $method = $_SERVER['REQUEST_METHOD'];
 $data = json_decode(file_get_contents("php://input"), true);
-
+function isAdmin() {
+    return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
+}
 switch ($action) {
     case 'getAllCars':
         if ($method == 'GET') {
@@ -128,6 +130,111 @@ case 'createReservation':
             // Si l'utilisateur n'est pas connecté
             http_response_code(403); // Forbidden
             echo json_encode(['success' => false, 'message' => 'Accès refusé. Veuillez vous connecter.']);
+        }
+        break;
+         case 'getUserReservations':
+        // On vérifie si l'utilisateur est bien connecté
+        if ($method == 'GET' && isset($_SESSION['user_id'])) {
+            $id_user = $_SESSION['user_id'];
+            
+            // On appelle la nouvelle fonction du modèle
+            $reservations = $reservationModel->getByUserId($id_user);
+
+            echo json_encode(['success' => true, 'data' => $reservations]);
+        } else {
+            // Si non connecté, on renvoie une erreur
+            http_response_code(403); // Forbidden
+            echo json_encode(['success' => false, 'message' => 'Accès non autorisé.']);
+        }
+        break;
+    // Pour la déconnexion, on détruit simplement la session
+    // On n'a pas besoin de vérifier le rôle ici, car c'est une action simple
+    // qui ne nécessite pas de permissions spéciales.
+    // On peut aussi renvoyer un message de succès.
+    // On n'a pas besoin de vérifier le rôle ici, car c'est une action simple
+    // qui ne nécessite pas de permissions spéciales.
+      case 'adminGetAllCars':
+        if (isAdmin()) {
+            $cars = $carModel->getAllForAdmin();
+            echo json_encode(['success' => true, 'data' => $cars]);
+        } else {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'Accès refusé.']);
+        }
+        break;
+
+    case 'adminAddCar':
+        if (isAdmin() && $method == 'POST') {
+            
+            // On récupère les données du formulaire
+            $marque = $_POST['marque'];
+            $modele = $_POST['modele'];
+            $type = $_POST['type'];
+            $prix = $_POST['prix_par_jour'];
+            $annee = $_POST['annee'];
+            $statut = $_POST['statut']; // <-- ON RÉCUPÈRE LE NOUVEAU CHAMP
+
+            $image_name = 'default.jpg'; 
+
+            if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+                // ... (votre code d'upload d'image reste le même)
+                $target_dir = "../../uploads/cars/";
+                $image_name = uniqid() . '-' . basename($_FILES["image"]["name"]);
+                $target_file = $target_dir . $image_name;
+                move_uploaded_file($_FILES["image"]["tmp_name"], $target_file);
+            }
+            
+            // On passe le statut à la fonction create()
+            $success = $carModel->create($marque, $modele, $type, $prix, $annee, $image_name, $statut);
+
+            if ($success) {
+                header('Location: ../../frontend/pages/dashboard-admin.html?message=success');
+            } else {
+                header('Location: ../../frontend/pages/add-car.html?message=error');
+            }
+            exit();
+        }
+        break;
+        
+    // Vous ajouterez 'adminUpdateCar' et 'adminDeleteCar' sur le même principe.
+     case 'adminUpdateCar':
+        if (isAdmin() && $method == 'POST') {
+            // On récupère les données du formulaire
+            $id = $_POST['id_voiture'];
+            $marque = $_POST['marque'];
+            $modele = $_POST['modele'];
+            $type = $_POST['type'];
+            $prix = $_POST['prix_par_jour'];
+            $annee = $_POST['annee'];
+            $statut = $_POST['statut'];
+
+            $success = $carModel->update($id, $marque, $modele, $type, $prix, $annee, $statut);
+
+            if ($success) {
+                header('Location: ../../frontend/pages/dashboard-admin.html?message=update_success');
+            } else {
+                header('Location: ../../frontend/pages/edit-car.html?id=' . $id . '&message=error');
+            }
+            exit();
+        }
+        break;
+
+    case 'adminDeleteCar':
+        if (isAdmin() && $method == 'POST') {
+            // Les données sont envoyées en JSON par notre JS
+            $data = json_decode(file_get_contents("php://input"), true);
+            $id = $data['id_voiture'];
+
+            $success = $carModel->delete($id);
+
+            if ($success) {
+                echo json_encode(['success' => true, 'message' => 'Voiture supprimée avec succès.']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Erreur lors de la suppression. La voiture est peut-être liée à une réservation existante.']);
+            }
+        } else {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'Accès refusé.']);
         }
         break;
 

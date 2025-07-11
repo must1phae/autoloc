@@ -26,7 +26,38 @@ class Reservation {
             return false;
         }
     }
+     /**
+     * NOUVELLE FONCTION À AJOUTER
+     * Récupère toutes les réservations d'un utilisateur spécifique,
+     * avec les détails de la voiture associée.
+     */
+    public function getByUserId($id_user) {
+        // La requête SQL utilise une jointure (JOIN) pour lier les tables
+        // 'reservation' et 'voiture' sur la colonne 'id_voiture'.
+        $sql = "SELECT 
+                    r.id_reservation, 
+                    r.date_debut, 
+                    r.date_fin, 
+                    r.montant_total, 
+                    r.statut AS statut_reservation,
+                    v.marque, 
+                    v.modele, 
+                    v.image
+                FROM 
+                    reservation AS r
+                JOIN 
+                    voiture AS v ON r.id_voiture = v.id_voiture
+                WHERE 
+                    r.id_user = ?
+                ORDER BY 
+                    r.date_debut DESC"; // On trie par date la plus récente d'abord
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$id_user]);
+        return $stmt->fetchAll();
+    }
 
     // Plus tard, vous ajouterez ici des fonctions pour lister les réservations d'un utilisateur, etc.
 }
+
 ?>
