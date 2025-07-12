@@ -58,5 +58,44 @@ class User {
         $stmt->execute([$id]);
         return $stmt->fetch();
     }
+     public function getAll($admin_id) {
+        // On ne veut pas que l'admin se supprime lui-même par erreur
+        $sql = "SELECT id_user, nom, prenom, email, role FROM utilisateur WHERE id_user != ? ORDER BY nom, prenom";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$admin_id]);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * NOUVELLE FONCTION (POUR ADMIN)
+     * Met à jour le rôle d'un utilisateur.
+     */
+    public function updateRole($id_user, $new_role) {
+        $sql = "UPDATE utilisateur SET role = ? WHERE id_user = ?";
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            return $stmt->execute([$new_role, $id_user]);
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * NOUVELLE FONCTION (POUR ADMIN)
+     * Supprime un utilisateur.
+     */
+    public function delete($id_user) {
+        // La suppression en cascade (ON DELETE CASCADE) dans votre BDD
+        // s'occupera de supprimer les réservations et documents liés.
+        $sql = "DELETE FROM utilisateur WHERE id_user = ?";
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            return $stmt->execute([$id_user]);
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
 }
 ?>

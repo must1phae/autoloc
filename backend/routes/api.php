@@ -13,9 +13,19 @@ require_once '../config/db.php';
 require_once '../models/User.php';
 require_once '../models/Car.php';
 require_once '../models/Reservation.php';
+require_once '../models/Document.php';
+// On suppose que vous avez déjà créé le modèle Avis.php
+require_once '../models/Avis.php';
+require_once '../ai/description.php';
+ // Initialiser les modèles
 $userModel = new User($pdo);
 $carModel = new Car($pdo);
 // Initialiser le nouveau modèle
+$avisModel = new Avis($pdo);
+$documentModel = new Document($pdo);
+// Initialiser le modèle de réservation
+// On suppose que vous avez déjà créé le modèle Reservation.php
+// et que vous avez une méthode pour créer une réservation. 
 $reservationModel = new Reservation($pdo);
 
 $action = isset($_GET['action']) ? $_GET['action'] : '';
@@ -197,7 +207,7 @@ case 'createReservation':
         break;
         
     // Vous ajouterez 'adminUpdateCar' et 'adminDeleteCar' sur le même principe.
-     case 'adminUpdateCar':
+      case 'adminUpdateCar':
         if (isAdmin() && $method == 'POST') {
             // On récupère les données du formulaire
             $id = $_POST['id_voiture'];
@@ -207,8 +217,14 @@ case 'createReservation':
             $prix = $_POST['prix_par_jour'];
             $annee = $_POST['annee'];
             $statut = $_POST['statut'];
+            
+            // ===============================================
+            // == RÉCUPÉRATION DU NOUVEAU CHAMP DESCRIPTION ==
+            // ===============================================
+            $description = $_POST['description'];
 
-            $success = $carModel->update($id, $marque, $modele, $type, $prix, $annee, $statut);
+            // On passe la nouvelle variable à la fonction du modèle
+            $success = $carModel->update($id, $marque, $modele, $type, $prix, $annee, $statut, $description);
 
             if ($success) {
                 header('Location: ../../frontend/pages/dashboard-admin.html?message=update_success');
@@ -237,6 +253,43 @@ case 'createReservation':
             echo json_encode(['success' => false, 'message' => 'Accès refusé.']);
         }
         break;
+         // ===============================================
+    // ==     NOUVELLES ROUTES GESTION UTILISATEURS   ==
+    // ===============================================
+
+    case 'adminGetAllUsers':
+        if (isAdmin()) {
+            $users = $userModel->getAll($_SESSION['user_id']); // On passe l'ID de l'admin
+            echo json_encode(['success' => true, 'data' => $users]);
+        } else {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'Accès refusé.']);
+        }
+        break;
+
+    case 'adminUpdateUserRole':
+        if (isAdmin() && $method == 'POST') {
+            $data = json_decode(file_get_contents("php://input"), true);
+            $success = $userModel->updateRole($data['id_user'], $data['role']);
+            if ($success) {
+                echo json_encode(['success' => true, 'message' => 'Rôle mis à jour.']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Erreur lors de la mise à jour.']);
+            }
+        }
+        break;
+
+    case 'adminDeleteUser':
+        if (isAdmin() && $method == 'POST') {
+            $data = json_decode(file_get_contents("php://input"), true);
+            $success = $userModel->delete($data['id_user']);
+            if ($success) {
+                echo json_encode(['success' => true, 'message' => 'Utilisateur supprimé.']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Erreur lors de la suppression.']);
+            }
+        }
+        break;
 
     case 'logout':
         session_destroy();
@@ -257,6 +310,126 @@ case 'createReservation':
         http_response_code(404);
         echo json_encode(['success' => false, 'message' => 'Action non reconnue.']);
         break;
+         // ===============================================
+    // ==   NOUVELLES ROUTES GESTION RÉSERVATIONS   ==
+    // ===============================================
 
-}
+    case 'adminGetAllReservations':
+        if (isAdmin()) {
+            $reservations = $reservationModel->getAll();
+            echo json_encode(['success' => true, 'data' => $reservations]);
+        } else {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'Accès refusé.']);
+        }
+        break;
+
+    case 'adminUpdateReservationStatus':
+        if (isAdmin() && $method == 'POST') {
+            $data = json_decode(file_get_contents("php://input"), true);
+            $success = $reservationModel->updateStatus($data['id_reservation'], $data['statut']);
+            if ($success) {
+                echo json_encode(['success' => true, 'message' => 'Statut de la réservation mis à jour.']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Erreur lors de la mise à jour.']);
+            }
+        }
+        break;
+         // ===============================================
+    // ==         NOUVELLES ROUTES DOCUMENTS        ==
+    // ===============================================
+
+    case 'uploadDocument': // Pour le client
+        if (isset($_SESSION['user_id']) && $method == 'POST') {
+            $id_user = $_SESSION['user_id'];
+            $type_doc = $_POST['type_doc'];
+            $file_name = 'default.pdf';
+
+            if (isset($_FILES['document_file']) && $_FILES['document_file']['error'] == 0) {
+                $target_dir = "../../uploads/documents/";
+                // On préfixe avec l'ID de l'utilisateur pour l'organisation
+                $file_name = $id_user . '-' . uniqid() . '-' . basename($_FILES["document_file"]["name"]);
+                $target_file = $target_dir . $file_name;
+                move_uploaded_file($_FILES["document_file"]["tmp_name"], $target_file);
+            }
+
+            $documentModel->create($id_user, $type_doc, $file_name);
+            header('Location: ../../frontend/pages/upload-documents.html?message=success');
+            exit();
+        }
+        break;
+
+    case 'getUserDocuments': // Pour le client
+        if (isset($_SESSION['user_id'])) {
+            $docs = $documentModel->getByUserId($_SESSION['user_id']);
+            echo json_encode(['success' => true, 'data' => $docs]);
+        }
+        break;
+
+    case 'adminGetPendingDocuments': // Pour l'admin
+        if (isAdmin()) {
+            $docs = $documentModel->getPending();
+            echo json_encode(['success' => true, 'data' => $docs]);
+        }
+        break;
+
+    case 'adminUpdateDocumentStatus': // Pour l'admin
+        if (isAdmin() && $method == 'POST') {
+            $data = json_decode(file_get_contents("php://input"), true);
+            $success = $documentModel->updateStatus($data['id_doc'], $data['statut']);
+            echo json_encode(['success' => $success]);
+        }
+        break;
+        
+   
+case 'leaveReview':
+    // L'utilisateur est-il bien connecté ?
+    if (isset($_SESSION['user_id']) && $method == 'POST') {
+        
+        // On récupère le corps de la requête JSON envoyée par le JS
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        // --- POINT DE DÉBOGAGE N°1 ---
+        // Est-ce que les données sont bien reçues et décodées ?
+        if ($data === null) {
+            // Si $data est null, le JSON est mal formé ou vide.
+            error_log("API leaveReview: Erreur de décodage JSON.");
+            echo json_encode(['success' => false, 'message' => 'Données invalides.']);
+            exit();
+        }
+
+        // --- POINT DE DÉBOGAGE N°2 ---
+        // Est-ce que toutes les clés nécessaires sont présentes ?
+        if (!isset($data['id_voiture'], $data['note'], $data['commentaire'])) {
+            error_log("API leaveReview: Données manquantes. Reçu: " . print_r($data, true));
+            echo json_encode(['success' => false, 'message' => 'Données manquantes.']);
+            exit();
+        }
+
+        // Appel de la fonction du modèle
+        $success = $avisModel->create(
+            $_SESSION['user_id'],
+            $data['id_voiture'],
+            $data['note'],
+            $data['commentaire']
+        );
+
+        // La fonction create() a renvoyé false.
+        echo json_encode(['success' => $success]);
+
+    } else {
+        // L'utilisateur n'est pas connecté ou la méthode n'est pas POST
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'Accès refusé.']);
+    }
+    break;
+ case 'getCarReviews': // <-- Est-ce que le nom est EXACTEMENT celui-ci ?
+        if (isset($_GET['id'])) {
+            $avisModel = new Avis($pdo); // Assurez-vous que $avisModel est initialisé
+            $reviews = $avisModel->getByCarId($_GET['id']);
+            echo json_encode(['success' => true, 'data' => $reviews]);
+        }
+        break;
+        
+} 
 ?>

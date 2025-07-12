@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Gérer les Utilisateurs - Admin</title>
+    <title>Gérer les Réservations - Admin</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
@@ -24,24 +24,27 @@
         </div>
     </div>
 </header>
+
     <main>
-        <h2>Liste des Utilisateurs</h2>
-        <table id="users-table">
+        <h2>Liste de Toutes les Réservations</h2>
+        
+        <table id="reservations-table">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Nom Complet</th>
-                    <th>Email</th>
-                    <th>Rôle</th>
-                    <th>Actions</th>
+                    <th>ID Rés.</th>
+                    <th>Client</th>
+                    <th>Voiture</th>
+                    <th>Période</th>
+                    <th>Montant</th>
+                    <th>Statut</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- Les utilisateurs seront chargés ici par JS -->
+                <!-- Les réservations seront chargées ici par JS -->
             </tbody>
         </table>
     </main>
     
-    <script src="../js/user-management.js"></script>
+    <script src="../js/reservation-management.js"></script>
 </body>
 </html>

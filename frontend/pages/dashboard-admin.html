@@ -6,15 +6,24 @@
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <header>
-        <h1>Tableau de Bord Administrateur</h1>
-        <nav>
-            <!-- Liens vers les autres pages de gestion -->
-            <a href="user-list.html">Gérer les Utilisateurs</a>
-            <a href="verify-documents.html">Valider les Documents</a>
-            <button id="logout-btn">Déconnexion</button>
+  <header class="main-header admin-header">
+    <div class="header-container">
+        <div class="logo">
+            <a href="dashboard-admin.html">AutoLoc <span>Admin</span></a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="dashboard-admin.html">Voitures</a></li>
+                <li><a href="reservations-list.html">Réservations</a></li>
+                <li><a href="user-list.html">Utilisateurs</a></li>
+                <li><a href="verify-documents.html">Documents</a></li>
+            </ul>
         </nav>
-    </header>
+        <div class="user-actions">
+            <button id="logout-btn" class="btn btn-secondary">Déconnexion</button>
+        </div>
+    </div>
+</header>
 
     <main>
         <h3>Gestion du Parc Automobile</h3>

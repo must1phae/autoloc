@@ -8,13 +8,26 @@
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <header>
-        <h1><a href="home.html">AutoLoc</a></h1>
-        <nav>
-            <a href="login.html">Connexion</a>
-            <a href="dashboard-client.html">Mon Compte</a>
+   <header class="main-header client-header">
+    <div class="header-container">
+        <div class="logo">
+            <a href="home.html">AutoLoc</a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <!-- La classe 'active' peut être ajoutée par JS ou manuellement pour indiquer la page actuelle -->
+                <li><a href="dashboard-client.html" class="active">Mes Réservations</a></li>
+                <li><a href="cars-list.html">Louer une Voiture</a></li>
+                <li><a href="upload-documents.html">Mes Documents</a></li>
+            </ul>
         </nav>
-    </header>
+        <div class="user-actions">
+            <!-- Cet élément pourra être rempli par JavaScript -->
+            <span id="welcome-message" class="welcome-text"></span>
+            <button id="logout-btn" class="btn btn-secondary">Déconnexion</button>
+        </div>
+    </div>
+</header>
     <main>
         <h2>Nos voitures disponibles à la location</h2>
         <div id="cars-container" class="car-grid">

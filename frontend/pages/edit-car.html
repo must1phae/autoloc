@@ -5,9 +5,24 @@
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <header>
-        <h1><a href="dashboard-admin.html">Retour au Tableau de Bord</a></h1>
-    </header>
+    <header class="main-header admin-header">
+    <div class="header-container">
+        <div class="logo">
+            <a href="dashboard-admin.html">AutoLoc <span>Admin</span></a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="dashboard-admin.html">Voitures</a></li>
+                <li><a href="reservations-list.html">Réservations</a></li>
+                <li><a href="user-list.html">Utilisateurs</a></li>
+                <li><a href="verify-documents.html">Documents</a></li>
+            </ul>
+        </nav>
+        <div class="user-actions">
+            <button id="logout-btn" class="btn btn-secondary">Déconnexion</button>
+        </div>
+    </div>
+</header>
     <main>
         <h2>Modifier la voiture</h2>
         <div id="edit-form-container">

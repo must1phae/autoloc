@@ -1,1 +1,37 @@
-// upload-documents.html - fichier de structure pour AutoLoc
+<!-- frontend/pages/upload-documents.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <title>Mes Documents - AutoLoc</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <!-- Intégrez la navbar client ici -->
+    <header class="main-header client-header">...</header>
+
+    <main>
+        <h2>Gérer mes Documents</h2>
+        <p>Veuillez uploader une copie de votre permis de conduire et de votre pièce d'identité (CIN).</p>
+
+        <form action="../../backend/routes/api.php?action=uploadDocument" method="POST" enctype="multipart/form-data" class="upload-form">
+            <label for="type_doc">Type de document :</label>
+            <select name="type_doc" required>
+                <option value="Permis">Permis de conduire</option>
+                <option value="CIN">Carte d'Identité Nationale</option>
+                <option value="Autre">Autre</option>
+            </select>
+            
+            <label for="document_file">Fichier (PDF, JPG, PNG) :</label>
+            <input type="file" name="document_file" required>
+            
+            <button type="submit">Envoyer le document</button>
+        </form>
+
+        <h3>Mes documents envoyés</h3>
+        <div id="documents-list">
+            <!-- La liste sera chargée ici par JS -->
+        </div>
+    </main>
+    <script src="../js/document-client.js"></script>
+</body>
+</html>

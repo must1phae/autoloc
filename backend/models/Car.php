@@ -58,17 +58,33 @@ class Car {
      * NOUVELLE FONCTION (POUR ADMIN)
      * Met à jour les informations d'une voiture.
      */
-    public function update($id_voiture, $marque, $modele, $type, $prix_par_jour, $annee, $statut) {
-        $sql = "UPDATE voiture SET marque = ?, modele = ?, type = ?, prix_par_jour = ?, annee = ?, statut = ? WHERE id_voiture = ?";
+     /**
+     * MODIFICATION ICI : On ajoute le paramètre $description
+     * Met à jour les informations d'une voiture.
+     */
+    public function update($id_voiture, $marque, $modele, $type, $prix_par_jour, $annee, $statut, $description) {
+        // La requête UPDATE inclut maintenant la colonne 'description'
+        $sql = "UPDATE voiture 
+                SET 
+                    marque = ?, 
+                    modele = ?, 
+                    type = ?, 
+                    prix_par_jour = ?, 
+                    annee = ?, 
+                    statut = ?, 
+                    description = ? 
+                WHERE 
+                    id_voiture = ?";
         try {
             $stmt = $this->pdo->prepare($sql);
-            return $stmt->execute([$marque, $modele, $type, $prix_par_jour, $annee, $statut, $id_voiture]);
+            // On ajoute $description à la liste des paramètres à exécuter
+            return $stmt->execute([$marque, $modele, $type, $prix_par_jour, $annee, $statut, $description, $id_voiture]);
         } catch (PDOException $e) {
             error_log($e->getMessage());
             return false;
         }
     }
-     
+
     public function delete($id_voiture) {
         // Avant de supprimer, on peut vouloir supprimer l'image associée du serveur
         $car = $this->getById($id_voiture);
