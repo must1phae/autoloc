@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${car.marque} ${car.modele}</td>
                     <td>${car.prix_par_jour} €</td>
                     <td><span class="status status-${car.statut.replace(' ', '-')}">${car.statut}</span></td>
-                    <td>
+                    <td  class="actions">
                         <a href="edit-car.html?id=${car.id_voiture}" class="btn-edit">Modifier</a>
                         <button class="btn-delete" data-id="${car.id_voiture}">Supprimer</button>
                     </td>

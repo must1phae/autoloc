@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoLoc - Location de Voitures Facile et Rapide</title>
+    <!-- Le chemin vers le CSS doit être ajusté car index.html n'est pas dans le dossier 'pages' -->
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+    <!-- ======================= NAVBAR PUBLIQUE ======================= -->
+    <header class="main-header public-header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="index.html">AutoLoc</a>
+            </div>
+            <nav class="main-nav" id="main-navigation">
+                <!-- Les liens seront insérés ici par JavaScript -->
+            </nav>
+        </div>
+    </header>
+
+    <!-- ======================= SECTION HÉROS ======================= -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1>Trouvez la voiture de location idéale</h1>
+            <p>Simple, rapide et aux meilleurs prix. Réservez votre véhicule en quelques clics.</p>
+            <a href="cars-list.html" class="btn btn-primary">Voir nos voitures</a>
+        </div>
+    </section>
+
+    <!-- ======================= LISTE DES VOITURES ======================= -->
+    <main id="car-list-section" class="main-container">
+        <h2>Nos véhicules disponibles à la location</h2>
+        <div id="car-list" class="car-grid">
+            <!-- Les voitures seront chargées ici par JavaScript -->
+            <p>Chargement des voitures...</p>
+        </div>
+    </main>
+
+    <!-- ======================= CHATBOT ======================= -->
+    <div id="chatbot-container">
+        <div id="chatbot-header" class="chatbot-collapsed">
+            <span>Discuter avec AutoBot</span>
+            <span id="chatbot-toggle-icon">▲</span>
+        </div>
+        <div id="chatbot-body" style="display: none;">
+            <div id="chatbot-messages"></div>
+            <div id="chatbot-input-container">
+                <input type="text" id="chatbot-input" placeholder="Posez votre question...">
+                <button id="chatbot-send-btn">Envoyer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ======================= FOOTER ======================= -->
+    <footer class="main-footer">
+        <p>© 2025 AutoLoc - Mustapha EL GHAZZAL. Tous droits réservés.</p>
+    </footer>
+
+    <!-- ======================= SCRIPTS JAVASCRIPT ======================= -->
+    <!-- Les chemins doivent aussi être ajustés -->
+    <script src="../js/main.js"></script>
+    <script src="../js/chatbot.js"></script>
+    <script src="../js/cars.js"></script>
+ 
+
+</body>
+</html>

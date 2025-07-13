@@ -1,5 +1,53 @@
  /* frontend/css/style.css */
+/* frontend/css/style.css */
 
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1517524206127-48bbd363f357?q=80&w=2070'); /* Vous pouvez changer cette image */
+    background-size: cover;
+    background-position: center;
+    color: white;
+    text-align: center;
+    padding: 100px 20px;
+}
+
+.hero-content h1 {
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+
+.hero-content p {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+}
+
+/* Style pour la navbar publique */
+.public-header .user-actions {
+    display: none; /* Cache les actions utilisateur par défaut */
+}
+
+.public-header .main-nav {
+    display: block;
+}
+
+/* Style pour la navbar une fois connecté */
+.main-header .welcome-text {
+    margin-right: 15px;
+    font-weight: bold;
+}
+
+.main-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.main-footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    background-color: #f2f2f2;
+    border-top: 1px solid #ddd;
+}
 #reviews-section {
     margin-top: 40px;
     border-top: 1px solid #eee;
@@ -47,4 +95,449 @@
     color: #777;
     text-align: right;
     display: block;
+}
+/* frontend/css/style.css - VERSION AMÉLIORÉE INSPIRÉE DU DESIGN */
+
+/* === VARIABLES ET RESET === */
+:root {
+    --primary-color: #0056b3; /* Bleu un peu plus sobre */
+    --dark-color: #1a1a1a;
+    --light-color: #ffffff;
+    --grey-color: #f4f7f6;
+    --text-color: #333333;
+    --border-radius: 8px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+    background-color: var(--light-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+a {
+    text-decoration: none;
+    color: var(--primary-color);
+}
+
+ul {
+    list-style: none;
+}
+
+.main-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+
+/* === HEADER / NAVBAR === */
+.main-header {
+    background-color: var(--light-color);
+    border-bottom: 1px solid #e0e0e0;
+    padding: 15px 0;
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo a {
+    font-weight: 700;
+    font-size: 1.5em;
+    color: var(--dark-color);
+}
+
+.logo span { /* Pour le 'Admin' */
+    color: #777;
+    font-size: 0.8em;
+}
+
+.main-nav ul {
+    display: flex;
+    gap: 25px;
+}
+
+.main-nav a {
+    color: var(--text-color);
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.main-nav a:hover, .main-nav a.active {
+    color: var(--primary-color);
+}
+
+
+/* === BOUTONS === */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-primary {
+    background-color: var(--dark-color);
+    color: var(--light-color);
+    border: 1px solid var(--dark-color);
+}
+
+.btn-primary:hover {
+    background-color: #333;
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--dark-color);
+    border: 1px solid #e0e0e0;
+}
+
+.btn-secondary:hover {
+    background-color: #f0f0f0;
+}
+
+
+/* === SECTION HÉROS (PAGE D'ACCUEIL) === */
+.hero-section {
+    background-color: var(--grey-color);
+    text-align: center;
+    padding: 80px 20px;
+}
+
+.hero-content h1 {
+    font-size: 2.8em;
+    margin-bottom: 15px;
+    color: var(--dark-color);
+}
+
+.hero-content p {
+    font-size: 1.1em;
+    color: #666;
+    max-width: 600px;
+    margin: 0 auto 30px auto;
+}
+
+
+/* === LISTE DES VOITURES === */
+#car-list-section h2 {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 2em;
+}
+
+.car-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.car-card {
+    background: var(--light-color);
+    border: 1px solid #e0e0e0;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    text-align: left;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.car-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+.car-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+#upcoming-reservations-list img{
+   width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+.car-card h3 {
+    margin: 15px 20px 5px 20px;
+    font-size: 1.2em;
+}
+
+.car-card p {
+    margin: 0 20px 15px 20px;
+    color: #666;
+}
+
+.car-card .btn {
+    display: block;
+    margin: 15px 20px;
+    background-color: var(--primary-color);
+    color: var(--light-color);
+}
+/* === STYLE POUR LES TABLEAUX DE GESTION (ADMIN) === */
+.management-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 30px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.management-table thead {
+    background-color: var(--grey-color);
+}
+
+.management-table th,
+.management-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.management-table th {
+    font-weight: 600;
+    color: #333;
+}
+
+.management-table tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+.management-table img {
+    max-width: 100px;
+    border-radius: var(--border-radius);
+}
+
+.management-table .actions a,
+.management-table .actions button {
+    margin-right: 10px;
+    cursor: pointer;
+}
+.actions .btn-edit { color: var(--primary-color); font-weight: 600; }
+.actions .btn-delete { color: #dc3545; font-weight: 600; background: none; border: none; font-size: 1em; }
+/* === STYLE GÉNÉRAL POUR LES FORMULAIRES === */
+.form-container {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.form-container h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+    color: var(--dark-color);
+}
+
+.form-container form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+}
+
+.form-container form input[type="text"],
+.form-container form input[type="email"],
+.form-container form input[type="password"],
+.form-container form input[type="number"],
+.form-container form input[type="date"],
+.form-container form select,
+.form-container form textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+    font-size: 1em;
+    transition: border-color 0.3s;
+}
+
+.form-container form input:focus,
+.form-container form select:focus,
+.form-container form textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.form-container form button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1em;
+}
+
+.form-container .message-success,
+.form-container .message-error {
+    text-align: center;
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+}
+.message-success { background-color: #d4edda; color: #155724; }
+.message-error { background-color: #f8d7da; color: #721c24; }
+/* === STYLE POUR LE DASHBOARD CLIENT === */
+.dashboard-container {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.dashboard-sidebar {
+    flex: 0 0 250px; /* Ne grandit pas, ne rétrécit pas, base de 250px */
+    background-color: var(--grey-color);
+    padding: 20px;
+    border-radius: var(--border-radius);
+}
+
+.dashboard-sidebar .user-profile {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.dashboard-sidebar .user-profile img { /* Pour une photo de profil future */
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.dashboard-sidebar .user-profile h4 {
+    margin: 0;
+}
+
+.dashboard-sidebar .sidebar-nav ul li a {
+    display: block;
+    padding: 12px 15px;
+    color: #333;
+    font-weight: 500;
+    border-radius: var(--border-radius);
+    margin-bottom: 5px;
+}
+
+.dashboard-sidebar .sidebar-nav ul li a.active,
+.dashboard-sidebar .sidebar-nav ul li a:hover {
+    background-color: var(--primary-color);
+    color: var(--light-color);
+}
+
+.dashboard-content {
+    flex-grow: 1; /* Prend le reste de l'espace */
+}
+
+.dashboard-section {
+    background-color: #ffffff;
+    padding: 30px;
+    border: 1px solid #e0e0e0;
+    border-radius: var(--border-radius);
+    margin-bottom: 30px;
+}
+
+.dashboard-section h3 {
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+.no-data-message {
+    text-align: center;
+    padding: 40px;
+    background-color: var(--grey-color);
+    border-radius: var(--border-radius);
+}
+.no-data-message p {
+    margin-bottom: 20px;
+    color: #666;
+}
+/* frontend/css/style.css */
+
+.car-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Deux colonnes de taille égale */
+    gap: 40px;
+    align-items: start;
+    margin-bottom: 40px;
+}
+
+   
+
+.car-info-container h2 {
+    font-size: 2.2em;
+    margin-bottom: 20px;
+}
+
+.car-info-container p {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+}
+
+.car-info-container .btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2em;
+}
+
+/* Responsive pour les écrans plus petits */
+@media (max-width: 768px) {
+    .car-details-grid {
+        grid-template-columns: 1fr; /* Une seule colonne sur mobile */
+    }
+}
+/* frontend/css/style.css */
+
+/* Style pour le formulaire d'upload sur la page des documents */
+.upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 500px;
+}
+.upload-form select, .upload-form input[type="file"] {
+    margin-bottom: 0;
+}
+.upload-form .btn {
+    align-self: flex-start;
+}
+
+
+/* Style pour la liste des documents */
+.document-list {
+    list-style: none;
+    padding: 0;
+}
+
+.document-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: var(--border-radius);
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+}
+
+.document-item .doc-type {
+    font-weight: 600;
+}
+
+.document-item .doc-date {
+    font-size: 0.9em;
+    color: #666;
 }

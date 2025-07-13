@@ -2,46 +2,79 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mon Tableau de Bord - AutoLoc</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-   <header class="main-header client-header">
-    <div class="header-container">
-        <div class="logo">
-            <a href="home.html">AutoLoc</a>
-        </div>
-        <nav class="main-nav">
-            <ul>
-                <!-- La classe 'active' peut être ajoutée par JS ou manuellement pour indiquer la page actuelle -->
-                <li><a href="dashboard-client.html" class="active">Mes Réservations</a></li>
-                <li><a href="cars-list.html">Louer une Voiture</a></li>
-                <li><a href="upload-documents.html">Mes Documents</a></li>
-            </ul>
-        </nav>
-        <div class="user-actions">
-            <!-- Cet élément pourra être rempli par JavaScript -->
-            <span id="welcome-message" class="welcome-text"></span>
-            <button id="logout-btn" class="btn btn-secondary">Déconnexion</button>
-        </div>
-    </div>
-</header>
 
-    <main>
-        <h2>Mon Tableau de Bord</h2>
-        
-        <section id="user-info">
-            <!-- Les infos de l'utilisateur seront chargées ici -->
-            <p>Chargement de vos informations...</p>
-        </section>
+    <!-- ======================= NAVBAR CLIENT ======================= -->
+    <header class="main-header client-header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="index.html">AutoLoc</a>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="dashboard-client.html" class="active">Tableau de Bord</a></li>
+                    <!-- Correction du lien : il doit pointer vers la page d'accueil où se trouve la liste -->
+                    <li><a href="cars-list.html">Louer une Voiture</a></li> 
+                    <li><a href="upload-documents.html">Mes Documents</a></li>
+                </ul>
+            </nav>
+            <div class="user-actions">
+                <span id="welcome-message" class="welcome-text"></span>
+                <button id="logout-btn" class="btn btn-secondary">Déconnexion</button>
+            </div>
+        </div>
+    </header>
 
-        <h3>Mes Réservations</h3>
-        <section id="reservations-list">
-            <!-- La liste des réservations sera chargée ici -->
-        </section>
+    <!-- ======================= CONTENU DU DASHBOARD ======================= -->
+    <main class="main-container">
+        <div class="dashboard-container">
+
+            <!-- 1. BARRE LATÉRALE (SIDEBAR) -->
+            <aside class="dashboard-sidebar">
+                <div class="user-profile" id="user-info-sidebar">
+                    <p>Chargement...</p>
+                </div>
+                <nav class="sidebar-nav">
+                    <ul>
+                        <li><a href="dashboard-client.html" class="active">Mes Réservations</a></li>
+                        <li><a href="my-documents.html">Mes Documents</a></li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- 2. CONTENU PRINCIPAL -->
+            <div class="dashboard-content">
+                <h2>Mes Réservations</h2>
+                
+                <section class="dashboard-section">
+                    <h3>À venir</h3>
+                    <div id="upcoming-reservations-list">
+                        <p>Chargement...</p>
+                    </div>
+                </section>
+
+                <section class="dashboard-section">
+                    <h3>Historique</h3>
+                    <div id="past-reservations-list">
+                        <p>Chargement...</p>
+                    </div>
+                </section>
+            </div>
+
+        </div>
     </main>
     
-    <!-- On utilise le fichier JS dédié au dashboard client -->
+    <!-- ======================= SCRIPTS ======================= -->
+    <!-- Script principal pour le contenu de cette page -->
     <script src="../js/dashboard-client.js"></script>
+    <!-- Script commun pour la logique de la barre de navigation -->
+    <script src="../js/client-nav.js"></script>
+    
+    <!-- La ligne pour reservation.js a été SUPPRIMÉE car elle est inutile ici -->
+
 </body>
 </html>

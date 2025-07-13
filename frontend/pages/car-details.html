@@ -14,18 +14,24 @@
         <h1><a href="cars-list.html">Retour à la liste</a></h1>
         <!-- On ajoutera plus tard des liens de connexion/dashboard ici -->
     </header>
+<!-- frontend/pages/car-details.html -->
+<main class="main-container">
+    <div class="details-page-layout">
+        <!-- Le conteneur pour les détails de la voiture (image + infos) -->
+        <div id="car-details-container" class="car-details-grid">
+            <!-- Ce contenu sera généré par JavaScript -->
+            <p>Chargement des détails de la voiture...</p>
+        </div>
 
-    <main id="car-details-container">
-        <!-- Le contenu sera injecté ici par JavaScript -->
-        <p>Chargement des détails de la voiture...</p>
-    </main>
-    <!-- Dans frontend/pages/car-details.html, après la section principale -->
-<section id="reviews-section">
-    <h3>Avis des clients</h3>
-    <div id="reviews-list">
-        <!-- Les avis seront chargés ici -->
+        <!-- La section pour les avis -->
+        <section id="reviews-section" class="dashboard-section">
+            <h3>Avis des clients</h3>
+            <div id="reviews-list">
+                <!-- Les avis seront chargés ici -->
+            </div>
+        </section>
     </div>
-</section>
+</main>
     
     <!-- On peut créer un JS dédié ou utiliser main.js -->
     <script src="../js/car-details.js"></script> 

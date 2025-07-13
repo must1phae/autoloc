@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Documents - AutoLoc</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+    <!-- ======================= NAVBAR CLIENT ======================= -->
+    <header class="main-header client-header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="index.html">AutoLoc</a>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="dashboard-client.html">Tableau de Bord</a></li>
+                    <li><a href="../../index.html#car-list-section">Louer une Voiture</a></li>
+                </ul>
+            </nav>
+            <div class="user-actions">
+                <span id="welcome-message" class="welcome-text"></span>
+                <button id="logout-btn" class="btn btn-secondary">Déconnexion</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ======================= CONTENU DE LA PAGE ======================= -->
+    <main class="main-container">
+        <div class="dashboard-container">
+
+            <!-- 1. BARRE LATÉRALE (SIDEBAR) -->
+            <aside class="dashboard-sidebar">
+                <div class="user-profile" id="user-info-sidebar">
+                    <p>Chargement...</p>
+                </div>
+                <nav class="sidebar-nav">
+                    <ul>
+                        <li><a href="dashboard-client.html">Mes Réservations</a></li>
+                        <!-- On met la classe 'active' sur le lien de la page actuelle -->
+                        <li><a href="my-documents.html" class="active">Mes Documents</a></li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- 2. CONTENU PRINCIPAL -->
+            <div class="dashboard-content">
+                <h2>Gérer mes Documents</h2>
+                
+                <!-- Section pour uploader un nouveau document -->
+                <section class="dashboard-section">
+                    <h3>Uploader un nouveau document</h3>
+                    <p>Veuillez fournir une copie de votre permis de conduire et de votre pièce d'identité (CIN).</p>
+                    <form action="../../backend/routes/api.php?action=uploadDocument" method="POST" enctype="multipart/form-data" class="upload-form">
+                        <label for="type_doc">Type de document :</label>
+                        <select name="type_doc" required>
+                            <option value="Permis">Permis de conduire</option>
+                            <option value="CIN">Carte d'Identité Nationale</option>
+                            <option value="Autre">Autre</option>
+                        </select>
+                        <label for="document_file">Fichier (PDF, JPG, PNG) :</label>
+                        <input type="file" name="document_file" required>
+                        <button type="submit" class="btn">Envoyer le document</button>
+                    </form>
+                </section>
+
+                <!-- Section pour voir les documents déjà envoyés -->
+                <section class="dashboard-section">
+                    <h3>Mes documents envoyés</h3>
+                    <div id="documents-list-container">
+                        <!-- La liste sera chargée ici par JavaScript -->
+                        <p>Chargement de vos documents...</p>
+                    </div>
+                </section>
+            </div>
+
+        </div>
+    </main>
+    
+    <!-- ======================= SCRIPTS ======================= -->
+    <script src="../js/my-documents.js"></script>
+    <script src="../js/client-nav.js"></script>
+
+</body>
+</html>

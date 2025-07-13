@@ -7,7 +7,26 @@
 </head>
 <body>
     <!-- Intégrez la navbar client ici -->
-    <header class="main-header client-header">...</header>
+   <header class="main-header client-header">
+    <div class="header-container">
+        <div class="logo">
+            <a href="index.html">AutoLoc</a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <!-- La classe 'active' peut être ajoutée par JS ou manuellement pour indiquer la page actuelle -->
+                <li><a href="dashboard-client.html" class="active">Mes Réservations</a></li>
+                <li><a href="cars-list.html">Louer une Voiture</a></li>
+                <li><a href="upload-documents.html">Mes Documents</a></li>
+            </ul>
+        </nav>
+        <div class="user-actions">
+            <!-- Cet élément pourra être rempli par JavaScript -->
+            <span id="welcome-message" class="welcome-text"></span>
+            <button id="logout-btn" class="btn btn-secondary">Déconnexion</button>
+        </div>
+    </div>
+</header>
 
     <main>
         <h2>Gérer mes Documents</h2>
@@ -33,5 +52,6 @@
         </div>
     </main>
     <script src="../js/document-client.js"></script>
+    
 </body>
 </html>
