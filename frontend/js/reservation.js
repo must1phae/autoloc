@@ -17,11 +17,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     const authResponse = await fetch(`${API_URL}?action=checkAuth`);
     const authResult = await authResponse.json();
 
-    if (!authResult.isLoggedIn) {
-        // Si non connecté, rediriger vers la page de login
-        window.location.href = `login.html?redirect=reservation-form.html${window.location.search}`;
-        return;
-    }
+   if (!authResult.isLoggedIn) {
+    // Pas connecté -> login
+    window.location.href = 'login.html';
+    return; // On arrête l'exécution du script
+}
+
+if (authResult.user.role === 'admin') {
+    // C'est un admin, il n'a rien à faire ici
+    window.location.href = 'dashboard-admin.html';
+    return; // On arrête l'exécution
+}
+
 
     // 2. Récupérer l'ID de la voiture depuis l'URL et charger ses infos
     const params = new URLSearchParams(window.location.search);

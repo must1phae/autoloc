@@ -16,7 +16,7 @@ require_once '../models/Reservation.php';
 require_once '../models/Document.php';
 // On suppose que vous avez déjà créé le modèle Avis.php
 require_once '../models/Avis.php';
-require_once '../ai/description.php';
+ 
  // Initialiser les modèles
 $userModel = new User($pdo);
 $carModel = new Car($pdo);
@@ -73,29 +73,61 @@ switch ($action) {
    // Dans backend/routes/api.php
 
 // ...
-
 case 'login':
-    if ($method == 'POST') {
-        if (!empty($data['email']) && !empty($data['password'])) {
-            $user = $userModel->login($data['email'], $data['password']);
-            if ($user) {
-                // Stocker les infos de l'utilisateur dans la session
-                $_SESSION['user_id'] = $user['id_user'];
-                $_SESSION['user_role'] = $user['role'];
+    // 1. On vérifie d'abord que la méthode HTTP est bien POST.
+    if ($method !== 'POST') {
+        http_response_code(405); // Method Not Allowed
+        echo json_encode(['success' => false, 'message' => 'Méthode non autorisée.']);
+        break; // Arrêt immédiat
+    }
 
-                // On renvoie le nom et SURTOUT le rôle au frontend
-                echo json_encode([
-                    'success' => true, 
-                    'message' => 'Connexion réussie.', 
-                    'user' => [
-                        'nom' => $user['nom'], 
-                        'role' => $user['role'] // <-- LA PARTIE CRUCIALE !
-                    ]
-                ]);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Email ou mot de passe incorrect.']);
-            }
-        }
+    // 2. On vérifie la présence des données nécessaires (plus sûr que !empty).
+    if (!isset($data['email']) || !isset($data['password'])) {
+        http_response_code(400); // Bad Request
+        echo json_encode(['success' => false, 'message' => 'Email et mot de passe sont requis.']);
+        break;
+    }
+
+    // 3. On nettoie les entrées pour la sécurité.
+    $email = filter_var(trim($data['email']), FILTER_SANITIZE_EMAIL);
+    $password = $data['password'];
+
+    // 4. On vérifie que les champs ne sont pas vides après nettoyage.
+    if (empty($email) || empty($password)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Les champs ne peuvent pas être vides.']);
+        break;
+    }
+
+    // 5. On tente de connecter l'utilisateur via le modèle.
+    $user = $userModel->login($email, $password);
+
+    if ($user) {
+        // ---- SUCCÈS DE LA CONNEXION ----
+        
+        // 6. Mesure de sécurité : on régénère l'ID de session.
+        session_regenerate_id(true);
+
+        // 7. On stocke les informations essentielles dans la session.
+        $_SESSION['user_id'] = $user['id_user'];
+        $_SESSION['user_role'] = $user['role'];
+        // On peut aussi stocker le prénom pour un message d'accueil
+        $_SESSION['user_prenom'] = $user['prenom'];
+
+        // 8. On renvoie une réponse positive au frontend.
+        // On inclut seulement les informations non-sensibles nécessaires.
+        echo json_encode([
+            'success' => true, 
+            'message' => 'Connexion réussie !', 
+            'user' => [
+                'prenom' => $user['prenom'], // On renvoie le prénom pour un message d'accueil
+                'role' => $user['role']      // Et le rôle pour la redirection
+            ]
+        ]);
+    } else {
+        // ---- ÉCHEC DE LA CONNEXION ----
+        http_response_code(401); // Unauthorized
+        echo json_encode(['success' => false, 'message' => 'Email ou mot de passe incorrect.']);
     }
     break;
 

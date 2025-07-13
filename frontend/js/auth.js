@@ -1,86 +1,121 @@
-// frontend/js/auth.js
+// frontend/js/auth.js - VERSION FINALE
 
 document.addEventListener('DOMContentLoaded', () => {
-    // L'URL de notre API backend
+    // On définit l'URL de l'API une seule fois pour tout le script.
     const API_URL = 'http://localhost/autoloc/backend/routes/api.php';
 
-    // --- LOGIQUE POUR LE FORMULAIRE D'INSCRIPTION ---
+    // =========================================================
+    // ==         GESTION DU FORMULAIRE D'INSCRIPTION         ==
+    // =========================================================
     const registerForm = document.getElementById('register-form');
     if (registerForm) {
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Empêche le rechargement de la page
+        registerForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Empêche le rechargement de la page.
 
-            // Récupérer les valeurs du formulaire
-            const nom = document.getElementById('nom').value;
-            const prenom = document.getElementById('prenom').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            // On cible les éléments une seule fois pour la performance.
+            const nomInput = document.getElementById('nom');
+            const prenomInput = document.getElementById('prenom');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
             const messageDiv = document.getElementById('message');
+            const submitButton = registerForm.querySelector('button[type="submit"]');
 
-            // Envoyer les données à l'API
-            const response = await fetch(`${API_URL}?action=register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nom, prenom, email, password })
-            });
+            // On désactive le bouton pour éviter les doubles clics.
+            submitButton.disabled = true;
+            submitButton.textContent = 'Enregistrement...';
+            
+            try {
+                // On envoie les données à l'API.
+                const response = await fetch(`${API_URL}?action=register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        nom: nomInput.value, 
+                        prenom: prenomInput.value, 
+                        email: emailInput.value, 
+                        password: passwordInput.value 
+                    })
+                });
 
-            const result = await response.json();
+                const result = await response.json();
 
-            if (result.success) {
-                messageDiv.style.color = 'green';
-                messageDiv.textContent = result.message;
-                // Rediriger vers la page de connexion après un court délai
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 2000);
-            } else {
-                messageDiv.style.color = 'red';
-                messageDiv.textContent = result.message;
+                if (result.success) {
+                    messageDiv.className = 'message-success'; // Utilise les classes CSS pour le style.
+                    messageDiv.textContent = result.message + " Vous allez être redirigé...";
+                    // On redirige vers la page de connexion après un court délai.
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2500);
+                } else {
+                    messageDiv.className = 'message-error';
+                    messageDiv.textContent = result.message;
+                    // On réactive le bouton en cas d'erreur.
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'S\'inscrire';
+                }
+            } catch (error) {
+                console.error("Erreur lors de l'inscription:", error);
+                messageDiv.className = 'message-error';
+                messageDiv.textContent = 'Une erreur de communication est survenue. Veuillez réessayer.';
+                submitButton.disabled = false;
+                submitButton.textContent = 'S\'inscrire';
             }
         });
     }
 
-
-    // --- LOGIQUE POUR LE FORMULAIRE DE CONNEXION (MISE À JOUR) ---
+    // =========================================================
+    // ==           GESTION DU FORMULAIRE DE CONNEXION          ==
+    // =========================================================
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
 
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
             const messageDiv = document.getElementById('message');
+            const submitButton = loginForm.querySelector('button[type="submit"]');
 
-            const response = await fetch(`${API_URL}?action=login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
+            submitButton.disabled = true;
+            submitButton.textContent = 'Connexion...';
 
-            const result = await response.json();
+            try {
+                const response = await fetch(`${API_URL}?action=login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        email: emailInput.value, 
+                        password: passwordInput.value 
+                    })
+                });
 
-            if (result.success) {
-                messageDiv.style.color = 'green';
-                messageDiv.textContent = result.message;
+                const result = await response.json();
 
-                // ---- C'EST LA NOUVELLE PARTIE INTELLIGENTE ----
-                // On vérifie le rôle renvoyé par l'API
-                if (result.user.role === 'admin') {
-                    // Si c'est un admin, on redirige vers le dashboard admin
+                if (result.success) {
+                    messageDiv.className = 'message-success';
+                    messageDiv.textContent = result.message;
+
+                    // Redirection intelligente basée sur le rôle renvoyé par l'API.
+                    const destination = result.user.role === 'admin' 
+                        ? 'dashboard-admin.html' 
+                        : 'dashboard-client.html';
+                    
                     setTimeout(() => {
-                        window.location.href = 'dashboard-admin.html'; 
+                        window.location.href = destination; 
                     }, 1500);
+
                 } else {
-                    // Sinon (c'est un client), on redirige vers le dashboard client
-                    setTimeout(() => {
-                        window.location.href = 'dashboard-client.html';
-                    }, 1500);
+                    messageDiv.className = 'message-error';
+                    messageDiv.textContent = result.message;
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Se connecter';
                 }
-                // ---------------------------------------------
-
-            } else {
-                messageDiv.style.color = 'red';
-                messageDiv.textContent = result.message;
+            } catch (error) {
+                console.error("Erreur lors de la connexion:", error);
+                messageDiv.className = 'message-error';
+                messageDiv.textContent = 'Une erreur de communication est survenue. Veuillez réessayer.';
+                submitButton.disabled = false;
+                submitButton.textContent = 'Se connecter';
             }
         });
     }

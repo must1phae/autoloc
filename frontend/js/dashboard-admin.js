@@ -61,12 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================
 
     // Écouteur pour la déconnexion
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', async () => {
-            await fetch(`${API_URL}?action=logout`);
-            window.location.href = 'home.html';
-        });
-    }
+    
 
     // Écouteur pour les clics dans le tableau (pour la suppression)
     if (carsTableBody) {

@@ -5,6 +5,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const response = await fetch(`${API_URL}?action=getUserDocuments`);
     const result = await response.json();
+if (!authResult.isLoggedIn) {
+    // Pas connecté -> login
+    window.location.href = 'login.html';
+    return; // On arrête l'exécution du script
+}
+
+if (authResult.user.role === 'admin') {
+    // C'est un admin, il n'a rien à faire ici
+    window.location.href = 'dashboard-admin.html';
+    return; // On arrête l'exécution
+}
 
     if (result.success && listDiv) {
         listDiv.innerHTML = '';

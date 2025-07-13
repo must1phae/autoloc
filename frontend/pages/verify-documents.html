@@ -6,9 +6,25 @@
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <!-- Intégrez la navbar admin ici -->
-    <header class="main-header admin-header">...</header>
-
+    <!-- Intégrez la navbar admin ici --><header class="main-header admin-header">
+    <div class="header-container">
+        <div class="logo">
+            <a href="dashboard-admin.html">AutoLoc <span>Admin</span></a>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="dashboard-admin.html">Voitures</a></li>
+                <li><a href="reservations-list.html">Réservations</a></li>
+                <li><a href="user-list.html">Utilisateurs</a></li>
+                <li><a href="verify-documents.html">Documents</a></li>
+            </ul>
+        </nav>
+        <div class="user-actions">
+            <button id="logout-btn" class="btn btn-secondary">Déconnexion</button>
+        </div>
+    </div>
+</header>
+     
     <main>
         <h2>Documents en attente de validation</h2>
         <table id="documents-table">
@@ -24,5 +40,7 @@
         </table>
     </main>
     <script src="../js/document-admin.js"></script>
+    <script src="../js/admin-nav.js"></script>     <!-- Script commun pour la navbar -->
+
 </body>
 </html>
