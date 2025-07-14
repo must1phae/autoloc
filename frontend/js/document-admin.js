@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <tr id="doc-row-${doc.id_doc}">
                         <td>${doc.prenom} ${doc.nom}</td>
                         <td>${doc.type_doc}</td>
-                        <td><a href="../uploads/documents/${doc.nom_fichier}" target="_blank">Voir le fichier</a></td>
+                        <td><a href="../../uploads/documents/${doc.nom_fichier}" target="_blank">Voir le fichier</a></td>
                         <td>
                             <button class="btn-approve" data-id="${doc.id_doc}">Valider</button>
                             <button class="btn-reject" data-id="${doc.id_doc}">Rejeter</button>

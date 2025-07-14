@@ -71,6 +71,28 @@ switch ($action) {
         break;
         
    // Dans backend/routes/api.php
+   case 'updateUserProfile':
+        if (isset($_SESSION['user_id']) && $method == 'POST') {
+            $id_user = $_SESSION['user_id'];
+            $data = json_decode(file_get_contents("php://input"), true);
+            
+            // On vérifie que les données de base sont là
+            if (isset($data['nom'], $data['prenom'])) {
+                // Le mot de passe est optionnel
+                $password = $data['password'] ?? null;
+                
+                $success = $userModel->updateProfile($id_user, $data['nom'], $data['prenom'], $password);
+                
+                if ($success) {
+                    echo json_encode(['success' => true, 'message' => 'Profil mis à jour avec succès.']);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Erreur lors de la mise à jour du profil.']);
+                }
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Données manquantes.']);
+            }
+        }
+        break;
 
 // ...
 case 'login':
@@ -98,7 +120,7 @@ case 'login':
         echo json_encode(['success' => false, 'message' => 'Les champs ne peuvent pas être vides.']);
         break;
     }
-
+ 
     // 5. On tente de connecter l'utilisateur via le modèle.
     $user = $userModel->login($email, $password);
 
@@ -371,25 +393,34 @@ case 'createReservation':
     // ==         NOUVELLES ROUTES DOCUMENTS        ==
     // ===============================================
 
-    case 'uploadDocument': // Pour le client
-        if (isset($_SESSION['user_id']) && $method == 'POST') {
-            $id_user = $_SESSION['user_id'];
+ // Dans api.php, modifiez ce case
+
+case 'uploadDocument':
+    if (isset($_SESSION['user_id']) && $method == 'POST') {
+        $id_user = $_SESSION['user_id'];
+        
+        if (isset($_POST['type_doc']) && isset($_FILES['document_file']) && $_FILES['document_file']['error'] == 0) {
             $type_doc = $_POST['type_doc'];
-            $file_name = 'default.pdf';
-
-            if (isset($_FILES['document_file']) && $_FILES['document_file']['error'] == 0) {
-                $target_dir = "../../uploads/documents/";
-                // On préfixe avec l'ID de l'utilisateur pour l'organisation
-                $file_name = $id_user . '-' . uniqid() . '-' . basename($_FILES["document_file"]["name"]);
-                $target_file = $target_dir . $file_name;
-                move_uploaded_file($_FILES["document_file"]["tmp_name"], $target_file);
+            $target_dir = "../../uploads/documents/"; // Votre chemin conservé
+            $file_name = $id_user . '-' . uniqid() . '-' . basename($_FILES["document_file"]["name"]);
+            $target_file = $target_dir . $file_name;
+            
+            if (move_uploaded_file($_FILES["document_file"]["tmp_name"], $target_file)) {
+                $success = $documentModel->create($id_user, $type_doc, $file_name);
+                if ($success) {
+                    // RENVOYER UNE RÉPONSE JSON
+                    echo json_encode(['success' => true, 'message' => 'Document envoyé avec succès !']);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Erreur lors de l\'enregistrement.']);
+                }
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Erreur lors de l\'upload du fichier.']);
             }
-
-            $documentModel->create($id_user, $type_doc, $file_name);
-            header('Location: ../../frontend/pages/upload-documents.html?message=success');
-            exit();
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Données ou fichier manquant.']);
         }
-        break;
+    }
+    break;
 
     case 'getUserDocuments': // Pour le client
         if (isset($_SESSION['user_id'])) {
@@ -464,4 +495,6 @@ case 'leaveReview':
         break;
         
 } 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 ?>

@@ -17,7 +17,7 @@
             <nav class="main-nav">
                 <ul>
                     <li><a href="dashboard-client.html">Tableau de Bord</a></li>
-                    <li><a href="../../index.html#car-list-section">Louer une Voiture</a></li>
+                   
                 </ul>
             </nav>
             <div class="user-actions">
@@ -41,6 +41,7 @@
                         <li><a href="dashboard-client.html">Mes Réservations</a></li>
                         <!-- On met la classe 'active' sur le lien de la page actuelle -->
                         <li><a href="my-documents.html" class="active">Mes Documents</a></li>
+                         <li><a href="modifier-profile.html">profile</a></li>
                     </ul>
                 </nav>
             </aside>
@@ -53,7 +54,9 @@
                 <section class="dashboard-section">
                     <h3>Uploader un nouveau document</h3>
                     <p>Veuillez fournir une copie de votre permis de conduire et de votre pièce d'identité (CIN).</p>
-                    <form action="../../backend/routes/api.php?action=uploadDocument" method="POST" enctype="multipart/form-data" class="upload-form">
+                    
+                    <!-- MODIFICATION : Ajout d'un id="upload-doc-form" -->
+                    <form id="upload-doc-form" action="../../backend/routes/api.php?action=uploadDocument" method="POST" enctype="multipart/form-data" class="upload-form">
                         <label for="type_doc">Type de document :</label>
                         <select name="type_doc" required>
                             <option value="Permis">Permis de conduire</option>
@@ -64,6 +67,8 @@
                         <input type="file" name="document_file" required>
                         <button type="submit" class="btn">Envoyer le document</button>
                     </form>
+                    <!-- Ajout d'un conteneur pour les messages de retour -->
+                    <div id="upload-message" style="margin-top: 15px;"></div>
                 </section>
 
                 <!-- Section pour voir les documents déjà envoyés -->

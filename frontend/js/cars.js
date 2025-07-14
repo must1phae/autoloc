@@ -1,52 +1,104 @@
-// frontend/js/cars.js
-document.addEventListener('DOMContentLoaded', () => {
-    const carsContainer = document.getElementById('cars-container');
-    const API_URL = 'http://localhost/autoloc/backend/routes/api.php';
-    
+// frontend/js/cars.js - VERSION AVEC NAVBAR DYNAMIQUE ET CHEMINS D'ORIGINE CONSERVÉS
 
+document.addEventListener('DOMContentLoaded', () => {
+    const API_URL = 'http://localhost/autoloc/backend/routes/api.php';
+
+    // Sélecteurs pour les éléments de la page
+    const carsContainer = document.getElementById('cars-container'); // Votre HTML doit avoir cet ID
+    const mainNav = document.getElementById('main-navigation');      // Votre HTML doit aussi avoir cet ID pour la navbar
+
+    // =========================================================
+    // == 1. GESTION DE LA NAVBAR DYNAMIQUE (Logique ajoutée)
+    // =========================================================
+    async function setupNavbar() {
+        if (!mainNav) return;
+
+        const authResponse = await fetch(`${API_URL}?action=checkAuth`);
+        const authResult = await authResponse.json();
+
+        // Liens de base pour la navigation
+        let baseNavLinks = `
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="cars-list.html" class="active">Louer une Voiture</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        `;
+        
+        let userActionsHtml = '';
+
+        if (authResult.isLoggedIn) {
+            // --- CAS UTILISATEUR CONNECTÉ ---
+            const user = authResult.user;
+            const dashboardLink = user.role === 'admin' 
+                ? 'dashboard-admin.html' 
+                : 'dashboard-client.html';
+
+            userActionsHtml = `
+                <div class="user-profile-icon">
+                    <a href="${dashboardLink}">
+                        <span>${user.prenom.charAt(0).toUpperCase()}</span>
+                    </a>
+                </div>
+            `;
+            
+        } else {
+            // --- CAS UTILISATEUR NON CONNECTÉ ---
+            userActionsHtml = `
+                <div class="auth-buttons">
+                    <a href="login.html" class="btn btn-secondary">Connexion</a>
+                    <a href="register.html" class="btn btn-primary">Inscription</a>
+                </div>
+            `;
+        }
+        
+        // On assemble la navbar
+        mainNav.innerHTML = `
+            <ul>${baseNavLinks}</ul>
+            <div class="nav-actions-container">
+                ${userActionsHtml}
+            </div>
+        `;
+    }
+
+    // =========================================================
+    // == 2. CHARGEMENT DE LA LISTE DES VOITURES (Votre logique d'origine)
+    // =========================================================
     async function fetchAndDisplayCars() {
+        if (!carsContainer) return;
+
         try {
             const response = await fetch(`${API_URL}?action=getAllCars`);
             const result = await response.json();
 
-            // ============ AJOUTEZ CETTE LIGNE D'ESPIONNAGE N°1 ============
-            console.log("Données brutes reçues du serveur :", result); 
-            // ==========================================================
-
             if (result.success && result.data && result.data.length > 0) {
                 carsContainer.innerHTML = ''; 
-                
                 result.data.forEach(car => {
-
-                    // ============ AJOUTEZ CETTE LIGNE D'ESPIONNAGE N°2 ============
-                    console.log("Traitement de la voiture :", car);
-                    // ==========================================================
-
                     const carCard = document.createElement('div');
                     carCard.className = 'car-card';
                     
-                    // Ce code est maintenant CORRECT car car.image = "img.jpg"
-carCard.innerHTML = `
-    <img src="../../uploads/cars/${car.image || 'default.jpg'}" alt="${car.marque} ${car.modele}">
-    ...
-
-                        <p>Type : ${car.type}</p>
-                        <p class="price"><strong>${car.prix_par_jour} €</strong> / jour</p>
-                        <a href="car-details.html?id=${car.id_voiture}" class="btn">Voir les détails & Réserver</a>
-                        
+                    // ===============================================
+                    // ==   CES CHEMINS SONT CONSERVÉS COMME DEMANDÉ  ==
+                    // ===============================================
+                    carCard.innerHTML = `
+                        <img src="../../uploads/cars/${car.image || 'default.jpg'}" alt="${car.marque} ${car.modele}">
+                        <div class="car-card-content">
+                            <h3>${car.marque} ${car.modele}</h3>
+                            <p>Type : ${car.type}</p>
+                            <p class="price"><strong>${car.prix_par_jour} €</strong> / jour</p>
+                            <a href="car-details.html?id=${car.id_voiture}" class="btn">Voir les détails & Réserver</a>
+                        </div>
                     `;
                     carsContainer.appendChild(carCard);
                 });
             } else {
-                // Cette partie s'exécute si result.success est false ou si result.data est vide
                 carsContainer.innerHTML = '<p>Aucune voiture disponible pour le moment.</p>';
-                console.log("Raison de l'échec : ", result.message || "La liste de données est vide.");
             }
         } catch (error) {
-            console.error('Erreur finale dans le bloc catch:', error);
-            carsContainer.innerHTML = '<p>Impossible de charger les voitures.</p>';
+            console.error('Erreur lors du chargement des voitures:', error);
+            carsContainer.innerHTML = '<p>Une erreur critique est survenue.</p>';
         }
     }
 
+    // --- 3. LANCEMENT DES FONCTIONS ---
+    setupNavbar();
     fetchAndDisplayCars();
 });

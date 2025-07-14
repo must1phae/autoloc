@@ -8,33 +8,25 @@
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-   <header class="main-header client-header">
+  <header class="main-header public-header">
     <div class="header-container">
         <div class="logo">
-            <a href="index.html">AutoLoc</a>
+            <a href="../../index.html">AutoLoc</a>
         </div>
-        <nav class="main-nav">
-            <ul>
-                <!-- La classe 'active' peut être ajoutée par JS ou manuellement pour indiquer la page actuelle -->
-                <li><a href="dashboard-client.html" class="active">Mes Réservations</a></li>
-                <li><a href="cars-list.html">Louer une Voiture</a></li>
-                <li><a href="upload-documents.html">Mes Documents</a></li>
-            </ul>
+        <!-- Le JS remplira cette partie -->
+        <nav class="main-nav" id="main-navigation">
+            <!-- Chargement de la navigation... -->
         </nav>
-        <div class="user-actions">
-            <!-- Cet élément pourra être rempli par JavaScript -->
-            <span id="welcome-message" class="welcome-text"></span>
-            <button id="logout-btn" class="btn btn-secondary">Déconnexion</button>
-        </div>
     </div>
 </header>
-    <main>
-        <h2>Nos voitures disponibles à la location</h2>
-        <div id="cars-container" class="car-grid">
-            <p>Chargement des voitures...</p>
-        </div>
-    </main>
+   <main class="main-container">
+    <h2>Toutes nos voitures disponibles</h2>
+    <div id="cars-container" class="car-grid">
+        <p>Chargement des voitures...</p>
+    </div>
+</main>
     <!-- On inclut le script JavaScript pour cette page -->
     <script src="../js/cars.js"></script>
+     <script src="../js/client-nav.js"></script>
 </body>
 </html>

@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const userInfoSidebarDiv = document.getElementById('user-info-sidebar');
     const upcomingReservationsDiv = document.getElementById('upcoming-reservations-list');
     const pastReservationsDiv = document.getElementById('past-reservations-list');
-
+    const logoutBtn = document.getElementById('logout-btn');
     // --- Fonction principale qui initialise la page ---
     async function initializeDashboard() {
         const authResponse = await fetch(`${API_URL}?action=checkAuth`);
@@ -128,4 +128,27 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+    // --- GESTION DE LA DÉCONNEXION ---
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+            // On appelle l'action de déconnexion de l'API
+            await fetch(`${API_URL}?action=logout`);
+            // On redirige vers la page d'accueil après la déconnexion
+            alert("Vous avez été déconnecté.");
+            window.location.href = 'login.html';
+        });
+    }
+
+    // --- GESTION DE LA CLASSE 'ACTIVE' (BONUS) ---
+    // Cette partie met en surbrillance le lien de la page actuelle.
+    const navLinks = document.querySelectorAll('.main-nav a');
+    const currentPage = window.location.pathname.split('/').pop(); // Récupère le nom du fichier (ex: 'user-list.html')
+
+    navLinks.forEach(link => {
+        if (link.getAttribute('href') === currentPage) {
+            link.classList.add('active');
+        }
+    });
 });
+// frontend/js/admin-nav.js
+ 

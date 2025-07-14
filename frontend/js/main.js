@@ -1,5 +1,4 @@
-// main.js - fichier de structure pour AutoLoc
-// frontend/js/main.js - VERSION FINALE POUR index.html
+// frontend/js/main.js - VERSION AVEC NAVBAR AMÉLIORÉE ET CHEMINS CONSERVÉS
 
 document.addEventListener('DOMContentLoaded', () => {
     // L'URL de l'API reste la même.
@@ -13,43 +12,56 @@ document.addEventListener('DOMContentLoaded', () => {
     async function setupNavbar() {
         if (!mainNav) return;
 
-        // On vérifie si un utilisateur est connecté
         const authResponse = await fetch(`${API_URL}?action=checkAuth`);
         const authResult = await authResponse.json();
 
-        if (authResult.isLoggedIn) {
-            // Utilisateur CONNECTÉ
-            const user = authResult.user;
-            const dashboardLink = user.role === 'admin' 
-                ? '../pages/dashboard-admin.html' 
-                : '../pages/dashboard-client.html';
+        // On définit les liens de base de la navigation
+        let baseNavLinks = `
+            <li><a href="index.html" class="active">Accueil</a></li>
+            <li><a href="cars-list.html">Louer une Voiture</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        `;
+        
+        let userActionsHtml = '';
 
-            mainNav.innerHTML = `
-                <ul>
-                    <li><a href="${dashboardLink}">Mon Tableau de Bord</a></li>
-                </ul>
-                <div class="user-actions">
-                    <span class="welcome-text">Bonjour, ${user.prenom} !</span>
-                    <button id="logout-btn" class="btn btn-secondary">Déconnexion</button>
+        if (authResult.isLoggedIn) {
+            // --- CAS UTILISATEUR CONNECTÉ ---
+            const user = authResult.user;
+            // Chemin vers le dashboard tel que vous l'aviez, partant du dossier 'pages' implicitement
+            const dashboardLink = user.role === 'admin' 
+                ? 'dashboard-admin.html' 
+                : 'dashboard-client.html';
+
+            // On crée le cercle de profil
+            userActionsHtml = `
+                <div class="user-profile-icon">
+                    <a href="pages/${dashboardLink}">
+                        <span>${user.prenom.charAt(0).toUpperCase()}</span>
+                    </a>
                 </div>
             `;
-            // On attache l'événement de déconnexion
-            document.getElementById('logout-btn').addEventListener('click', async () => {
-                await fetch(`${API_URL}?action=logout`);
-                window.location.reload(); // On recharge la page pour voir les changements
-            });
+            
         } else {
-            // Utilisateur NON CONNECTÉ (visiteur)
-            mainNav.innerHTML = `
-                <ul>
-                    <li><a href="../pages/login.html">Connexion</a></li>
-                    <li><a href="../pages/register.html" class="btn btn-primary">Inscription</a></li>
-                </ul>
+            // --- CAS UTILISATEUR NON CONNECTÉ (visiteur) ---
+            userActionsHtml = `
+                <div class="auth-buttons">
+                    <a href="pages/login.html" class="btn btn-secondary">Connexion</a>
+                    <a href="pages/register.html" class="btn btn-primary">Inscription</a>
+                </div>
             `;
         }
+        
+        // On assemble la navbar complète
+        mainNav.innerHTML = `
+            <ul>${baseNavLinks}</ul>
+            <div class="nav-actions-container">
+                ${userActionsHtml}
+            </div>
+        `;
     }
 
     // --- 2. CHARGEMENT DE LA LISTE DES VOITURES ---
+    // Cette section est modifiée pour utiliser les chemins que vous avez fournis.
     async function fetchAndDisplayCars() {
         if (!carListContainer) return;
 
@@ -62,12 +74,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 result.data.forEach(car => {
                     const carCard = document.createElement('div');
                     carCard.className = 'car-card';
-                    // Les chemins vers les images et les pages doivent être complets
+                    
+                    // ===============================================
+                    // == CHEMINS CONSERVÉS TELS QUE VOUS LES AVIEZ ==
+                    // ===============================================
                     carCard.innerHTML = `
                         <img src="../../uploads/cars/${car.image}" alt="${car.marque} ${car.modele}">
-                        <h3>${car.marque} ${car.modele}</h3>
-                        <p>À partir de <strong>${car.prix_par_jour} €/jour</strong></p>
-                        <a href="../pages/car-details.html?id=${car.id_voiture}" class="btn">Voir détails et réserver</a>
+                        <div class="car-card-content">
+                            <h3>${car.marque} ${car.modele}</h3>
+                            <p>À partir de <strong>${car.prix_par_jour} €/jour</strong></p>
+                            <a href="car-details.html?id=${car.id_voiture}" class="btn">Voir détails et réserver</a>
+                        </div>
                     `;
                     carListContainer.appendChild(carCard);
                 });

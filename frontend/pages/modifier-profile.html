@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier mon Profil - AutoLoc</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+    <!-- NAVBAR CLIENT -->
+     <header class="main-header client-header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="index.html">AutoLoc</a>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="dashboard-client.html">Tableau de Bord</a></li>
+                   
+                </ul>
+            </nav>
+            <div class="user-actions">
+                <span id="welcome-message" class="welcome-text"></span>
+                <button id="logout-btn" class="btn btn-secondary">Déconnexion</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="dashboard-container">
+
+            <!-- SIDEBAR -->
+            <aside class="dashboard-sidebar">
+                <div class="user-profile" id="user-info-sidebar"><p>Chargement...</p></div>
+                <nav class="sidebar-nav">
+                    <ul>
+                        <li><a href="dashboard-client.html">Mes Réservations</a></li>
+                        <li><a href="my-documents.html">Mes Documents</a></li>
+                        <li><a href="modifier-profile.html" class="active">Mon Profil</a></li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- CONTENU PRINCIPAL -->
+            <div class="dashboard-content">
+                <h2>Modifier mon Profil</h2>
+                <section class="dashboard-section">
+                    <form id="profile-form">
+                        <label for="prenom">Prénom :</label>
+                        <input type="text" id="prenom" name="prenom" required>
+                        
+                        <label for="nom">Nom :</label>
+                        <input type="text" id="nom" name="nom" required>
+                        
+                        <label for="email">Email :</label>
+                        <input type="email" id="email" name="email" disabled>
+                        <small>L'adresse e-mail ne peut pas être modifiée.</small>
+                        
+                        <hr style="margin: 20px 0;">
+                        
+                        <label for="password">Nouveau mot de passe :</label>
+                        <input type="password" id="password" name="password">
+                        <small>Laissez vide si vous ne souhaitez pas changer de mot de passe.</small>
+
+                        <button type="submit" class="btn" style="margin-top: 20px;">Mettre à jour le profil</button>
+                    </form>
+                    <div id="profile-message" style="margin-top: 15px;"></div>
+                </section>
+            </div>
+        </div>
+    </main>
+    
+    <script src="../js/modifier-profile.js"></script>
+    <script src="../js/client-nav.js"></script>
+
+</body>
+</html>

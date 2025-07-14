@@ -541,3 +541,40 @@ ul {
     font-size: 0.9em;
     color: #666;
 }
+img{
+    max-width: 800px;
+    max-height: 600px;
+
+    }
+    /* frontend/css/style.css */
+
+/* Conteneur pour les actions à droite de la navbar */
+.nav-actions-container {
+    display: flex;
+    align-items: center;
+}
+
+/* Style pour les boutons Connexion/Inscription */
+.auth-buttons a {
+    margin-left: 10px;
+}
+
+/* Style pour l'icône de profil ronde */
+.user-profile-icon a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    background-color: var(--primary-color);
+    color: var(--light-color);
+    border-radius: 50%; /* Crée le cercle */
+    font-size: 1.2em;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.3s;
+}
+
+.user-profile-icon a:hover {
+    transform: scale(1.1);
+}
