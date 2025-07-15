@@ -8,12 +8,23 @@ class Car {
         $this->pdo = $pdo;
     }
 
-    public function getAllAvailable() {
-        $sql = "SELECT * FROM voiture WHERE statut = 'disponible' ORDER BY marque, modele";
+    /**
+     * Obtenir les voitures disponibles, avec une limite optionnelle.
+     * @param int|null $limit Le nombre maximum de voitures à retourner.
+     * @return array
+     */
+    public function getAllAvailable($limit = null) {
+        // On commence la requête de base
+        $sql = "SELECT * FROM voiture WHERE statut = 'disponible' ORDER BY id_voiture DESC";
+
+        // Si une limite est fournie et est un nombre, on l'ajoute à la requête
+        if ($limit !== null && is_numeric($limit)) {
+            $sql .= " LIMIT " . intval($limit);
+        }
+
         $stmt = $this->pdo->query($sql);
         return $stmt->fetchAll();
     }
-
     public function getById($id) {
         $sql = "SELECT * FROM voiture WHERE id_voiture = ?";
         $stmt = $this->pdo->prepare($sql);

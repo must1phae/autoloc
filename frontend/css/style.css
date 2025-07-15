@@ -1,580 +1,360 @@
- /* frontend/css/style.css */
-/* frontend/css/style.css */
-
-.hero-section {
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1517524206127-48bbd363f357?q=80&w=2070'); /* Vous pouvez changer cette image */
-    background-size: cover;
-    background-position: center;
-    color: white;
-    text-align: center;
-    padding: 100px 20px;
-}
-
-.hero-content h1 {
-    font-size: 3em;
-    margin-bottom: 20px;
-}
-
-.hero-content p {
-    font-size: 1.2em;
-    margin-bottom: 30px;
-}
-
-/* Style pour la navbar publique */
-.public-header .user-actions {
-    display: none; /* Cache les actions utilisateur par défaut */
-}
-
-.public-header .main-nav {
-    display: block;
-}
-
-/* Style pour la navbar une fois connecté */
-.main-header .welcome-text {
-    margin-right: 15px;
-    font-weight: bold;
-}
-
-.main-container {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 20px;
-}
-
-.main-footer {
-    text-align: center;
-    padding: 20px;
-    margin-top: 40px;
-    background-color: #f2f2f2;
-    border-top: 1px solid #ddd;
-}
-#reviews-section {
-    margin-top: 40px;
-    border-top: 1px solid #eee;
-    padding-top: 20px;
-}
-
-.average-rating {
-    margin-bottom: 20px;
-    font-size: 1.2em;
-    font-weight: bold;
-}
-
-.review-card {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 15px;
-}
-
-.review-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.review-header strong {
-    font-size: 1.1em;
-}
-
-.review-header .stars {
-    color: #ffc107; /* Couleur or pour les étoiles */
-    font-size: 1.2em;
-}
-
-.review-comment {
-    font-style: italic;
-    color: #555;
-    margin-bottom: 10px;
-}
-
-.review-date {
-    font-size: 0.8em;
-    color: #777;
-    text-align: right;
-    display: block;
-}
-/* frontend/css/style.css - VERSION AMÉLIORÉE INSPIRÉE DU DESIGN */
-
-/* === VARIABLES ET RESET === */
+/* ==================== VARIABLES & RESET (Thème Black & White) ==================== */
 :root {
-    --primary-color: #0056b3; /* Bleu un peu plus sobre */
-    --dark-color: #1a1a1a;
-    --light-color: #ffffff;
-    --grey-color: #f4f7f6;
-    --text-color: #333333;
+    /* -- NOUVELLE PALETTE DE COULEURS -- */
+    --primary-color: #111111;   /* Remplacé le bleu par un noir fort */
+    --secondary-color: #f1f1f1; /* Gris très clair pour les boutons secondaires */
+    --dark-color: #222222;      /* Noir doux pour le texte principal */
+    --gray-color: #6c757d;      /* Gris moyen pour le texte secondaire */
+    --background-color: #ffffff;
+    --light-gray-bg: #f9f9f9;   /* Fond pour les sections */
+    
+    --font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --container-width: 1200px;
     --border-radius: 8px;
+    --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-    font-family: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
-    background-color: var(--light-color);
-    color: var(--text-color);
+    font-family: var(--font-family);
+    color: var(--dark-color);
+    background-color: var(--background-color);
     line-height: 1.6;
+}
+
+h1, h2, h3 {
+    line-height: 1.3;
 }
 
 a {
     text-decoration: none;
-    color: var(--primary-color);
+    color: inherit;
 }
 
 ul {
     list-style: none;
 }
 
-.main-container {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 0 20px;
+img {
+    max-width: 100%;
+    display: block;
 }
 
+/* ==================== LAYOUT & CONTAINERS ==================== */
+.main-container {
+    max-width: var(--container-width);
+    margin: 4rem auto;
+    padding: 0 1.5rem;
+}
 
-/* === HEADER / NAVBAR === */
+/* ==================== HEADER & NAVBAR ==================== */
 .main-header {
-    background-color: var(--light-color);
-    border-bottom: 1px solid #e0e0e0;
-    padding: 15px 0;
+    background-color: var(--background-color);
+    padding: 1rem 0;
+    border-bottom: 1px solid #e9ecef;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 .header-container {
-    max-width: 1200px;
-    margin: auto;
-    padding: 0 20px;
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .logo a {
+    font-size: 1.8rem;
     font-weight: 700;
-    font-size: 1.5em;
-    color: var(--dark-color);
+    color: var(--primary-color); /* Le logo sera maintenant noir */
 }
 
-.logo span { /* Pour le 'Admin' */
-    color: #777;
-    font-size: 0.8em;
+.main-nav {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
 }
 
 .main-nav ul {
     display: flex;
-    gap: 25px;
+    gap: 2rem;
 }
 
 .main-nav a {
-    color: var(--text-color);
     font-weight: 500;
-    transition: color 0.3s;
+    transition: color 0.3s ease;
+    padding-bottom: 5px; /* Espace pour le soulignage */
+    border-bottom: 2px solid transparent; /* Bordure transparente par défaut */
 }
 
-.main-nav a:hover, .main-nav a.active {
-    color: var(--primary-color);
+.main-nav a:hover {
+    color: #000; /* Noir pur au survol */
 }
 
-
-/* === BOUTONS === */
-.btn {
-    display: inline-block;
-    padding: 10px 20px;
-    border-radius: var(--border-radius);
-    font-weight: 600;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.btn-primary {
-    background-color: var(--dark-color);
-    color: var(--light-color);
-    border: 1px solid var(--dark-color);
-}
-
-.btn-primary:hover {
-    background-color: #333;
-}
-
-.btn-secondary {
-    background-color: transparent;
+/* -- STYLE DISTINCTIF POUR LA PAGE ACTIVE -- */
+.main-nav a.active {
     color: var(--dark-color);
-    border: 1px solid #e0e0e0;
+    font-weight: 700; /* Police plus grasse */
+    border-bottom: 2px solid var(--dark-color); /* Soulignage visible */
 }
 
-.btn-secondary:hover {
-    background-color: #f0f0f0;
-}
-
-
-/* === SECTION HÉROS (PAGE D'ACCUEIL) === */
-.hero-section {
-    background-color: var(--grey-color);
-    text-align: center;
-    padding: 80px 20px;
-}
-
-.hero-content h1 {
-    font-size: 2.8em;
-    margin-bottom: 15px;
-    color: var(--dark-color);
-}
-
-.hero-content p {
-    font-size: 1.1em;
-    color: #666;
-    max-width: 600px;
-    margin: 0 auto 30px auto;
-}
-
-
-/* === LISTE DES VOITURES === */
-#car-list-section h2 {
-    text-align: center;
-    margin-bottom: 40px;
-    font-size: 2em;
-}
-
-.car-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 30px;
-}
-
-.car-card {
-    background: var(--light-color);
-    border: 1px solid #e0e0e0;
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    text-align: left;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.car-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-}
-
-.car-card img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-#upcoming-reservations-list img{
-   width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-.car-card h3 {
-    margin: 15px 20px 5px 20px;
-    font-size: 1.2em;
-}
-
-.car-card p {
-    margin: 0 20px 15px 20px;
-    color: #666;
-}
-
-.car-card .btn {
-    display: block;
-    margin: 15px 20px;
-    background-color: var(--primary-color);
-    color: var(--light-color);
-}
-/* === STYLE POUR LES TABLEAUX DE GESTION (ADMIN) === */
-.management-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 30px;
-    background-color: #ffffff;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-.management-table thead {
-    background-color: var(--grey-color);
-}
-
-.management-table th,
-.management-table td {
-    padding: 15px;
-    text-align: left;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.management-table th {
-    font-weight: 600;
-    color: #333;
-}
-
-.management-table tbody tr:hover {
-    background-color: #f9f9f9;
-}
-
-.management-table img {
-    max-width: 100px;
-    border-radius: var(--border-radius);
-}
-
-.management-table .actions a,
-.management-table .actions button {
-    margin-right: 10px;
-    cursor: pointer;
-}
-.actions .btn-edit { color: var(--primary-color); font-weight: 600; }
-.actions .btn-delete { color: #dc3545; font-weight: 600; background: none; border: none; font-size: 1em; }
-/* === STYLE GÉNÉRAL POUR LES FORMULAIRES === */
-.form-container {
-    max-width: 500px;
-    margin: 40px auto;
-    padding: 30px;
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: var(--border-radius);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-.form-container h2 {
-    text-align: center;
-    margin-bottom: 25px;
-    font-size: 1.8em;
-    color: var(--dark-color);
-}
-
-.form-container form label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #555;
-}
-
-.form-container form input[type="text"],
-.form-container form input[type="email"],
-.form-container form input[type="password"],
-.form-container form input[type="number"],
-.form-container form input[type="date"],
-.form-container form select,
-.form-container form textarea {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: var(--border-radius);
-    font-size: 1em;
-    transition: border-color 0.3s;
-}
-
-.form-container form input:focus,
-.form-container form select:focus,
-.form-container form textarea:focus {
-    outline: none;
-    border-color: var(--primary-color);
-}
-
-.form-container form button[type="submit"] {
-    width: 100%;
-    padding: 12px;
-    font-size: 1.1em;
-}
-
-.form-container .message-success,
-.form-container .message-error {
-    text-align: center;
-    padding: 10px;
-    margin-top: 15px;
-    border-radius: var(--border-radius);
-    font-weight: 500;
-}
-.message-success { background-color: #d4edda; color: #155724; }
-.message-error { background-color: #f8d7da; color: #721c24; }
-/* === STYLE POUR LE DASHBOARD CLIENT === */
-.dashboard-container {
-    display: flex;
-    gap: 30px;
-    align-items: flex-start;
-}
-
-.dashboard-sidebar {
-    flex: 0 0 250px; /* Ne grandit pas, ne rétrécit pas, base de 250px */
-    background-color: var(--grey-color);
-    padding: 20px;
-    border-radius: var(--border-radius);
-}
-
-.dashboard-sidebar .user-profile {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.dashboard-sidebar .user-profile img { /* Pour une photo de profil future */
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin-bottom: 10px;
-}
-
-.dashboard-sidebar .user-profile h4 {
-    margin: 0;
-}
-
-.dashboard-sidebar .sidebar-nav ul li a {
-    display: block;
-    padding: 12px 15px;
-    color: #333;
-    font-weight: 500;
-    border-radius: var(--border-radius);
-    margin-bottom: 5px;
-}
-
-.dashboard-sidebar .sidebar-nav ul li a.active,
-.dashboard-sidebar .sidebar-nav ul li a:hover {
-    background-color: var(--primary-color);
-    color: var(--light-color);
-}
-
-.dashboard-content {
-    flex-grow: 1; /* Prend le reste de l'espace */
-}
-
-.dashboard-section {
-    background-color: #ffffff;
-    padding: 30px;
-    border: 1px solid #e0e0e0;
-    border-radius: var(--border-radius);
-    margin-bottom: 30px;
-}
-
-.dashboard-section h3 {
-    margin-bottom: 20px;
-    font-size: 1.5em;
-}
-
-.no-data-message {
-    text-align: center;
-    padding: 40px;
-    background-color: var(--grey-color);
-    border-radius: var(--border-radius);
-}
-.no-data-message p {
-    margin-bottom: 20px;
-    color: #666;
-}
-/* frontend/css/style.css */
-
-.car-details-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* Deux colonnes de taille égale */
-    gap: 40px;
-    align-items: start;
-    margin-bottom: 40px;
-}
-
-   
-
-.car-info-container h2 {
-    font-size: 2.2em;
-    margin-bottom: 20px;
-}
-
-.car-info-container p {
-    font-size: 1.1em;
-    margin-bottom: 15px;
-}
-
-.car-info-container .btn {
-    margin-top: 20px;
-    width: 100%;
-    padding: 15px;
-    font-size: 1.2em;
-}
-
-/* Responsive pour les écrans plus petits */
-@media (max-width: 768px) {
-    .car-details-grid {
-        grid-template-columns: 1fr; /* Une seule colonne sur mobile */
-    }
-}
-/* frontend/css/style.css */
-
-/* Style pour le formulaire d'upload sur la page des documents */
-.upload-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    max-width: 500px;
-}
-.upload-form select, .upload-form input[type="file"] {
-    margin-bottom: 0;
-}
-.upload-form .btn {
-    align-self: flex-start;
-}
-
-
-/* Style pour la liste des documents */
-.document-list {
-    list-style: none;
-    padding: 0;
-}
-
-.document-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
-    border: 1px solid #e0e0e0;
-    border-radius: var(--border-radius);
-    margin-bottom: 10px;
-    background-color: #f9f9f9;
-}
-
-.document-item .doc-type {
-    font-weight: 600;
-}
-
-.document-item .doc-date {
-    font-size: 0.9em;
-    color: #666;
-}
-img{
-    max-width: 800px;
-    max-height: 600px;
-
-    }
-    /* frontend/css/style.css */
-
-/* Conteneur pour les actions à droite de la navbar */
 .nav-actions-container {
     display: flex;
     align-items: center;
 }
 
-/* Style pour les boutons Connexion/Inscription */
-.auth-buttons a {
-    margin-left: 10px;
+/* --- Boutons d'authentification --- */
+.auth-buttons {
+    display: flex;
+    gap: 0.5rem;
 }
 
-/* Style pour l'icône de profil ronde */
+.btn {
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: var(--primary-color); /* Fond noir */
+    color: white;
+}
+.btn-primary:hover {
+    background-color: #333; /* Noir un peu plus clair au survol */
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--dark-color);
+    border: 1px solid var(--dark-color);
+}
+.btn-secondary:hover {
+    background-color: var(--dark-color);
+    color: white;
+}
+
+/* --- Icône de profil utilisateur --- */
 .user-profile-icon a {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    text-align: center;
     width: 40px;
     height: 40px;
-    background-color: var(--primary-color);
-    color: var(--light-color);
-    border-radius: 50%; /* Crée le cercle */
-    font-size: 1.2em;
-    font-weight: 600;
-    text-decoration: none;
-    transition: transform 0.3s;
+    background-color: var(--primary-color); /* Cercle noir */
+    color: white;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    font-weight: 700;
 }
 
-.user-profile-icon a:hover {
-    transform: scale(1.1);
+/* ==================== HERO SECTION ==================== */
+.hero-section {
+    height: 60vh;
+    min-height: 400px;
+    /* J'ajoute un filtre noir et blanc à l'image pour renforcer le style */
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(../../uploads/cars/mercedes-hero.jpg);
+    filter: grayscale(80%);
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    padding: 2rem;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+     text-align: center;
+    margin-bottom: 2rem;
+    max-width: 900px;
+}
+
+/* ==================== CAR LIST SECTION ==================== */
+#car-list-section h2 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.car-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.car-card {
+    background-color: var(--background-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.car-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.car-card img {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+    filter: grayscale(50%); /* Léger filtre sur les images des voitures */
+    transition: filter 0.3s ease;
+}
+
+.car-card:hover img {
+    filter: grayscale(0%); /* La couleur revient au survol */
+}
+
+.car-card-content {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.car-card-content h3 {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+}
+
+.car-card-content p {
+    color: var(--gray-color);
+    margin-bottom: 1rem;
+}
+
+.car-card-content .btn {
+    width: 100%;
+    margin-top: auto; /* Pousse le bouton vers le bas */
+}
+
+/* ==================== CHATBOT ==================== */
+#chatbot-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 350px;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    z-index: 1001;
+}
+
+#chatbot-header {
+    background-color: var(--primary-color); /* Fond noir */
+    color: white;
+    padding: 15px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+}
+
+#chatbot-toggle-icon {
+    transition: transform 0.3s ease;
+}
+#chatbot-header.chatbot-collapsed #chatbot-toggle-icon {
+    transform: rotate(180deg);
+}
+
+#chatbot-body {
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+#chatbot-messages {
+    flex-grow: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background-color: #f4f7f6;
+}
+
+#chatbot-input-container {
+    display: flex;
+    border-top: 1px solid #e9ecef;
+}
+
+#chatbot-input {
+    flex-grow: 1;
+    border: none;
+    padding: 15px;
+    font-size: 1rem;
+    outline: none;
+}
+
+#chatbot-send-btn {
+    background-color: var(--primary-color); /* Bouton noir */
+    color: white;
+    border: none;
+    padding: 0 20px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* ==================== FOOTER ==================== */
+.main-footer {
+    background-color: var(--dark-color);
+    color: #adb5bd;
+    text-align: center;
+    padding: 2rem 0;
+    margin-top: 4rem;
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .main-nav {
+        flex-direction: column;
+        width: 100%;
+    }
+    .main-nav ul {
+        justify-content: center;
+        width: 100%;
+        flex-wrap: wrap; /* Permet aux liens de passer à la ligne si besoin */
+    }
+    .hero-content h1 {
+        font-size: 2.2rem;
+    }
+    .hero-content p {
+        font-size: 1rem;
+    }
+    #car-list-section h2 {
+        font-size: 2rem;
+    }
+    #chatbot-container {
+        width: 90%;
+        bottom: 10px;
+        right: 5%;
+    }
+}
+.text-center {
+    text-align: center;
+    margin-top: 2.5rem;
 }

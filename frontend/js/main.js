@@ -1,57 +1,75 @@
-// frontend/js/main.js - VERSION AVEC NAVBAR AMÉLIORÉE ET CHEMINS CONSERVÉS
+// frontend/js/main.js - VERSION FINALE AVEC LOGIQUE DE NAVBAR ET REDIRECTION CORRECTES
 
 document.addEventListener('DOMContentLoaded', () => {
     // L'URL de l'API reste la même.
     const API_URL = 'http://localhost/autoloc/backend/routes/api.php';
 
-    // Cibles pour les éléments de la page d'accueil
+    // Cibles pour les éléments de la page
     const carListContainer = document.getElementById('car-list');
     const mainNav = document.getElementById('main-navigation');
 
-    // --- 1. GESTION DE LA NAVBAR DYNAMIQUE ---
+    // --- 1. GESTION DE LA NAVBAR DYNAMIQUE (Avec la logique de redirection corrigée) ---
     async function setupNavbar() {
         if (!mainNav) return;
 
+        const currentPage = window.location.pathname.split('/').pop();
+        const navLinksData = [
+            { href: 'index.html', label: 'Accueil' },
+            { href: 'cars-list.html', label: 'Louer une Voiture' },
+            { href: 'contact.html', label: 'Contact' }
+        ];
+        let baseNavLinks = navLinksData.map(link => {
+            const isActive = (currentPage === link.href || (currentPage === '' && link.href === 'index.html')) ? 'active' : '';
+            return `<li><a href="${link.href}" class="${isActive}">${link.label}</a></li>`;
+        }).join('');
+
+        // On vérifie le statut de connexion auprès de l'API
         const authResponse = await fetch(`${API_URL}?action=checkAuth`);
         const authResult = await authResponse.json();
-
-        // On définit les liens de base de la navigation
-        let baseNavLinks = `
-            <li><a href="index.html" class="active">Accueil</a></li>
-            <li><a href="cars-list.html">Louer une Voiture</a></li>
-            <li><a href="contact.html">Contact</a></li>
-        `;
         
         let userActionsHtml = '';
 
-        if (authResult.isLoggedIn) {
-            // --- CAS UTILISATEUR CONNECTÉ ---
+        // =========================================================================
+        // === DÉBUT DE LA LOGIQUE D'AFFICHAGE CONDITIONNEL (Connexion/Profil) ===
+        // =========================================================================
+
+        if (authResult.success && authResult.isLoggedIn) {
+            // --- CAS 1: L'UTILISATEUR EST CONNECTÉ ---
             const user = authResult.user;
-            // Chemin vers le dashboard tel que vous l'aviez, partant du dossier 'pages' implicitement
+            
+            // On détermine le bon lien vers le dashboard en fonction du rôle
             const dashboardLink = user.role === 'admin' 
                 ? 'dashboard-admin.html' 
                 : 'dashboard-client.html';
 
-            // On crée le cercle de profil
+            // On génère l'icône de profil qui redirige vers le bon dashboard.
+            // Le chemin "pages/" est nécessaire car on part de index.html (à la racine).
             userActionsHtml = `
                 <div class="user-profile-icon">
-                    <a href="pages/${dashboardLink}">
+                    <a href="/${dashboardLink}">
                         <span>${user.prenom.charAt(0).toUpperCase()}</span>
                     </a>
                 </div>
             `;
             
         } else {
-            // --- CAS UTILISATEUR NON CONNECTÉ (visiteur) ---
+            // --- CAS 2: L'UTILISATEUR N'EST PAS CONNECTÉ (Visiteur) ---
+            
+            // On génère les boutons "Connexion" et "Inscription".
+            // Le chemin "pages/" est nécessaire pour pointer vers les fichiers dans le sous-dossier.
             userActionsHtml = `
                 <div class="auth-buttons">
-                    <a href="pages/login.html" class="btn btn-secondary">Connexion</a>
-                    <a href="pages/register.html" class="btn btn-primary">Inscription</a>
+                    <a href="../pages/login.html" class="btn btn-secondary">Connexion</a>
+                    <a href="../pages/register.html" class="btn btn-primary">Inscription</a>
                 </div>
             `;
         }
+
+        // =========================================================================
+        // === FIN DE LA LOGIQUE D'AFFICHAGE CONDITIONNEL                          ===
+        // =========================================================================
         
-        // On assemble la navbar complète
+        // On assemble la navbar complète avec la bonne partie droite (profil ou boutons)
         mainNav.innerHTML = `
             <ul>${baseNavLinks}</ul>
             <div class="nav-actions-container">
@@ -60,13 +78,15 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    // --- 2. CHARGEMENT DE LA LISTE DES VOITURES ---
-    // Cette section est modifiée pour utiliser les chemins que vous avez fournis.
+    // --- 2. CHARGEMENT DE LA LISTE LIMITÉE DES VOITURES ---
+    // Cette fonction reste inchangée.
     async function fetchAndDisplayCars() {
         if (!carListContainer) return;
 
+        const seeMoreContainer = document.getElementById('see-more-container');
+
         try {
-            const response = await fetch(`${API_URL}?action=getAllCars`);
+            const response = await fetch(`${API_URL}?action=getAllCars&limit=6`);
             const result = await response.json();
 
             if (result.success && result.data.length > 0) {
@@ -75,19 +95,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     const carCard = document.createElement('div');
                     carCard.className = 'car-card';
                     
-                    // ===============================================
-                    // == CHEMINS CONSERVÉS TELS QUE VOUS LES AVIEZ ==
-                    // ===============================================
                     carCard.innerHTML = `
                         <img src="../../uploads/cars/${car.image}" alt="${car.marque} ${car.modele}">
                         <div class="car-card-content">
                             <h3>${car.marque} ${car.modele}</h3>
                             <p>À partir de <strong>${car.prix_par_jour} €/jour</strong></p>
-                            <a href="car-details.html?id=${car.id_voiture}" class="btn">Voir détails et réserver</a>
+                            <a href="../pages/car-details.html?id=${car.id_voiture}" class="btn">Voir détails et réserver</a>
                         </div>
                     `;
                     carListContainer.appendChild(carCard);
                 });
+
+                if (seeMoreContainer) {
+                    seeMoreContainer.innerHTML = `<a href="cars-list.html" class="btn btn-primary">Voir toutes nos voitures</a>`;
+                }
+
             } else {
                 carListContainer.innerHTML = '<p>Aucune voiture disponible pour le moment.</p>';
             }

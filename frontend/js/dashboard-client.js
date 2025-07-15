@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } else {
             // Si l'utilisateur n'a aucune réservation
-            upcomingReservationsDiv.innerHTML = `<div class="no-data-message"><p>Vous n'avez aucune réservation à venir.</p><a href="../../index.html#car-list-section" class="btn">Louer une voiture</a></div>`;
+            upcomingReservationsDiv.innerHTML = `<div class="no-data-message"><p>Vous n'avez aucune réservation à venir.</p><a href="../pages/cars-list.html" class="btn">Louer une voiture</a></div>`;
             pastReservationsDiv.innerHTML = `<div class="no-data-message"><p>Vous n'avez pas encore d'historique de réservation.</p></div>`;
         }
     }

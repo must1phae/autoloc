@@ -37,13 +37,13 @@ function isAdmin() {
 switch ($action) {
     case 'getAllCars':
         if ($method == 'GET') {
-            try {
-                $cars = $carModel->getAllAvailable(); 
-                echo json_encode(['success' => true, 'data' => $cars]);
-            } catch (Exception $e) {
-                http_response_code(500);
-                echo json_encode(['success' => false, 'message' => 'Erreur interne du serveur: ' . $e->getMessage()]);
-            }
+            // On vérifie si un paramètre 'limit' est présent dans l'URL
+            $limit = isset($_GET['limit']) ? intval($_GET['limit']) : null;
+            
+            // On appelle la fonction du modèle avec la limite (qui peut être null)
+            $cars = $carModel->getAllAvailable($limit);
+
+            echo json_encode(['success' => true, 'data' => $cars]);
         }
         break;
 
