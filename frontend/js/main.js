@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="car-card-content">
                             <h3>${car.marque} ${car.modele}</h3>
                             <p>À partir de <strong>${car.prix_par_jour} €/jour</strong></p>
-                            <a href="../pages/car-details.html?id=${car.id_voiture}" class="btn">Voir détails et réserver</a>
+                            <a href="../pages/car-details.html?id=${car.id_voiture}" class="btn ">Voir détails et réserver</a>
                         </div>
                     `;
                     carListContainer.appendChild(carCard);
