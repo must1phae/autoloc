@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Protection de la page et redirection
         if (!authResult.isLoggedIn || authResult.user.role !== 'client') {
-            window.location.href = 'login.html';
+            window.location.href = 'auth.html';
             return;
         }
 

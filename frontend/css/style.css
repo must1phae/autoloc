@@ -124,7 +124,7 @@ img {
     font-weight: 500;
     transition: color 0.3s ease;
     padding-bottom: 5px;
-    border-bottom: 2px solid transparent;
+    
 }
 .main-nav a:hover {
     color: #000;
@@ -408,4 +408,598 @@ img {
 }
 .car-card-content a.btn.btn-primary:hover {
     background-color: #333;
+}
+/* frontend/css/style.css */
+
+/* === BARRE DE RECHERCHE === */
+.search-container {
+    max-width: 600px;
+    margin: 0 auto 40px auto; /* Centre la barre et ajoute de l'espace en dessous */
+}
+
+#search-input {
+    width: 100%;
+    padding: 15px 20px;
+    font-size: 1.1em;
+    border: 1px solid #e0e0e0;
+    border-radius: 50px; /* Pour un look arrondi moderne */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#search-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(0, 86, 179, 0.2);
+}/* frontend/css/style.css */
+
+/* === FILTRES === */
+.filter-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap; /* Pour les petits écrans */
+}
+
+.filter-btn {
+    background-color: #f0f0f0;
+    color: var(--text-color);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.filter-btn:hover {
+    background-color: #ddd;
+}
+
+/* Style pour le bouton de filtre actif */
+.filter-btn.active {
+    background-color: var(--dark-color);
+    color: var(--light-color);
+}
+/* frontend/css/style.css */
+
+.filter-selects {
+    margin-top: 10px;
+    display: flex;
+    gap: 20px;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-group label {
+    font-weight: 500;
+}
+
+.filter-select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+    background-color: white;
+    font-size: 0.9em;
+}
+/* ========================================================= */
+/* ==   STYLE POUR LA PAGE D'AUTHENTIFICATION ANIMÉE      == */
+/* ========================================================= */
+
+/* Applique un fond et centre le conteneur pour la page auth.html */
+.auth-page-body {
+    background-color: var(--light-gray-bg); /* Utilise votre variable de fond gris clair */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Le conteneur principal qui contient les deux formulaires */
+.container {
+    background-color: var(--background-color);
+    border-radius: var(--border-radius);
+    box-shadow: 0 14px 28px rgba(0,0,0,0.15), 0 10px 10px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden; /* Crucial pour l'animation de glissement */
+    width: 768px;
+    max-width: 95%;
+    min-height: 520px;
+}
+
+/* Style de base pour les deux formulaires (connexion et inscription) */
+.form-container {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    transition: all 0.6s ease-in-out;
+}
+
+.form-container form {
+    background-color: var(--background-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 50px;
+    height: 100%;
+    text-align: center;
+}
+
+.form-container h1 {
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--dark-color);
+}
+
+.form-container input {
+    background-color: #eee;
+    border: none;
+    padding: 12px 15px;
+    margin: 8px 0;
+    width: 100%;
+    border-radius: var(--border-radius);
+}
+
+.form-container button[type="submit"] {
+    margin-top: 1.5rem;
+}
+
+/* Div pour afficher les messages de succès ou d'erreur */
+.form-container .message {
+    margin-top: 10px;
+    font-size: 0.9em;
+    height: 20px; /* Réserve l'espace pour éviter que le layout ne saute */
+}
+
+/* Positionnement initial des formulaires */
+.sign-in-container {
+    left: 0;
+    width: 50%;
+    z-index: 2; /* Le formulaire de connexion est visible au départ */
+}
+
+.sign-up-container {
+    left: 0;
+    width: 50%;
+    opacity: 0; /* Le formulaire d'inscription est caché au départ */
+    z-index: 1;
+}
+
+
+/* --- Logique de l'animation au clic --- */
+/* Quand le panneau est actif (clic sur "S'inscrire"), on déplace les formulaires */
+.container.right-panel-active .sign-in-container {
+    transform: translateX(100%);
+}
+
+.container.right-panel-active .sign-up-container {
+    transform: translateX(100%);
+    opacity: 1;
+    z-index: 5;
+    animation: show 0.6s;
+}
+
+@keyframes show {
+    0%, 49.99% { opacity: 0; z-index: 1; }
+    50%, 100% { opacity: 1; z-index: 5; }
+}
+
+
+/* --- Panneaux superposés colorés (Overlay) --- */
+.overlay-container {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    transition: transform 0.6s ease-in-out;
+    z-index: 100;
+}
+
+.overlay {
+    background: var(--primary-color);
+    background: linear-gradient(to right, #333, var(--primary-color));
+    color: var(--background-color);
+    position: relative;
+    left: -100%;
+    height: 100%;
+    width: 200%;
+    transform: translateX(0);
+    transition: transform 0.6s ease-in-out;
+}
+
+.overlay-panel {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 40px;
+    text-align: center;
+    top: 0;
+    height: 100%;
+    width: 50%;
+    transform: translateX(0);
+    transition: transform 0.6s ease-in-out;
+}
+
+.overlay-panel h1 {
+    font-weight: 700;
+}
+
+.overlay-panel p {
+    font-size: 14px;
+    line-height: 20px;
+    margin: 20px 0 30px;
+}
+
+/* Bouton "ghost" transparent sur le panneau coloré */
+.overlay-panel button.ghost {
+    background-color: white;
+    border: 1px solid var(--background-color);
+    color: black;
+    border-radius: 50px;
+    padding: 12px 25px;
+    
+}
+.overlay-panel button.ghost:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Mouvement des panneaux */
+.container.right-panel-active .overlay-container {
+    transform: translateX(-100%);
+}
+.container.right-panel-active .overlay {
+    transform: translateX(50%);
+}
+.overlay-left {
+    transform: translateX(-20%);
+}
+.container.right-panel-active .overlay-left {
+    transform: translateX(0);
+}
+.overlay-right {
+    right: 0;
+    transform: translateX(0);
+}
+.container.right-panel-active .overlay-right {
+    transform: translateX(20%);
+}
+ 
+
+.btn {
+    padding: 12px 25px;
+    border-radius: 50px; /* Boutons arrondis */
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.btn-primary {
+    background-color: var(--primary-color); /* Fond noir */
+    color: white; /* Texte blanc */
+}
+.btn-primary:hover {
+    background-color: #333; /* Effet au survol */
+}
+/* ========================================================= */
+/* ==   STYLE POUR LES MESSAGES DE FORMULAIRE             == */
+/* ========================================================= */
+
+/* Style de base pour le conteneur du message */
+.message {
+    margin-top: 15px;
+    font-size: 0.9em;
+    font-weight: 600;
+    /* On définit une hauteur pour que le layout ne "saute" pas quand le message apparaît */
+    min-height: 20px;
+    /* On ajoute une transition pour une apparition en douceur */
+    transition: opacity 0.3s ease-in-out;
+    text-align: center;
+    width: 100%;
+}
+
+/* Style pour les messages de succès (texte vert) */
+.message.message-success {
+    color: #28a745; /* Vert */
+}
+
+/* Style pour les messages d'erreur (texte rouge) */
+.message.message-error {
+    color: #dc3545; /* Rouge */
+}/* ========================================================= */
+/* ==   STYLE CRÉATIF POUR LE DASHBOARD ADMIN             == */
+/* ========================================================= */
+
+/* En-tête de la section admin */
+ /* ========================================================= */
+/* ==   STYLE POUR LE TABLEAU DE GESTION (ADMIN DASHBOARD) == */
+/* ========================================================= */
+
+/* Conteneur principal de la page admin pour un espacement propre */
+main {
+    max-width: var(--container-width);
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+main h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+/* Style pour le bouton "Ajouter une voiture" */
+main > a.btn-primary {
+    margin-bottom: 2rem;
+    display: inline-block; /* Pour que la marge du bas s'applique correctement */
+}
+
+/* Style principal du tableau */
+.management-table {
+    width: 100%;
+    border-collapse: collapse; /* Bords nets entre les cellules */
+    background-color: var(--background-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    overflow: hidden; /* Assure que le border-radius s'applique aux coins */
+}
+
+/* Style de l'en-tête du tableau (ID, Image, Marque, etc.) */
+.management-table thead tr {
+    background-color: var(--light-gray-bg);
+}
+
+.management-table th {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--gray-color);
+    text-transform: uppercase;
+    font-size: 0.85em;
+    letter-spacing: 0.5px;
+}
+
+/* Style des cellules du corps du tableau */
+.management-table tbody td {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e9ecef; /* Ligne de séparation entre les rangées */
+    vertical-align: middle; /* Aligne le contenu verticalement au centre */
+}
+
+/* Effet de survol sur les lignes du tableau */
+.management-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Style spécifique pour l'image de la voiture */
+.management-table img {
+    width: 100px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+/* Style pour la colonne "Actions" (Modifier / Supprimer) */
+.management-table .actions {
+    white-space: nowrap; /* Empêche les boutons de passer à la ligne */
+}
+
+.management-table .actions a,
+.management-table .actions button {
+    margin-right: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: var(--font-family); /* Hérite de la police du site */
+    font-size: 0.9em;
+}
+
+.management-table .actions .btn-edit {
+    color: var(--primary-color)
+; /* Bleu pour l'action positive */
+    transition: opacity 0.3s;
+}
+.management-table .actions .btn-edit:hover {
+    opacity: 0.7;
+}
+
+.management-table .actions .btn-delete {
+    color: #dc3545; /* Rouge pour l'action destructive */
+    transition: opacity 0.3s;
+}
+.management-table .actions .btn-delete:hover {
+    opacity: 0.7;
+}
+
+/* Rappel des styles de statut (déjà définis mais utiles ici pour référence) */
+.status {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #fff;
+    text-transform: capitalize;
+    white-space: nowrap;
+}/* ========================================================= */
+/* == STYLE CRÉATIF POUR LA LISTE DES RÉSERVATIONS (ADMIN) == */
+/* ========================================================= */
+
+/* En-tête de la page de gestion */
+main > h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--dark-color);
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+/* On applique la classe .management-table à notre tableau des réservations */
+#reservations-table {
+    /* Cela va hériter du style .management-table qu'on a défini avant */
+    /* Assurez-vous d'ajouter cette classe à votre <table> */
+}
+
+/* Style spécifique pour le sélecteur de statut */
+.management-table select.status-select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+    background-color: #fff;
+    font-family: inherit; /* Hérite de la police du site */
+    font-weight: 600;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    
+}
+
+.management-table select.status-select:focus {
+    outline: none;
+    border-color: var(--secondary-color); /* Couleur d'accentuation */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+
+}
+
+/* Pour que les sélecteurs de statut aient une couleur qui correspond à leur valeur */
+/* NOTE: C'est un peu plus complexe à faire en pur CSS. Le JavaScript serait nécessaire */
+/* pour changer la couleur du select lui-même après sélection. */
+/* On peut cependant styliser les options. */
+select option[value="en attente"] { background-color: #ffc107; color: #333; }
+select option[value="confirmée"] { background-color: #28a745; color: white; }
+select option[value="annulée"] { background-color: #dc3545; color: white; }
+select option[value="terminée"] { background-color: #6c757d; color: white; }
+
+/* Amélioration visuelle : on peut styliser la cellule du client pour la rendre plus évidente */
+.management-table .client-info {
+    font-weight: 600;
+}
+
+.management-table .car-info {
+    font-style: italic;
+    color: var(--gray-color);
+}
+/* ========================================================= */
+/* ==   STYLE CRÉATIF POUR LA LISTE DES UTILISATEURS (ADMIN) == */
+/* ========================================================= */
+
+/*
+   NOTE : La classe .management-table et le h2 de la page
+   hériteront automatiquement du style créatif que nous avons
+   défini pour les autres pages admin. Ces règles ci-dessous
+   sont des ajouts spécifiques pour la page des utilisateurs.
+*/
+
+/* On met en évidence le nom de l'utilisateur dans le tableau */
+.management-table .user-name {
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+/* Style pour le sélecteur de rôle */
+.management-table select.role-select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+    background-color: #fff;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.management-table select.role-select:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+/* On adapte le style du bouton de suppression pour qu'il soit cohérent */
+.management-table .actions .btn-delete-user {
+    /* Hérite du style .btn-delete que nous avons déjà défini */
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #dc3545; /* Rouge */
+    transition: opacity 0.3s;
+    font-family: inherit;
+}
+
+.management-table .actions .btn-delete-user:hover {
+    opacity: 0.7;
+}
+/* ========================================================= */
+/* ==   STYLE POUR LES ACTIONS DANS LES TABLEAUX ADMIN    == */
+/* ========================================================= */
+
+/* Conteneur des actions (pour aligner les boutons) */
+.management-table .actions {
+    text-align: right; /* Aligne les boutons à droite de la cellule */
+    white-space: nowrap; /* Empêche les boutons de passer à la ligne */
+}
+
+/* Style de base pour tous les boutons d'action (Modifier, Supprimer, etc.) */
+.management-table .actions a,
+.management-table .actions button {
+    margin-left: 1rem;
+    font-weight: 600;
+    font-size: 0.9em;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+/* Style spécifique pour le bouton Supprimer */
+.management-table .actions .btn-delete-user {
+    background-color: rgba(220, 53, 69, 0.1); /* Fond rouge très clair et transparent */
+    color: #dc3545; /* Texte rouge vif */
+}
+
+/* Effet au survol pour le bouton Supprimer */
+.management-table .actions .btn-delete-user:hover {
+    background-color: #dc3545; /* Le fond devient rouge plein */
+    color: white; /* Le texte devient blanc */
+    transform: translateY(-2px); /* Léger effet de soulèvement */
+    box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3); /* Ombre rouge subtile */
+}
+
+/* Pour le bouton "Modifier" (afin qu'il soit cohérent) */
+.management-table .actions .btn-edit {
+    background-color: #e9ecef;
+    color: var(--dark-color);
+}
+.management-table .actions .btn-edit:hover {
+    background-color: #d8dde1;
+}
+
+/* Sur les écrans de bureau, on peut rendre les actions plus subtiles et les faire apparaître au survol */
+@media (min-width: 993px) {
+    .management-table .actions a,
+    .management-table .actions button {
+        opacity: 0; /* Caché par défaut */
+        transition: opacity 0.3s ease;
+    }
+
+    .management-table tbody tr:hover .actions a,
+    .management-table tbody tr:hover .actions button {
+        opacity: 1; /* Apparaît au survol de la ligne */
+    }
 }

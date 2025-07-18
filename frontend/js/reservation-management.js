@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const authResponse = await fetch(`${API_URL}?action=checkAuth`);
         const authResult = await authResponse.json();
         if (!authResult.isLoggedIn || authResult.user.role !== 'admin') {
-            window.location.href = 'login.html';
+            window.location.href = 'auth.html';
             return;
         }
 
@@ -22,19 +22,19 @@ document.addEventListener('DOMContentLoaded', () => {
             result.data.forEach(res => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${res.id_reservation}</td>
-                    <td>${res.prenom} ${res.nom}</td>
-                    <td>${res.marque} ${res.modele}</td>
-                    <td>Du ${res.date_debut} au ${res.date_fin}</td>
-                    <td>${res.montant_total} €</td>
-                    <td>
-                        <select class="status-select" data-id="${res.id_reservation}">
-                            <option value="en attente" ${res.statut_reservation === 'en attente' ? 'selected' : ''}>En attente</option>
-                            <option value="confirmée" ${res.statut_reservation === 'confirmée' ? 'selected' : ''}>Confirmée</option>
-                            <option value="annulée" ${res.statut_reservation === 'annulée' ? 'selected' : ''}>Annulée</option>
-                            <option value="terminée" ${res.statut_reservation === 'terminée' ? 'selected' : ''}>Terminée</option>
-                        </select>
-                    </td>
+               <td>${res.id_reservation}</td>
+    <td class="client-info">${res.prenom} ${res.nom}</td>
+    <td class="car-info">${res.marque} ${res.modele}</td>
+    <td>Du ${res.date_debut} au ${res.date_fin}</td>
+    <td>${res.montant_total} €</td>
+    <td>
+        <select class="status-select" data-id="${res.id_reservation}">
+            <option value="en attente" ${res.statut_reservation === 'en attente' ? 'selected' : ''}>En attente</option>
+            <option value="confirmée" ${res.statut_reservation === 'confirmée' ? 'selected' : ''}>Confirmée</option>
+            <option value="annulée" ${res.statut_reservation === 'annulée' ? 'selected' : ''}>Annulée</option>
+            <option value="terminée" ${res.statut_reservation === 'terminée' ? 'selected' : ''}>Terminée</option>
+        </select>
+    </td>
                 `;
                 reservationsTableBody.appendChild(row);
             });

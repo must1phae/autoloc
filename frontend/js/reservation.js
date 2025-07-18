@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
    if (!authResult.isLoggedIn) {
     // Pas connecté -> login
-    window.location.href = 'login.html';
+    window.location.href = 'auth.html';
     return; // On arrête l'exécution du script
 }
 

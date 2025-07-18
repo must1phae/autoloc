@@ -37,6 +37,42 @@
     <!-- ======================= LISTE DES VOITURES ======================= -->
     <main id="car-list-section" class="main-container">
         <h2>Nos véhicules disponibles à la location</h2>
+          <div class="search-container">
+        <form id="search-form">
+            <input type="text" id="search-input" placeholder="Rechercher par marque ou modèle...">
+        </form> <div class="filter-selects">
+        <!-- Filtre par Prix -->
+        <div class="filter-group">
+            <label for="price-filter">Prix / jour :</label>
+            <select id="price-filter" class="filter-select">
+                <option value="all">Tous les prix</option>
+                <option value="0-50">Moins de 50€</option>
+                <option value="50-80">50€ - 80€</option>
+                <option value="80-9999">Plus de 80€</option>
+            </select>
+        </div>
+
+        <!-- Filtre par Année -->
+        <div class="filter-group">
+            <label for="year-filter">Année du véhicule :</label>
+            <select id="year-filter" class="filter-select">
+                <option value="all">Toutes les années</option>
+                <option value="2022-9999">Récent (2022+)</option>
+                <option value="2018-2021">Moderne (2018-2021)</option>
+                <option value="0-2017">Plus ancien</option>
+            </select>
+        </div>
+    </div>
+    </div>
+       <div id="filter-buttons-container" class="filter-container">
+        <!-- On ajoute un bouton 'data-filter' pour savoir ce qu'il filtre -->
+        <button class="filter-btn active" data-filter="all">Toutes</button>
+        <button class="filter-btn" data-filter="Berline">Berline</button>
+        <button class="filter-btn" data-filter="SUV">SUV</button>
+        <button class="filter-btn" data-filter="Utilitaire">Utilitaire</button>
+        <!-- Vous pouvez ajouter d'autres types ici si vous en avez -->
+    </div>
+   
         <div id="car-list" class="car-grid">
             <!-- Les voitures seront chargées ici par JavaScript -->
             <p>Chargement des voitures...</p>

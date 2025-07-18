@@ -1,4 +1,4 @@
-// frontend/js/app.js - VERSION FINALE AVEC MENU MOBILE INTÉGRÉ
+// frontend/js/app.js - VERSION FINALE AVEC MENU MOBILE ET BOUTON AUTH UNIQUE
 
 document.addEventListener('DOMContentLoaded', () => {
     const API_URL = 'http://localhost/autoloc/backend/routes/api.php';
@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function setupNavbar() {
         if (!mainNav || !mainHeader) return; // Sécurité ajoutée pour mainHeader
 
-        // --- VOTRE LOGIQUE DE LIENS ET CHEMINS (INCHANGÉE) ---
+        // --- Logique de liens et chemins ---
         const currentPage = window.location.pathname.split('/').pop();
         const navLinksData = [
             { href: 'index.html', label: 'Accueil' },
@@ -28,11 +28,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const isSubPage = document.body.dataset.pageLevel === 'sub';
 
         if (authResult.isLoggedIn) {
+            // --- CAS UTILISATEUR CONNECTÉ (INCHANGÉ) ---
             const user = authResult.user;
             const dashboardLink = user.role === 'admin' ? 'dashboard-admin.html' : 'dashboard-client.html';
-            userActionsHtml = `<div class="user-profile-icon"><a href="${isSubPage ? '' : '../pages/'}${dashboardLink}"><span>${user.prenom.charAt(0).toUpperCase()}</span></a></div>`;
+            // Le chemin est ajusté en fonction de la page
+            const finalDashboardLink = isSubPage ? dashboardLink : `../pages/${dashboardLink}`;
+            userActionsHtml = `<div class="user-profile-icon"><a href="${finalDashboardLink}"><span>${user.prenom.charAt(0).toUpperCase()}</span></a></div>`;
+        
         } else {
-            userActionsHtml = `<div class="auth-buttons"><a href="${isSubPage ? '' : 'pages/'}login.html" class="btn btn-secondary">Connexion</a><a href="${isSubPage ? '' : 'pages/'}register.html" class="btn btn-primary">Inscription</a></div>`;
+            // =========================================================
+            // ==      MODIFICATION DEMANDÉE : UN SEUL BOUTON AUTH    ==
+            // =========================================================
+            // Le chemin vers auth.html est ajusté en fonction de la page (racine ou sous-page)
+            const authLink = isSubPage ? 'auth.html' : 'auth.html';
+            
+            // On génère un seul bouton qui mène vers la page d'authentification
+            userActionsHtml = `
+                <div class="auth-buttons">
+                    <a href="${authLink}" class="btn btn-primary">Connexion / Inscription</a>
+                </div>
+            `;
+            // =========================================================
         }
         
         mainNav.innerHTML = `
@@ -42,11 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
-        // ===============================================
-        // ==  AJOUT DU BOUTON HAMBURGER ET DE SA LOGIQUE ==
-        // ===============================================
-
-        // Créer et insérer le bouton hamburger s'il n'existe pas déjà
+        // --- GESTION DU BOUTON HAMBURGER (INCHANGÉ) ---
         if (!mainHeader.querySelector('.nav-toggle')) {
             const toggleButton = document.createElement('button');
             toggleButton.className = 'nav-toggle';
@@ -54,9 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleButton.innerHTML = '<span></span><span></span><span></span>';
             mainHeader.querySelector('.header-container').appendChild(toggleButton);
 
-            // Ajouter la logique de clic sur le bouton
             toggleButton.addEventListener('click', () => {
-                // On ajoute/retire une classe sur le header pour contrôler l'état du menu
                 mainHeader.classList.toggle('nav-open');
             });
         }

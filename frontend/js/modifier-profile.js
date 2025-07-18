@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const authResult = await authResponse.json();
 
         if (!authResult.isLoggedIn || authResult.user.role !== 'client') {
-            window.location.href = 'login.html';
+            window.location.href = 'auth.html';
             return;
         }
 

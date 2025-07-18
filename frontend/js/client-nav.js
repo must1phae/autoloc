@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Protection de la page et redirection
         if (!authResult.isLoggedIn) {
-            window.location.href = 'login.html';
+            window.location.href = 'auth.html';
             return;
         }
         if (authResult.user.role === 'admin') {
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await fetch(`${API_URL}?action=logout`);
             // On redirige vers la page d'accueil après la déconnexion
             alert("Vous avez été déconnecté.");
-            window.location.href = 'login.html';
+            window.location.href = 'auth.html';
         });
     }
 

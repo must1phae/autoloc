@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Connexion / Inscription - AutoLoc</title>
+    <!-- On charge le même fichier CSS, mais on lui ajoutera des styles spécifiques -->
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="auth-page-body">
+
+    <div class="container" id="container">
+        <!-- FORMULAIRE D'INSCRIPTION (Register) -->
+        <div class="form-container sign-up-container">
+            <form id="register-form">
+                <h1>Créer un Compte</h1>
+                <input type="text" id="register-nom" placeholder="Nom" required />
+                <input type="text" id="register-prenom" placeholder="Prénom" required />
+                <input type="email" id="register-email" placeholder="Email" required />
+                <input type="password" id="register-password" placeholder="Mot de passe" required />
+             <button type="submit" class="btn btn-primary">S'inscrire</button>
+                <div id="register-message" class="message"></div>
+            </form>
+        </div>
+
+        <!-- FORMULAIRE DE CONNEXION (Login) -->
+        <div class="form-container sign-in-container">
+            <form id="login-form">
+                <h1>Se Connecter</h1>
+                <input type="email" id="login-email" placeholder="Email" required />
+                <input type="password" id="login-password" placeholder="Mot de passe" required />
+            <button type="submit" class="btn btn-primary">Se Connecter</button>
+
+                <div id="login-message" class="message"></div>
+            </form>
+        </div>
+
+        <!-- PANNEAUX D'ANIMATION (Overlay) -->
+        <div class="overlay-container">
+            <div class="overlay">
+                <!-- Panneau de gauche (visible quand le login est affiché) -->
+                <div class="overlay-panel overlay-left">
+                    <h1>Bon retour parmi nous !</h1>
+                    <p>Pour rester connecté avec nous, veuillez vous connecter avec vos informations personnelles</p>
+                    <button class="ghost" id="signIn">Se Connecter</button>
+                </div>
+                <!-- Panneau de droite (visible quand l'inscription est affichée) -->
+                <div class="overlay-panel overlay-right">
+                    <h1>Bonjour, Ami !</h1>
+                    <p>Entrez vos informations personnelles et commencez votre voyage avec nous</p>
+                    <button class="ghost" id="signUp">S'inscrire</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- On charge le même script auth.js, mais il faudra l'adapter -->
+    <script src="../js/auth.js"></script>
+</body>
+</html>

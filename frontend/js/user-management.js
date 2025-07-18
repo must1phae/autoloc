@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const authResponse = await fetch(`${API_URL}?action=checkAuth`);
         const authResult = await authResponse.json();
         if (!authResult.isLoggedIn || authResult.user.role !== 'admin') {
-            window.location.href = 'login.html';
+            window.location.href = 'auth.html';
             return;
         }
 
