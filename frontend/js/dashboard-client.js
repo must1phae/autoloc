@@ -73,15 +73,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const reservationCard = document.createElement('div');
                 reservationCard.className = 'reservation-card';
-                reservationCard.innerHTML = `
-                    <img src="../uploads/cars/${res.image}" alt="${res.marque}">
-                    <div class="reservation-details">
-                        <h4>${res.marque} ${res.modele}</h4>
-                        <p>Du <strong>${res.date_debut}</strong> au <strong>${res.date_fin}</strong></p>
-                        <p>Statut : <span class="status status-${res.statut_reservation.replace(' ', '-')}">${res.statut_reservation}</span></p>
-                        <div class="reservation-actions">${actionButton}</div>
-                    </div>
-                `;
+              reservationCard.innerHTML = `
+    <div class="reservation-card-left">
+        <a href="car-details.html?id=${res.id_voiture}" class="btn btn-secondary">Voir la voiture</a>
+    </div>
+    <div class="reservation-details">
+        <h4>${res.marque} ${res.modele}</h4>
+        <p>Du <strong>${new Date(res.date_debut).toLocaleDateString('fr-FR')}</strong> au <strong>${new Date(res.date_fin).toLocaleDateString('fr-FR')}</strong></p>
+        <p>Statut : <span class="status status-${res.statut_reservation.replace(' ', '-')}">${res.statut_reservation}</span></p>
+        <div class="reservation-actions">${actionButton}</div>
+    </div>
+`;
                 container.appendChild(reservationCard);
             });
         } else {
@@ -210,15 +212,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const reservationCard = document.createElement('div');
                 reservationCard.className = 'reservation-card';
-                reservationCard.innerHTML = `
-                    <img src="../../uploads/cars/${res.image}" alt="${res.marque}">
-                    <div class="reservation-details">
-                        <h4>${res.marque} ${res.modele}</h4>
-                        <p>Du <strong>${res.date_debut}</strong> au <strong>${res.date_fin}</strong></p>
-                        <p>Statut : <span class="status status-${res.statut_reservation.replace(' ', '-')}">${res.statut_reservation}</span></p>
-                        <div class="reservation-actions">${actionButton}</div>
-                    </div>
-                `;
+             reservationCard.innerHTML = `
+    <div class="reservation-card-left">
+        <a href="car-details.html?id=${res.id_voiture}" class="btn btn-secondary">Voir la voiture</a>
+    </div>
+    <div class="reservation-details">
+        <h4>${res.marque} ${res.modele}</h4>
+        <p>Du <strong>${new Date(res.date_debut).toLocaleDateString('fr-FR')}</strong> au <strong>${new Date(res.date_fin).toLocaleDateString('fr-FR')}</strong></p>
+        <p>Statut : <span class="status status-${res.statut_reservation.replace(' ', '-')}">${res.statut_reservation}</span></p>
+        <div class="reservation-actions">${actionButton}</div>
+    </div>
+`;
                 container.appendChild(reservationCard);
             });
         } else {
@@ -257,4 +261,5 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+    
 });

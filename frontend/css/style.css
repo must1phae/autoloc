@@ -846,11 +846,7 @@ main > h2 {
 }
 
 /* On applique la classe .management-table à notre tableau des réservations */
-#reservations-table {
-    /* Cela va hériter du style .management-table qu'on a défini avant */
-    /* Assurez-vous d'ajouter cette classe à votre <table> */
-}
-
+ 
 /* Style spécifique pour le sélecteur de statut */
 .management-table select.status-select {
     padding: 8px 12px;
