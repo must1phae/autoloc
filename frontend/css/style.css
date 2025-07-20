@@ -412,80 +412,137 @@ img {
 /* frontend/css/style.css */
 
 /* === BARRE DE RECHERCHE === */
+/* ====================================================== */
+/* ==   STYLES POUR LA RECHERCHE ET LES FILTRES          == */
+/* ====================================================== */
+
+/* Conteneur principal pour la barre de recherche et les filtres */
 .search-container {
-    max-width: 600px;
-    margin: 0 auto 40px auto; /* Centre la barre et ajoute de l'espace en dessous */
+    background-color: var(--light-gray-bg);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem;
+    display: flex; /* Aligne la barre de recherche et les selects */
+    flex-wrap: wrap; /* Permet de passer à la ligne sur mobile */
+    gap: 1.5rem;
+    align-items: center;
+}
+
+/* Formulaire de recherche textuelle */
+#search-form {
+    flex-grow: 1; /* Prend le maximum d'espace disponible */
+    min-width: 250px;
 }
 
 #search-input {
     width: 100%;
     padding: 15px 20px;
-    font-size: 1.1em;
-    border: 1px solid #e0e0e0;
-    border-radius: 50px; /* Pour un look arrondi moderne */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-#search-input:focus {
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
     outline: none;
+}
+#search-input:focus {
     border-color: var(--primary-color);
-    box-shadow: 0 4px 12px rgba(0, 86, 179, 0.2);
-}/* frontend/css/style.css */
-
-/* === FILTRES === */
-.filter-container {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 20px;
-    flex-wrap: wrap; /* Pour les petits écrans */
+    box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1);
 }
 
-.filter-btn {
-    background-color: #f0f0f0;
-    color: var(--text-color);
-    border: none;
-    padding: 10px 20px;
-    border-radius: 50px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.filter-btn:hover {
-    background-color: #ddd;
-}
-
-/* Style pour le bouton de filtre actif */
-.filter-btn.active {
-    background-color: var(--dark-color);
-    color: var(--light-color);
-}
-/* frontend/css/style.css */
-
+/* Conteneur pour les menus déroulants (selects) */
 .filter-selects {
-    margin-top: 10px;
     display: flex;
-    gap: 20px;
+    flex-wrap: wrap;
+    gap: 1.5rem;
 }
 
 .filter-group {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0.75rem;
 }
 
 .filter-group label {
     font-weight: 500;
+    color: var(--gray-color);
 }
 
 .filter-select {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: var(--border-radius);
-    background-color: white;
-    font-size: 0.9em;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fff;
+    font-family: inherit;
+    font-size: 0.9rem;
+}
+
+/* Conteneur pour les boutons de filtre par type */
+#filter-buttons-container {
+    display: flex;
+    justify-content: center; /* Centre les boutons */
+    flex-wrap: wrap; /* Permet de passer à la ligne sur mobile */
+    gap: 1rem;
+    margin-bottom: 3rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 2rem;
+    left: 50%;
+    right:50%;
+    
+}
+
+/* Style des boutons de filtre */
+.filter-btn {
+    background-color: transparent;
+    border: 2px solid #ddd;
+    color: var(--gray-color);
+    padding: 10px 22px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 50px; /* Boutons en forme de pilule */
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+/* Style du bouton de filtre ACTIF */
+.filter-btn.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+
+/* --- Responsive Design pour les filtres --- */
+
+/* Pour les tablettes et en dessous */
+@media (max-width: 992px) {
+    .search-container {
+        flex-direction: column; /* Passe tout en colonne */
+        align-items: stretch; /* Les éléments prennent toute la largeur */
+    }
+
+    #search-form,
+    .filter-selects {
+        width: 100%;
+    }
+
+    .filter-selects {
+        justify-content: space-between;
+    }
+    #filter-buttons-container{
+        display: flex;
+        justify-content: center;
+    }
+    
+    .filter-group {
+        flex-grow: 1; /* Les groupes de select s'étalent pour remplir l'espace */
+    }
+    
+    .filter-select {
+        width: 100%;
+    }
 }
 /* ========================================================= */
 /* ==   STYLE POUR LA PAGE D'AUTHENTIFICATION ANIMÉE      == */
@@ -828,7 +885,7 @@ main > a.btn-primary {
     border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 700;
-    color: #fff;
+    color: #000000;
     text-transform: capitalize;
     white-space: nowrap;
 }/* ========================================================= */
@@ -998,4 +1055,594 @@ select option[value="terminée"] { background-color: #6c757d; color: white; }
     .management-table tbody tr:hover .actions button {
         opacity: 1; /* Apparaît au survol de la ligne */
     }
+}
+/* ====================================================== */
+/* ==   STYLES POUR LA PAGE DE VALIDATION DES DOCUMENTS (ADMIN)  == */
+/* ====================================================== */
+
+/* Style du titre principal de la page */
+main > h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+/* Style de la table des documents */
+#documents-table {
+    width: 100%;
+    border-collapse: collapse; /* Bords nets entre les cellules */
+    font-size: 1rem;
+}
+
+#documents-table thead th {
+    background-color: var(--light-gray-bg);
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: var(--gray-color);
+}
+
+#documents-table tbody td {
+    padding: 1.25rem 1rem; /* Plus d'espace vertical pour la lisibilité */
+    border-bottom: 1px solid #e9ecef;
+    vertical-align: middle; /* Aligne le contenu au milieu verticalement */
+}
+
+/* Style pour le lien du document (pour le télécharger/voir) */
+#documents-table .document-link {
+    font-weight: 600;
+    color: var(--primary-color);
+    text-decoration: underline;
+    transition: color 0.2s;
+}
+#documents-table .document-link:hover {
+    color: #555;
+}
+
+/* Conteneur pour les boutons d'action (Valider/Rejeter) */
+#documents-table .action-buttons {
+    display: flex;
+    gap: 0.75rem; /* Espace entre les boutons */
+}
+
+/* Style commun pour les boutons d'action */
+#documents-table .btn-action {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    color: white;
+    font-weight: 600;
+    transition: opacity 0.2s;
+}
+#documents-table .btn-action:hover {
+    opacity: 0.85;
+}
+
+/* Style spécifique pour le bouton "Valider" (vert) */
+.btn-validate {
+    background-color: #28a745; /* Vert succès */
+}
+
+/* Style spécifique pour le bouton "Rejeter" (rouge) */
+.btn-reject {
+    background-color: #dc3545; /* Rouge danger */
+}
+
+
+/* --- Responsive Design pour la table des documents --- */
+@media (max-width: 768px) {
+    /* Sur mobile, on cache l'en-tête de la table classique */
+    #documents-table thead {
+        display: none;
+    }
+
+    /* Chaque ligne devient une "carte" */
+    #documents-table tr {
+        display: block;
+        border: 1px solid #e9ecef;
+        border-radius: var(--border-radius);
+        margin-bottom: 1rem;
+        padding: 1rem;
+    }
+
+    /* Chaque cellule s'affiche en bloc (l'une en dessous de l'autre) */
+    #documents-table td {
+        display: block;
+        text-align: right; /* Aligne le contenu à droite */
+        padding: 0.5rem 0;
+        border-bottom: none; /* On retire la ligne de séparation */
+        position: relative; /* Contexte pour le pseudo-élément */
+    }
+
+    /* On utilise un pseudo-élément pour afficher le nom de la colonne */
+    #documents-table td::before {
+        content: attr(data-label); /* Récupère le texte depuis l'attribut data-label */
+        position: absolute;
+        left: 0;
+        font-weight: 600;
+        color: var(--gray-color);
+    }
+    
+    .action-buttons {
+        justify-content: flex-end; /* Aligne les boutons à droite */
+        margin-top: 0.5rem;
+    }
+}
+/* ====================================================== */
+/* ==     STYLE ALTERNATIF "FANTÔME" POUR LE BOUTON SUPPRIMER   == */
+/* ====================================================== */
+
+.btn-delete-user {
+    background-color: transparent;
+    color: #dc3545; /* Texte en rouge */
+    border: 2px solid #dc3545; /* Bordure rouge */
+    
+    /* Styles communs */
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-delete-user:hover {
+    background-color: #dc3545; /* Le fond devient rouge au survol */
+    color: white; /* Le texte devient blanc */
+}
+
+.btn-delete-user:active {
+    transform: scale(0.98);
+}
+/* ====================================================== */
+/* ==   STYLES CRÉATIFS POUR LA PAGE DÉTAILS VOITURE     == */
+/* ====================================================== */
+
+/* Animation d'apparition pour le contenu de la page */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.details-page-layout {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* Grille asymétrique pour un look plus dynamique */
+.car-details-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr; /* L'image est plus grande que le texte */
+    gap: 4rem;
+    align-items: center; /* Centre verticalement pour un meilleur équilibre */
+    margin-bottom: 6rem;
+    animation: fadeIn 0.8s ease-out forwards;
+}
+
+/* Conteneur de l'image avec un effet de parallaxe subtil au scroll (si possible) */
+.car-image-container img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--border-radius);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); /* Ombre plus prononcée */
+    transform: scale(1.02); /* Léger zoom pour un effet premium */
+}
+
+/* Conteneur des infos avec une typographie marquée */
+.car-info-container h2 {
+    font-size: 3rem; /* Titre plus impactant */
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 2rem;
+    color: var(--primary-color);
+}
+
+.car-info-container p {
+    font-size: 1.1rem;
+    display: flex;
+    justify-content: space-between; /* Aligne le label et la valeur */
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+.car-info-container p strong {
+    color: var(--dark-color);
+    font-weight: 600;
+}
+ 
+
+/* Bouton d'action avec un effet de "pulsation" pour attirer l'attention */
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7); }
+    70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(0, 0, 0, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
+}
+
+.car-info-container .btn {
+    margin-top: 2rem;
+    width: 100%;
+    text-align: center;
+    padding: 18px;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    animation: pulse 2s infinite; /* L'animation se répète à l'infini */
+}
+
+
+/* --- Section des Avis revisitée --- */
+#reviews-section {
+    margin-top: 5rem;
+    border-top: 2px solid var(--primary-color); /* Bordure noire plus épaisse */
+    padding-top: 4rem;
+    animation: fadeIn 0.8s 0.2s ease-out forwards; /* Apparition décalée */
+    opacity: 0; /* Caché par défaut pour l'animation */
+}
+#reviews-section h3 {
+    font-size: 2.2rem;
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.average-rating {
+    text-align: center;
+    font-size: 1.3rem;
+    margin-bottom: 3rem;
+}
+.average-rating strong {
+    color: var(--primary-color);
+}
+
+/* Avis affichés en colonnes de style "maçonnerie" (si possible, sinon grille simple) */
+#reviews-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.review-card {
+    background-color: #fff;
+    padding: 2rem;
+    border: 1px solid #eee;
+    border-radius: var(--border-radius);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.review-card:hover {
+    transform: translateY(-10px); /* L'avis "flotte" au survol */
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.review-header strong { font-size: 1.1rem; }
+.review-header .stars { font-size: 1.2rem; color: #ffc107; }
+.review-comment {
+    font-size: 1.1rem;
+    font-style: italic;
+    color: #333;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    position: relative;
+    padding-left: 1.5rem;
+}
+/* Ajout de guillemets décoratifs */
+.review-comment::before {
+    content: '“';
+    font-size: 3rem;
+    color: #e0e0e0;
+    position: absolute;
+    left: -10px;
+    top: -10px;
+}
+.review-date { font-size: 0.85rem; color: var(--gray-color); }
+
+/* --- Responsive Design Créatif --- */
+@media (max-width: 992px) {
+    .car-details-grid {
+        grid-template-columns: 1fr; /* On passe à une seule colonne */
+    }
+    .car-info-container h2 {
+        text-align: center; /* On centre le titre quand il est au-dessus */
+        font-size: 2.5rem;
+    }
+}
+@media (max-width: 768px) {
+    .car-details-grid {
+        gap: 2rem;
+    }
+    .car-info-container h2 {
+        font-size: 2rem;
+    }
+    .car-info-container .btn {
+        animation: none; /* On enlève la pulsation sur mobile pour économiser les ressources */
+    }
+}
+/* ====================================================== */
+/* ==   STYLES CRÉATIFS POUR BOUTONS D'ACTION (ADMIN)   == */
+/* ====================================================== */
+
+/* Base commune pour les deux boutons : taille, police, etc. */
+.btn-approve,
+.btn-reject {
+    padding: 8px 18px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    
+    border: none; /* On retire la bordure par défaut */
+    border-radius: var(--border-radius); /* Coins arrondis cohérents */
+    
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Transition fluide */
+}
+
+/* Effet au clic pour un retour visuel */
+.btn-approve:active,
+.btn-reject:active {
+    transform: scale(0.97);
+}
+
+
+/* --- Bouton "Valider" (Action principale) --- */
+.btn-approve {
+    background-image: linear-gradient(45deg, #28a745, #22c55e); /* Dégradé de vert subtil */
+    color: white;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2); /* Ombre douce et colorée */
+}
+
+/* Au survol, le bouton "lève" et le dégradé change */
+.btn-approve:hover {
+    transform: translateY(-3px); /* Effet de lévitation */
+    box-shadow: 0 7px 20px rgba(40, 167, 69, 0.3);
+}
+
+
+/* --- Bouton "Rejeter" (Action secondaire/fantôme) --- */
+.btn-reject {
+    background-color: transparent;
+    border: 2px solid #ef4444; /* Bordure rouge */
+    color: #ef4444; /* Texte rouge */
+}
+
+/* Au survol, le bouton se remplit de couleur */
+.btn-reject:hover {
+    background-color: #ef4444;
+    color: white;
+    transform: translateY(-3px); /* Effet de lévitation */
+    box-shadow: 0 7px 20px rgba(239, 68, 68, 0.25); /* Ombre douce rouge */
+}
+/* ====================================================== */
+/* ==   STYLES POUR LA SECTION MISE EN AVANT & AVANTAGES == */
+/* ====================================================== */
+
+/* Conteneur principal de la section */
+.features-section {
+    padding: 4rem 0; /* Espace vertical avant et après la section */
+     width: 100%;
+}
+
+/* Style commun pour les titres de section (doit déjà exister, mais on s'assure qu'il est bon) */
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+/* Grille à 3 colonnes pour les voitures de luxe */
+.grid-3-cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+    margin-bottom: 6rem; /* Espace avant la section "Pourquoi nous choisir" */
+}
+
+/* Carte individuelle pour chaque marque de luxe */
+.feature-card {
+    text-align: left; /* Texte aligné à gauche pour une meilleure lisibilité */
+}
+
+.feature-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+    margin-bottom: 1.5rem;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.07);
+}
+
+.feature-card h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.feature-card p {
+    color: var(--gray-color);
+    line-height: 1.7;
+}
+
+
+/* Grille à 2 colonnes pour la section "Pourquoi nous choisir" */
+.why-us-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr; /* L'image est légèrement plus grande que le texte */
+    gap: 4rem;
+    align-items: center;
+}
+
+/* Colonne de texte */
+/* ====================================================== */
+/* ==   STYLES POUR LA SECTION MISE EN AVANT & AVANTAGES == */
+/* ====================================================== */
+
+/* Conteneur principal de la section */
+/* ====================================================== */
+/* ==   STYLES CRÉATIFS POUR LA SECTION MISE EN AVANT    == */
+/* ====================================================== */
+
+/* Animation d'apparition pour la section */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Conteneur principal de la section */
+.features-section {
+    padding: 4rem 0;
+    animation: fadeIn 0.8s ease-out forwards; /* Applique l'animation */
+    width:95%;
+    justify-self: center;
+}
+
+/* Style commun pour les titres de section avec un élément décoratif */
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+    padding-bottom: 1rem; /* Espace pour la ligne en dessous */
+}
+/* La ligne décorative */
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background-color: var(--primary-color);
+}
+
+/* Grille à 3 colonnes pour les voitures de luxe */
+.grid-3-cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+    margin-bottom: 6rem;
+}
+
+/* Carte individuelle */
+.feature-card {
+    text-align: left;
+    transition: all 0.3s ease-in-out; /* Transition douce pour l'effet de survol */
+}
+
+/* Conteneur de l'image pour masquer le zoom */
+.feature-card .image-container {
+    overflow: hidden;
+    border-radius: var(--border-radius);
+    margin-bottom: 1.5rem;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.07);
+}
+.feature-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.4s ease; /* Transition pour l'effet de zoom */
+}
+.feature-card h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    transition: color 0.3s ease;
+}
+.feature-card p {
+    color: var(--gray-color);
+    line-height: 1.7;
+}
+
+/* --- EFFETS DE SURVOL CRÉATIFS POUR LA CARTE --- */
+.feature-card:hover {
+    transform: translateY(-10px); /* La carte "flotte" */
+}
+.feature-card:hover img {
+    transform: scale(1.05); /* L'image zoome légèrement */
+}
+.feature-card:hover h3 {
+    color: var(--primary-color); /* Le titre prend la couleur principale */
+}
+
+/* Grille à 2 colonnes pour "Pourquoi nous choisir" */
+.why-us-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 4rem;
+    align-items: center;
+}
+.why-us-text .section-title {
+    text-align: left;
+}
+.why-us-text .section-title::after {
+    left: 0; /* Aligne la barre décorative à gauche */
+    transform: translateX(0);
+}
+.why-us-text h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    margin-top: 1.5rem;
+    display: flex; /* Pour aligner l'icône et le texte */
+    align-items: center;
+    gap: 0.75rem;
+}
+/* Ajout d'icônes SVG devant les titres des avantages */
+.why-us-text h3:nth-of-type(1)::before { /* Assurance */
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-color: var(--primary-color);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M10 1.944A11.954 11.954 0 012.166 5.002L2.084 5.051a.75.75 0 00.444 1.348l4.473.895a.75.75 0 00.722-.444l.238-.475a10.454 10.454 0 006.882 0l.238.475a.75.75 0 00.722.444l4.473-.895a.75.75 0 00.444-1.348l-.082-.049A11.954 11.954 0 0110 1.944zM1.99 7.051a13.454 13.454 0 0016.02 0l.082.049a.75.75 0 00.444-1.348L14.063 5.5l.238-.475a13.454 13.454 0 00-8.602 0l.238.475L1.464 6.652a.75.75 0 00.444 1.348l.082-.049z' clip-rule='evenodd' /%3E%3Cpath d='M2.166 5.002A11.954 11.954 0 0110 1.944a11.954 11.954 0 017.834 3.058L17.916 5.05a.75.75 0 01-1.348-.444l-.895-4.473a.75.75 0 01.444-.722l.475-.238A13.454 13.454 0 001.464 3.848l.475.238a.75.75 0 01.444.722l-.895 4.473a.75.75 0 01-1.348.444L.084 13.05a.75.75 0 00.444 1.348l4.473-.895a.75.75 0 00.722-.444l.238-.475a10.454 10.454 0 006.882 0l.238.475a.75.75 0 00.722.444l4.473.895a.75.75 0 00.444-1.348l-.082-.049z' /%3E%3C/svg%3E") no-repeat center;
+    mask-size: contain;
+}
+.why-us-text h3:nth-of-type(2)::before { /* Annulation */
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-color: var(--primary-color);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z' clip-rule='evenodd' /%3E%3C/svg%3E") no-repeat center;
+    mask-size: contain;
+}
+
+.why-us-text p {
+    color: var(--gray-color);
+    line-height: 1.8;
+}
+.why-us-image {
+    overflow: hidden; /* Nécessaire pour l'effet de zoom */
+    border-radius: var(--border-radius);
+}
+.why-us-image img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+.why-us-image:hover img {
+    transform: scale(1.03); /* L'image zoome au survol */
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 992px) {
+    .grid-3-cols, .why-us-grid {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+    .why-us-grid { text-align: center; }
+    .why-us-text .section-title { text-align: center; }
+    .why-us-text .section-title::after { left: 50%; transform: translateX(-50%); }
+    .why-us-text h3 { justify-content: center; }
 }

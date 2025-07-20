@@ -42,10 +42,12 @@ document.addEventListener('DOMContentLoaded', () => {
             
         } else {
             // --- CAS UTILISATEUR NON CONNECTÉ ---
+               const authLink = isSubPage ? 'auth.html' : 'auth.html';
+            
+            // On génère un seul bouton qui mène vers la page d'authentification
             userActionsHtml = `
                 <div class="auth-buttons">
-                    <a href="login.html" class="btn btn-secondary">Connexion</a>
-                    <a href="register.html" class="btn btn-primary">Inscription</a>
+                    <a href="${authLink}" class="btn btn-primary">Connexion / Inscription</a>
                 </div>
             `;
         }
