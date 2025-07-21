@@ -1645,4 +1645,185 @@ main > h2 {
     .why-us-text .section-title { text-align: center; }
     .why-us-text .section-title::after { left: 50%; transform: translateX(-50%); }
     .why-us-text h3 { justify-content: center; }
+}/* ====================================================== */
+/* ==   STYLES CRÉATIFS POUR LE FORMULAIRE D'AJOUT (ADMIN) == */
+/* ====================================================== */
+
+/* Conteneur principal de la page pour un look centré et propre */
+body > main {
+    
+    margin: 4rem auto;
+    padding: 0 1.5rem;
+}
+
+body > main h2 {
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 2rem;
+    margin:  auto;
+}
+
+/* Style du formulaire principal */
+main > form {
+    background-color: #fff;
+    padding: 2.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 10px S30px rgba(0,0,0,0.08);
+    display: grid;
+    gap: 1.5rem; /* Espace entre chaque champ */
+      /* Centre le formulaire dans son conteneur */
+    text-align: center;
+    
+    
+} 
+/* On cible les champs par leur attribut `name` */
+main > form input[type="text"],
+main > form input[type="number"],
+main > form select,
+main > form input[type="file"] {
+    width: 70%;
+      /* Centre les champs dans le formulaire */
+      margin: auto;
+      
+    padding: 12px 15px 12px 45px; /* Espace à gauche pour la future icône */
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.2s ease-in-out;
+    position: relative; /* Nécessaire pour positionner l'icône */
+}
+
+/* Effet au focus */
+main > form input:focus,
+main > form select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1);
+    outline: none;
+}
+/* Quand on focus l'input, on change la couleur de l'icône qui le précède */
+main > form input:focus::before {
+    color: var(--primary-color) !important;
+}
+
+/* --- Ajout des icônes avec CSS UNIQUEMENT --- */
+/* On crée un conteneur "virtuel" pour chaque input pour y placer une icône */
+main > form input[name="marque"],
+main > form input[name="modele"],
+main > form input[name="type"],
+main > form input[name="prix_par_jour"],
+main > form input[name="annee"] {
+    position: relative; /* Contexte pour le pseudo-élément */
+}
+/* Pseudo-élément ::before pour créer l'icône */
+main > form input[name]::before {
+    font-family: "Font Awesome 5 Free"; /* ASSUREZ-VOUS D'AVOIR FONT AWESOME LIÉ */
+    font-weight: 900;
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ccc;
+    transition: color 0.2s;
+}
+
+/* Alternative sans Font Awesome (avec SVG en background) */
+main > form input[name] {
+    background-repeat: no-repeat;
+    background-position: 15px center;
+    background-size: 20px;
+    padding-left: 45px;
+}
+
+/* --- Icônes spécifiques pour chaque champ --- */
+input[name="marque"] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23cccccc'%3E%3Cpath d='M9.43 5.43a.75.75 0 011.14 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.14-1.06L13.07 10 9.43 6.49a.75.75 0 010-1.06zM4.43 5.43a.75.75 0 011.14 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.14-1.06L7.07 10 4.43 6.49a.75.75 0 010-1.06z' /%3E%3C/svg%3E");
+}
+input[name="type"] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23cccccc'%3E%3Cpath d='M2.5 4A1.5 1.5 0 014 2.5h12A1.5 1.5 0 0117.5 4v1.5a.75.75 0 01-1.5 0V4a.75.75 0 00-.75-.75H4.75A.75.75 0 004 4v12a.75.75 0 00.75.75h4.5a.75.75 0 010 1.5h-4.5A1.5 1.5 0 012.5 16V4z' /%3E%3Cpath d='M9.5 10.75a.75.75 0 01.75-.75h5.5a.75.75 0 010 1.5h-5.5a.75.75 0 01-.75-.75z' /%3E%3Cpath d='M11 6.5a.75.75 0 01.75-.75h3.5a.75.75 0 010 1.5h-3.5a.75.75 0 01-.75-.75z' /%3E%3Cpath d='M9.5 15a.75.75 0 01.75-.75h5.5a.75.75 0 010 1.5h-5.5A.75.75 0 019.5 15z' /%3E%3C/svg%3E");
+}
+input[name="prix_par_jour"] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23cccccc'%3E%3Cpath d='M10.75 10.75a.75.75 0 01-1.5 0V8.25h-.75a.75.75 0 010-1.5h.75V5.5a.75.75 0 011.5 0v1.25h.75a.75.75 0 010 1.5h-.75v2.5z' /%3E%3Cpath fill-rule='evenodd' d='M2 10a8 8 0 1116 0 8 8 0 01-16 0zm2-1.5a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H4.75a.75.75 0 01-.75-.75z' clip-rule='evenodd' /%3E%3C/svg%3E");
+}
+input[name="annee"] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23cccccc'%3E%3Cpath fill-rule='evenodd' d='M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm-1 5.5c0-.414.336-.75.75-.75h10.5a.75.75 0 010 1.5H5.5a.75.75 0 01-.75-.75z' clip-rule='evenodd' /%3E%3C/svg%3E");
+}
+/* Le champ modèle et select n'ont pas d'icône, donc pas de padding */
+input[name="modele"],
+form select {
+    padding-left: 15px;
+}
+input[name="modele"]:focus {
+    background-image: none; /* On s'assure qu'aucune icône ne s'applique par erreur */
+}
+input:focus {
+    border-color: var(--primary-color) !important;
+}
+
+/* Style custom pour l'input de fichier */
+input[type="file"] {
+    padding: 1rem;
+    border-style: dashed;
+    text-align: center;
+}
+
+/* Style du bouton de soumission */
+form button[type="submit"] {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background-color: var(--primary-color);
+    color: white;
+}
+form button[type="submit"]:hover {
+    background-color: #333;
+} /* ====================================================== */
+/* ==   STYLE POUR L'EN-TÊTE DES PAGES ADMIN SECONDAIRES == */
+/* ====================================================== */
+
+.page-header-admin {
+    padding: 1.5rem 0;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem; /* Espace entre l'icône et le texte */
+    
+    color: var(--gray-color);
+    font-size: 1rem;
+    font-weight: 600;
+    
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Style de l'icône SVG */
+.back-link svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Effet au survol : le lien devient plus foncé */
+.back-link:hover {
+    color: var(--primary-color); /* Devient noir */
+    transform: translateX(-3px); /* Léger mouvement vers la gauche */
+}
+
+
+/* --- Responsive : cacher le texte sur mobile --- */
+@media (max-width: 768px) {
+    /* Sur les petits écrans, on cache le texte pour ne garder que l'icône */
+    .back-link span {
+        display: none;
+    }
+    
+    /* On recentre le header */
+    .page-header-admin {
+        text-align: center;
+    }
 }

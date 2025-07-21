@@ -8,90 +8,105 @@ class Reservation {
         $this->pdo = $pdo;
     }
 
+    // =========================================================
+    // ==         MÉTHODES UTILISÉES PAR LES CLIENTS          ==
+    // =========================================================
+
     /**
      * Crée une nouvelle réservation dans la base de données.
      */
     public function create($id_user, $id_voiture, $date_debut, $date_fin, $montant_total) {
-        // Le statut par défaut est 'en attente' comme dans votre BDD
         $sql = "INSERT INTO reservation (id_user, id_voiture, date_debut, date_fin, montant_total, statut) 
                 VALUES (?, ?, ?, ?, ?, 'en attente')";
-        
         try {
             $stmt = $this->pdo->prepare($sql);
-            // On exécute la requête avec les données fournies
             return $stmt->execute([$id_user, $id_voiture, $date_debut, $date_fin, $montant_total]);
         } catch (PDOException $e) {
-            // En cas d'erreur, on peut la journaliser ou la gérer ici
-            error_log($e->getMessage());
+            error_log("SQL Error in Reservation::create: " . $e->getMessage());
             return false;
         }
     }
-     /**
-     * NOUVELLE FONCTION À AJOUTER
-     * Récupère toutes les réservations d'un utilisateur spécifique,
-     * avec les détails de la voiture associée.
+
+    /**
+     * Récupère toutes les réservations d'un utilisateur spécifique.
      */
-   
-/**
- * Récupère toutes les réservations d'un utilisateur spécifique,
- * avec les détails de la voiture associée.
- */
-public function getByUserId($id_user) {
-    // La requête SQL utilise une jointure (JOIN)
-    $sql = "SELECT 
-                r.id_reservation, 
-                r.date_debut, 
-                r.date_fin, 
-                r.montant_total, 
-                r.statut AS statut_reservation,
-                v.marque, 
-                v.modele, 
-                v.image,
-                v.id_voiture  --  <-- AJOUTEZ CETTE LIGNE IMPORTANTE
-            FROM 
-                reservation AS r
-            JOIN 
-                voiture AS v ON r.id_voiture = v.id_voiture
-            WHERE 
-                r.id_user = ?
-            ORDER BY 
-                r.date_debut DESC"; 
+    public function getByUserId($id_user) {
+        $sql = "SELECT 
+                    r.id_reservation, r.date_debut, r.date_fin, r.montant_total, 
+                    r.statut AS statut_reservation,
+                    v.marque, v.modele, v.image, v.id_voiture
+                FROM reservation AS r
+                JOIN voiture AS v ON r.id_voiture = v.id_voiture
+                WHERE r.id_user = ?
+                ORDER BY r.date_debut DESC"; 
 
-    $stmt = $this->pdo->prepare($sql);
-    $stmt->execute([$id_user]);
-    return $stmt->fetchAll();
-}
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$id_user]);
+        return $stmt->fetchAll();
+    }
+    
+    // =========================================================
+    // ==        NOUVELLES MÉTHODES DE VÉRIFICATION           ==
+    // =========================================================
 
-    // Plus tard, vous ajouterez ici des fonctions pour lister les réservations d'un utilisateur, etc.
-     /**
-     * NOUVELLE FONCTION (POUR ADMIN)
-     * Récupère TOUTES les réservations du système avec les détails
-     * de l'utilisateur et de la voiture.
+    /**
+     * Vérifie si une voiture a des réservations qui se chevauchent avec les dates demandées.
+     * Ne prend pas en compte les réservations annulées ou terminées.
+     */
+    public function isCarAvailable($id_voiture, $date_debut, $date_fin) {
+        $sql = "SELECT COUNT(*) as count 
+                FROM reservation 
+                WHERE id_voiture = :id_voiture 
+                  AND statut IN ('en attente', 'confirmée')
+                  AND :date_debut < date_fin 
+                  AND :date_fin > date_debut";
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            ':id_voiture' => $id_voiture,
+            ':date_debut' => $date_debut,
+            ':date_fin' => $date_fin
+        ]);
+        $result = $stmt->fetch();
+        return $result['count'] == 0;
+    }
+
+    /**
+     * Récupère les plages de dates déjà réservées pour une voiture.
+     */
+    public function getBookedDatesByCarId($id_voiture) {
+        $sql = "SELECT date_debut, date_fin 
+                FROM reservation 
+                WHERE id_voiture = ? AND statut IN ('en attente', 'confirmée')";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$id_voiture]);
+        return $stmt->fetchAll();
+    }
+
+
+    // =========================================================
+    // ==         MÉTHODES UTILISÉES PAR L'ADMINISTRATEUR     ==
+    // =========================================================
+
+    /**
+     * Récupère TOUTES les réservations du système.
      */
     public function getAll() {
         $sql = "SELECT 
-                    r.id_reservation, 
-                    r.date_debut, 
-                    r.date_fin, 
-                    r.montant_total, 
+                    r.id_reservation, r.date_debut, r.date_fin, r.montant_total, 
                     r.statut AS statut_reservation,
                     v.marque, v.modele,
                     u.nom, u.prenom
-                FROM 
-                    reservation AS r
-                JOIN 
-                    voiture AS v ON r.id_voiture = v.id_voiture
-                JOIN 
-                    utilisateur AS u ON r.id_user = u.id_user
-                ORDER BY 
-                    r.id_reservation DESC";
+                FROM reservation AS r
+                JOIN voiture AS v ON r.id_voiture = v.id_voiture
+                JOIN utilisateur AS u ON r.id_user = u.id_user
+                ORDER BY r.id_reservation DESC";
 
         $stmt = $this->pdo->query($sql);
         return $stmt->fetchAll();
     }
 
     /**
-     * NOUVELLE FONCTION (POUR ADMIN)
      * Met à jour le statut d'une réservation spécifique.
      */
     public function updateStatus($id_reservation, $new_status) {
@@ -100,10 +115,9 @@ public function getByUserId($id_user) {
             $stmt = $this->pdo->prepare($sql);
             return $stmt->execute([$new_status, $id_reservation]);
         } catch (PDOException $e) {
-            error_log($e->getMessage());
+            error_log("SQL Error in Reservation::updateStatus: " . $e->getMessage());
             return false;
         }
     }
 }
-
 ?>

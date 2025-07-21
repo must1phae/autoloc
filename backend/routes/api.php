@@ -155,47 +155,80 @@ case 'login':
 
 // ...
 case 'createReservation':
-        // On vérifie d'abord si l'utilisateur est connecté. C'est une route protégée.
-        if ($method == 'POST' && isset($_SESSION['user_id'])) {
-            
-            // On récupère les données envoyées par le formulaire JS
-            $id_user = $_SESSION['user_id'];
-            $id_voiture = $data['id_voiture'];
-            $date_debut = $data['date_debut'];
-            $date_fin = $data['date_fin'];
-
-            // SÉCURITÉ : Ne jamais faire confiance au prix envoyé par le client.
-            // On le recalcule côté serveur.
-            $carModel = new Car($pdo);
-            $car = $carModel->getById($id_voiture);
-
-            if (!$car) {
-                echo json_encode(['success' => false, 'message' => 'Voiture non valide.']);
-                exit();
-            }
-
-            // Calcul du nombre de jours
-            $start = new DateTime($date_debut);
-            $end = new DateTime($date_fin);
-            $interval = $start->diff($end);
-            $days = $interval->days + 1; // +1 pour inclure le premier jour
-
-            $montant_total = $days * $car['prix_par_jour'];
-
-            // On tente de créer la réservation
-            $success = $reservationModel->create($id_user, $id_voiture, $date_debut, $date_fin, $montant_total);
-
-            if ($success) {
-                echo json_encode(['success' => true, 'message' => 'Réservation enregistrée avec succès !']);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Erreur lors de l\'enregistrement de la réservation.']);
-            }
-        } else {
-            // Si l'utilisateur n'est pas connecté
-            http_response_code(403); // Forbidden
-            echo json_encode(['success' => false, 'message' => 'Accès refusé. Veuillez vous connecter.']);
-        }
+    // On s'assure que la requête est bien en POST et que l'utilisateur est connecté.
+    if ($method !== 'POST' || !isset($_SESSION['user_id'])) {
+        http_response_code(403); // Forbidden
+        echo json_encode(['success' => false, 'message' => 'Accès refusé. Veuillez vous connecter.']);
         break;
+    }
+
+    // On récupère et on valide les données envoyées par le formulaire JS.
+    $id_user = $_SESSION['user_id'];
+    $id_voiture = $data['id_voiture'] ?? null;
+    $date_debut = $data['date_debut'] ?? null;
+    $date_fin = $data['date_fin'] ?? null;
+
+    if (!$id_voiture || !$date_debut || !$date_fin) {
+        http_response_code(400); // Bad Request
+        echo json_encode(['success' => false, 'message' => 'Données de réservation manquantes.']);
+        break;
+    }
+    
+    // --- Validation des dates ---
+    try {
+        $start = new DateTime($date_debut);
+        $end = new DateTime($date_fin);
+        if ($end < $start) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'La date de fin ne peut pas être antérieure à la date de début.']);
+            break;
+        }
+    } catch (Exception $e) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Format de date invalide.']);
+        break;
+    }
+
+
+    // =========================================================
+    // ==     NOUVELLE ÉTAPE : VÉRIFICATION DE DISPONIBILITÉ    ==
+    // =========================================================
+    // On appelle la nouvelle méthode du modèle Reservation.
+    $isAvailable = $reservationModel->isCarAvailable($id_voiture, $date_debut, $date_fin);
+
+    if (!$isAvailable) {
+        // Si la voiture n'est PAS disponible, on arrête tout et on renvoie une erreur claire.
+        http_response_code(409); // 409 Conflict (indique une collision de ressource)
+        echo json_encode(['success' => false, 'message' => 'Désolé, cette voiture est déjà réservée sur les dates sélectionnées. Veuillez choisir une autre période.']);
+        break; // On sort du case.
+    }
+    
+    // --- Si on arrive ici, la voiture est disponible, on peut continuer. ---
+
+    // SÉCURITÉ : Recalcul du prix côté serveur.
+    $car = $carModel->getById($id_voiture);
+    if (!$car) {
+        http_response_code(404); // Not Found
+        echo json_encode(['success' => false, 'message' => 'La voiture demandée n\'existe pas.']);
+        break;
+    }
+
+    $interval = $start->diff($end);
+    $days = $interval->days + 1; // +1 pour inclure le premier jour.
+    $montant_total = $days * $car['prix_par_jour'];
+
+    // On tente de créer la réservation.
+    $success = $reservationModel->create($id_user, $id_voiture, $date_debut, $date_fin, $montant_total);
+
+    if ($success) {
+        // La réservation a été créée avec succès.
+        echo json_encode(['success' => true, 'message' => 'Réservation enregistrée avec succès !']);
+    } else {
+        // Une erreur s'est produite lors de l'insertion en BDD.
+        http_response_code(500); // Internal Server Error
+        echo json_encode(['success' => false, 'message' => 'Une erreur interne est survenue lors de l\'enregistrement de la réservation.']);
+    }
+    break;
          case 'getUserReservations':
         // On vérifie si l'utilisateur est bien connecté
         if ($method == 'GET' && isset($_SESSION['user_id'])) {
@@ -493,6 +526,12 @@ case 'leaveReview':
             echo json_encode(['success' => true, 'data' => $reviews]);
         }
         break;
+        case 'getCarBookedDates':
+    if (isset($_GET['id'])) {
+        $dates = $reservationModel->getBookedDatesByCarId($_GET['id']);
+        echo json_encode(['success' => true, 'data' => $dates]);
+    }
+    break;
         
 } 
 ini_set('display_errors', 1);

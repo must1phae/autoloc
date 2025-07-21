@@ -1,14 +1,23 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    <meta charset="UTF-8">
     <title>Ajouter une Voiture - Admin</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <header>
-        <h1><a href="dashboard-admin.html">Retour au Tableau de Bord</a></h1>
-    </header>
-    <main>
+ <!-- Fichier : add-car.html (ou autre page admin) -->
+
+<header class="page-header-admin">
+    <a href="dashboard-admin.html" class="back-link" aria-label="Retour au tableau de bord">
+        <!-- Icône SVG "Retour" -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+        </svg>
+        <span>Tableau de Bord</span>
+    </a>
+</header>
+    <main class="m">
         <h2>Ajouter une nouvelle voiture</h2>
         <form action="../../backend/routes/api.php?action=adminAddCar" method="POST" enctype="multipart/form-data">
             <input type="text" name="marque" placeholder="Marque" required>
@@ -20,7 +29,7 @@
             <!-- ============================================= -->
             <!-- ==  AJOUTEZ CE BLOC POUR LE CHAMP STATUT   == -->
             <!-- ============================================= -->
-            <label for="statut">Statut initial :</label>
+            <label for="statut" class="v">Statut initial :</label>
             <select name="statut" id="statut" required>
                 <option value="disponible" selected>Disponible</option>
                 <option value="maintenance">En maintenance</option>
@@ -28,9 +37,11 @@
             </select>
             <!-- ============================================= -->
             
-            <label for="image">Image de la voiture :</label>
-            <input type="file" name="image" accept="image/*" required>
-
+          <!-- Votre HTML existant - Rien à changer -->
+<div class="input-group">
+    <label for="image">Image de la voiture</label>
+    <input type="file" name="image" id="image" accept="image/*" class="custom-file-input" required>
+</div>
             <button type="submit">Ajouter la voiture</button>
         </form>
     </main>
