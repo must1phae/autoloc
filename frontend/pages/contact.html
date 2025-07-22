@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Contactez-Nous - AutoLoc</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <!-- ======================= NAVBAR PUBLIQUE ======================= -->
+    <header class="main-header public-header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="index.html">AutoLoc</a>
+            </div>
+            <nav class="main-nav" id="main-navigation">
+                <!-- Chargement de la navigation... -->
+            </nav>
+        </div>
+    </header>
+
+    <!-- ======================= CONTENU DE LA PAGE CONTACT ======================= -->
+    <main class="main-container">
+        <div class="contact-header">
+            <h2>Contactez-Nous</h2>
+            <p>Une question, une suggestion ou besoin d'assistance ? Notre équipe est là pour vous aider.</p>
+        </div>
+
+        <div class="contact-grid">
+            <!-- Colonne de gauche : Informations -->
+            <div class="contact-info">
+                <h3>Informations de Contact</h3>
+                <p>N'hésitez pas à nous joindre via les canaux ci-dessous. Nous nous efforçons de répondre dans les plus brefs délais.</p>
+                <ul>
+                    <li>
+                        <!-- Icône Email -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z" /><path d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z" /></svg>
+                        <a href="mailto:contact@autoloc.com">contact@autoloc.com</a>
+                    </li>
+                    <li>
+                        <!-- Icône Téléphone -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2 3.5A1.5 1.5 0 013.5 2h1.148a1.5 1.5 0 011.465 1.175l.716 3.223a1.5 1.5 0 01-1.052 1.767l-.233.093c-.81.324-.961 1.406-.218 2.148a13.477 13.477 0 007.232 7.232c.742.742 1.824.592 2.148-.218l.093-.233a1.5 1.5 0 011.767-1.052l3.223.716A1.5 1.5 0 0118 15.352V16.5a1.5 1.5 0 01-1.5 1.5h-1.528a13.483 13.483 0 01-11.962-11.962A1.5 1.5 0 013.5 3.5h.504z" clip-rule="evenodd" /></svg>
+                        <span>+212 6 XX XX XX XX</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Colonne de droite : Formulaire -->
+            <div class="contact-form-container">
+                <form id="contact-form" class="creative-form">
+                    <div class="input-group">
+                        <label for="email">Votre Email</label>
+                        <input type="email" id="email" name="email" placeholder="nom@exemple.com" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="subject">Sujet</label>
+                        <input type="text" id="subject" name="subject" placeholder="Ex: Problème de réservation" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="message">Votre Message</label>
+                        <textarea id="message" name="message" rows="6" placeholder="Bonjour, je vous contacte concernant..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Envoyer le Message</button>
+                </form>
+                <div id="contact-message-feedback" class="message" style="display: none;"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ======================= FOOTER ======================= -->
+    <footer class="main-footer">
+        <p>© 2025 AutoLoc - Mustapha EL GHAZZAL. Tous droits réservés.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/app.js"></script>
+    <script src="../js/contact.js"></script>
+</body>
+</html>

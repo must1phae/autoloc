@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cette partie met en surbrillance le lien de la page actuelle.
     const navLinks = document.querySelectorAll('.main-nav a');
     const currentPage = window.location.pathname.split('/').pop(); // Récupère le nom du fichier (ex: 'user-list.html')
+    
 
     navLinks.forEach(link => {
         if (link.getAttribute('href') === currentPage) {

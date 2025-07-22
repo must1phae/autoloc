@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { href: 'index.html', label: 'Accueil' },
             { href: 'cars-list.html', label: 'Louer une Voiture' },
             { href: 'contact.html', label: 'Contact' }
+            
         ];
         let baseNavLinks = navLinksData.map(link => {
             const isActive = (currentPage === link.href || (currentPage === '' && link.href === 'index.html')) ? 'active' : '';
@@ -110,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="car-card-content">
                         <h3>${car.marque} ${car.modele}</h3>
                         <p>À partir de <strong>${car.prix_par_jour} €/jour</strong></p>
-                        <a href="../pages/car-details.html?id=${car.id_voiture}" class="btn ">Voir détails et réserver</a>
+                        <button class="btn btn-primary btn-view-details" data-id="${car.id_voiture}">Voir détails et réserver</button>
                     </div>
                 `;
                 carListContainer.appendChild(carCard);

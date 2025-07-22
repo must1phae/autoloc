@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Messages Reçus - Admin AutoLoc</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <!-- ======================= NAVBAR ADMIN ======================= -->
+    <header class="main-header admin-header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="dashboard-admin.html">AutoLoc <span>Admin</span></a>
+            </div>
+            <nav class="main-nav" id="main-navigation-admin">
+<ul>
+                <li><a href="dashboard-admin.html">Voitures</a></li>
+                <li><a href="reservations-list.html">Réservations</a></li>
+                <li><a href="user-list.html">Utilisateurs</a></li>
+                 <li><a href="admin-messages.html">Messages</a></li>
+                <li><a href="verify-documents.html">Documents</a></li>
+            </ul>            </nav>
+            <div class="user-actions">
+                <button id="logout-btn" class="btn btn-secondary">Déconnexion</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ======================= CONTENU PRINCIPAL ======================= -->
+    <main class="main-container">
+        <div class="admin-page-header">
+            <h1>Boîte de Réception</h1>
+            <p>Consultez ici tous les messages envoyés via le formulaire de contact.</p>
+        </div>
+        
+        <div class="messages-container">
+            <!-- Les messages seront chargés ici par JavaScript -->
+            <p>Chargement des messages...</p>
+        </div>
+    </main>
+    
+    <!-- Scripts -->
+    <script src="../js/admin-messages.js"></script>
+    <script src="../js/admin-nav.js"></script> <!-- Script commun pour la navbar -->
+</body>
+</html>

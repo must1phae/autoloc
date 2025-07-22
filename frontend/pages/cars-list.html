@@ -42,9 +42,45 @@
      <footer class="main-footer">
         <p>© 2025 AutoLoc - Mustapha EL GHAZZAL. Tous droits réservés.</p>
     </footer>
+    <div id="modal-overlay" class="modal-hidden">
+    <div id="car-details-modal">
+        <button id="modal-close-btn" class="modal-close-btn" aria-label="Fermer la fenêtre">
+            <!-- Icône "X" pour fermer -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+            </svg>
+        </button>
+        <!-- Le contenu de la modale sera injecté ici par JavaScript -->
+        <div id="modal-content-container">
+            <p>Chargement...</p>
+        </div>
+    </div>
+</div>
+<!-- ... (votre première modale pour les détails) ... -->
+
+<!-- ======================= MODALE POUR LE FORMULAIRE DE RÉSERVATION ======================= -->
+<div id="reservation-modal-overlay" class="modal-hidden">
+    <div id="reservation-modal">
+        <button id="reservation-modal-close-btn" class="modal-close-btn" aria-label="Fermer">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+            </svg>
+        </button>
+        <!-- Le formulaire et les détails seront injectés ici -->
+        <div id="reservation-modal-content">
+            <p>Chargement du formulaire...</p>
+        </div>
+    </div>
+</div>
+<!-- Flatpickr CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<!-- Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<!-- Pour la langue française -->
+<script src="https://npmcdn.com/flatpickr/dist/l10n/fr.js"></script>
     <script src="../js/cars.js"></script>
-    
-     
+    <script src="../js/reservation.js"></script>
+     <script src="../js/modal.js"></script>
       <script src="../js/app.js"></script>
 </body>
 </html>

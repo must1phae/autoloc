@@ -16,6 +16,13 @@ require_once '../models/Reservation.php';
 require_once '../models/Document.php';
 // On suppose que vous avez déjà créé le modèle Avis.php
 require_once '../models/Avis.php';
+// Inclure le nouveau modèle
+require_once '../models/Message.php';
+// ... (vos autres require_once)
+
+// Initialiser le nouveau modèle
+$messageModel = new Message($pdo);
+// ... (vos autres initialisations)
  
  // Initialiser les modèles
 $userModel = new User($pdo);
@@ -532,6 +539,57 @@ case 'leaveReview':
         echo json_encode(['success' => true, 'data' => $dates]);
     }
     break;
+     case 'sendContactMessage':
+        if ($method == 'POST') {
+            // On s'attend à recevoir des données JSON
+            $data = json_decode(file_get_contents("php://input"), true);
+
+            // Validation simple des données
+            if (!empty($data['email']) && filter_var($data['email'], FILTER_VALIDATE_EMAIL) && !empty($data['subject']) && !empty($data['message'])) {
+                
+                // On "nettoie" les données pour éviter les injections XSS
+                $email = htmlspecialchars(strip_tags($data['email']));
+                $subject = htmlspecialchars(strip_tags($data['subject']));
+                $message = htmlspecialchars(strip_tags($data['message']));
+
+                $success = $messageModel->create($email, $subject, $message);
+
+                if ($success) {
+                    http_response_code(200);
+                    echo json_encode(['success' => true, 'message' => 'Votre message a bien été enregistré.']);
+                } else {
+                    http_response_code(500);
+                    echo json_encode(['success' => false, 'message' => 'Erreur interne du serveur lors de l\'enregistrement.']);
+                }
+
+            } else {
+                http_response_code(400); // Bad Request
+                echo json_encode(['success' => false, 'message' => 'Veuillez remplir tous les champs correctement.']);
+            }
+        }
+        break;
+          case 'getAllMessages':
+        // Action protégée, on vérifiera si l'utilisateur est un admin (bonus)
+        // Pour l'instant, on suppose que l'accès est sécurisé
+        if ($method == 'GET') {
+            $messages = $messageModel->getAll();
+            echo json_encode(['success' => true, 'data' => $messages]);
+        }
+        break;
+
+    case 'markMessageAsRead':
+        if ($method == 'POST') {
+            $data = json_decode(file_get_contents("php://input"), true);
+            if (!empty($data['id'])) {
+                $success = $messageModel->markAsRead($data['id']);
+                if ($success) {
+                    echo json_encode(['success' => true]);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Erreur de base de données.']);
+                }
+            }
+        }
+        break;
         
 } 
 ini_set('display_errors', 1);
