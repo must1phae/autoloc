@@ -1,29 +1,56 @@
-// frontend/js/admin-nav.js
+// frontend/js/admin-nav.js - VERSION FINALE AVEC NAVIGATION DYNAMIQUE
 
 document.addEventListener('DOMContentLoaded', () => {
     const API_URL = 'http://localhost/autoloc/backend/routes/api.php';
-    const logoutBtn = document.getElementById('logout-btn');
     
-    // --- GESTION DE LA DÉCONNEXION ---
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', async () => {
-            // On appelle l'action de déconnexion de l'API
-            await fetch(`${API_URL}?action=logout`);
-            // On redirige vers la page d'accueil après la déconnexion
-            alert("Vous avez été déconnecté.");
-            window.location.href = 'auth.html';
-        });
+    // Sélecteurs pour la navbar
+    const adminNavContainer = document.getElementById('main-navigation-admin');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    /**
+     * Construit la barre de navigation admin dynamiquement.
+     */
+    function setupAdminNavbar() {
+        if (!adminNavContainer) return; // Ne fait rien si la nav n'est pas sur la page
+
+        const currentPage = window.location.pathname.split('/').pop();
+
+        // =========================================================
+        // ==  LA LISTE CENTRALE DE TOUS VOS LIENS ADMIN EST ICI  ==
+        // =========================================================
+        const navLinks = [
+            { href: 'dashboard-admin.html', label: 'Voitures' },
+            { href: 'reservations-list.html', label: 'Réservations' },
+            { href: 'user-list.html', label: 'Utilisateurs' },
+            { href: 'admin-messages.html', label: 'Messages' },
+            { href: 'verify-documents.html', label: 'Documents' }
+        ];
+
+        // On génère le HTML pour les liens et on ajoute la classe 'active' au bon
+        const navHtml = navLinks.map(link => {
+            const isActive = (currentPage === link.href) ? 'active' : '';
+            return `<li><a href="${link.href}" class="${isActive}">${link.label}</a></li>`;
+        }).join('');
+
+        // On injecte la liste de liens dans le conteneur de navigation
+        adminNavContainer.innerHTML = `<ul>${navHtml}</ul>`;
     }
 
-    // --- GESTION DE LA CLASSE 'ACTIVE' (BONUS) ---
-    // Cette partie met en surbrillance le lien de la page actuelle.
-    const navLinks = document.querySelectorAll('.main-nav a');
-    const currentPage = window.location.pathname.split('/').pop(); // Récupère le nom du fichier (ex: 'user-list.html')
-    
-
-    navLinks.forEach(link => {
-        if (link.getAttribute('href') === currentPage) {
-            link.classList.add('active');
+    /**
+     * Gère la logique du bouton de déconnexion.
+     */
+    function setupLogoutButton() {
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', async () => {
+                await fetch(`${API_URL}?action=logout`);
+                alert("Vous avez été déconnecté.");
+                // Redirige vers la page de connexion, ce qui est plus logique
+                window.location.href = 'login.html'; 
+            });
         }
-    });
+    }
+
+    // --- Lancement des fonctions ---
+    setupAdminNavbar();
+    setupLogoutButton();
 });

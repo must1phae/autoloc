@@ -1664,122 +1664,8 @@ body > main h2 {
 }
 
 /* Style du formulaire principal */
-main > form {
-    background-color: #fff;
-    padding: 2.5rem;
-    border-radius: var(--border-radius);
-    box-shadow: 0 10px S30px rgba(0,0,0,0.08);
-    display: grid;
-    gap: 1.5rem; /* Espace entre chaque champ */
-      /* Centre le formulaire dans son conteneur */
-    text-align: center;
-    
-    
-} 
-/* On cible les champs par leur attribut `name` */
-main > form input[type="text"],
-main > form input[type="number"],
-main > form select,
-main > form input[type="file"] {
-    width: 70%;
-      /* Centre les champs dans le formulaire */
-      margin: auto;
-      
-    padding: 12px 15px 12px 45px; /* Espace à gauche pour la future icône */
-    border: 2px solid #e9ecef;
-    border-radius: 6px;
-    font-size: 1rem;
-    transition: all 0.2s ease-in-out;
-    position: relative; /* Nécessaire pour positionner l'icône */
-}
-
-/* Effet au focus */
-main > form input:focus,
-main > form select:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1);
-    outline: none;
-}
-/* Quand on focus l'input, on change la couleur de l'icône qui le précède */
-main > form input:focus::before {
-    color: var(--primary-color) !important;
-}
-
-/* --- Ajout des icônes avec CSS UNIQUEMENT --- */
-/* On crée un conteneur "virtuel" pour chaque input pour y placer une icône */
-main > form input[name="marque"],
-main > form input[name="modele"],
-main > form input[name="type"],
-main > form input[name="prix_par_jour"],
-main > form input[name="annee"] {
-    position: relative; /* Contexte pour le pseudo-élément */
-}
-/* Pseudo-élément ::before pour créer l'icône */
-main > form input[name]::before {
-    font-family: "Font Awesome 5 Free"; /* ASSUREZ-VOUS D'AVOIR FONT AWESOME LIÉ */
-    font-weight: 900;
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #ccc;
-    transition: color 0.2s;
-}
-
-/* Alternative sans Font Awesome (avec SVG en background) */
-main > form input[name] {
-    background-repeat: no-repeat;
-    background-position: 15px center;
-    background-size: 20px;
-    padding-left: 45px;
-}
-
-/* --- Icônes spécifiques pour chaque champ --- */
-input[name="marque"] {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23cccccc'%3E%3Cpath d='M9.43 5.43a.75.75 0 011.14 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.14-1.06L13.07 10 9.43 6.49a.75.75 0 010-1.06zM4.43 5.43a.75.75 0 011.14 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.14-1.06L7.07 10 4.43 6.49a.75.75 0 010-1.06z' /%3E%3C/svg%3E");
-}
-input[name="type"] {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23cccccc'%3E%3Cpath d='M2.5 4A1.5 1.5 0 014 2.5h12A1.5 1.5 0 0117.5 4v1.5a.75.75 0 01-1.5 0V4a.75.75 0 00-.75-.75H4.75A.75.75 0 004 4v12a.75.75 0 00.75.75h4.5a.75.75 0 010 1.5h-4.5A1.5 1.5 0 012.5 16V4z' /%3E%3Cpath d='M9.5 10.75a.75.75 0 01.75-.75h5.5a.75.75 0 010 1.5h-5.5a.75.75 0 01-.75-.75z' /%3E%3Cpath d='M11 6.5a.75.75 0 01.75-.75h3.5a.75.75 0 010 1.5h-3.5a.75.75 0 01-.75-.75z' /%3E%3Cpath d='M9.5 15a.75.75 0 01.75-.75h5.5a.75.75 0 010 1.5h-5.5A.75.75 0 019.5 15z' /%3E%3C/svg%3E");
-}
-input[name="prix_par_jour"] {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23cccccc'%3E%3Cpath d='M10.75 10.75a.75.75 0 01-1.5 0V8.25h-.75a.75.75 0 010-1.5h.75V5.5a.75.75 0 011.5 0v1.25h.75a.75.75 0 010 1.5h-.75v2.5z' /%3E%3Cpath fill-rule='evenodd' d='M2 10a8 8 0 1116 0 8 8 0 01-16 0zm2-1.5a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H4.75a.75.75 0 01-.75-.75z' clip-rule='evenodd' /%3E%3C/svg%3E");
-}
-input[name="annee"] {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23cccccc'%3E%3Cpath fill-rule='evenodd' d='M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm-1 5.5c0-.414.336-.75.75-.75h10.5a.75.75 0 010 1.5H5.5a.75.75 0 01-.75-.75z' clip-rule='evenodd' /%3E%3C/svg%3E");
-}
-/* Le champ modèle et select n'ont pas d'icône, donc pas de padding */
-input[name="modele"],
-form select {
-    padding-left: 15px;
-}
-input[name="modele"]:focus {
-    background-image: none; /* On s'assure qu'aucune icône ne s'applique par erreur */
-}
-input:focus {
-    border-color: var(--primary-color) !important;
-}
-
-/* Style custom pour l'input de fichier */
-input[type="file"] {
-    padding: 1rem;
-    border-style: dashed;
-    text-align: center;
-}
-
-/* Style du bouton de soumission */
-form button[type="submit"] {
-    width: 100%;
-    padding: 15px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    background-color: var(--primary-color);
-    color: white;
-}
-form button[type="submit"]:hover {
-    background-color: #333;
-} /* ====================================================== */
+ 
+        /* ====================================================== */
 /* ==   STYLE POUR L'EN-TÊTE DES PAGES ADMIN SECONDAIRES == */
 /* ====================================================== */
 
@@ -2305,4 +2191,246 @@ form button[type="submit"]:hover {
 }.message.fade-out {
     opacity: 0;
     transform: translateY(-10px);
+}/* ====================================================== */
+/* ==   STYLES POUR LA MODALE D'AJOUT/MODIFICATION (ADMIN) == */
+/* ====================================================== */
+
+ /* ====================================================== */
+/* ==   STYLES POUR LE DASHBOARD ADMIN ET SA MODALE      == */
+/* ====================================================== */
+
+/* 1. En-tête de la page (Titre + Bouton "Ajouter") */
+.admin-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+}
+.admin-page-header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0;
+}
+/* Style du bouton "Ajouter une voiture" avec son icône */
+.admin-page-header .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.admin-page-header .btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+
+/* 2. Style de la table de gestion */
+.management-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: var(--border-radius);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    overflow: hidden; /* Pour que le border-radius s'applique */
+}
+.management-table thead th {
+    background-color: var(--light-gray-bg);
+    padding: 1rem 1.5rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--gray-color);
+    text-transform: uppercase;
+    font-size: 0.85em;
+}
+.management-table tbody td {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e9ecef;
+    vertical-align: middle;
+}
+.management-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+.table-car-image {
+    width: 100px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+
+/* 3. Style des boutons d'action dans la table (Modifier/Supprimer) */
+.action-buttons {
+    display: flex;
+    gap: 0.75rem;
+}
+.btn-action {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+/* Bouton "Modifier" */
+.btn-edit {
+    background-color: #e9ecef;
+    color: var(--dark-color);
+}
+.btn-edit:hover {
+    background-color: #d8dde1;
+    transform: translateY(-2px);
+}
+/* Bouton "Supprimer" */
+.btn-delete {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+.btn-delete:hover {
+    background-color: #dc3545;
+    color: white;
+    transform: translateY(-2px);
+}
+
+
+/* 4. Style de la Fenêtre Modale */
+#admin-modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(17, 17, 17, 0.8); z-index: 2000;
+    display: flex; align-items: center; justify-content: center;
+    padding: 1rem; opacity: 1; transition: opacity 0.3s ease;
+}
+#admin-modal-overlay.modal-hidden {
+    opacity: 0; pointer-events: none;
+}
+#admin-modal {
+    background-color: white; width: 100%; max-width: 700px;
+    border-radius: var(--border-radius); box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    position: relative; padding: 2.5rem; max-height: 90vh; overflow-y: auto;
+    transform: scale(1); transition: transform 0.3s ease;
+}
+#admin-modal-overlay.modal-hidden #admin-modal { transform: scale(0.95); }
+#modal-title { font-size: 1.8rem; text-align: center; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid #eee; }
+.modal-close-btn { position: absolute; top: 1rem; right: 1rem; font-size: 1.8rem; line-height: 1; background: none; border: none; cursor: pointer; color: #ccc; transition: color 0.2s, transform 0.2s; }
+.modal-close-btn:hover { color: var(--primary-color); transform: rotate(90deg); }
+
+/* On réutilise les styles .creative-form que vous avez déjà */
+#car-form-modal.creative-form { box-shadow: none; padding: 0; background-color: transparent; }
+
+
+/* 5. Design Responsive */
+@media (max-width: 768px) {
+    .admin-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+    
+    /* Responsive pour la table : défilement horizontal */
+    .admin-table-container {
+        overflow-x: auto; /* Permet de faire défiler la table horizontalement */
+    }
+    .management-table {
+        min-width: 600px; /* Force la table à être large pour que les colonnes ne soient pas écrasées */
+    }
+
+    /* Responsive pour la modale */
+    #admin-modal {
+        padding: 2rem 1.5rem;
+        width: 95%;
+    }
+    #admin-modal .form-row {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}/* ====================================================== */
+/* ==   NOUVEAU STYLE POUR LE DASHBOARD ADMIN (COMME L'IMAGE) == */
+/* ====================================================== */
+
+/* En-tête de la page (Titre + Bouton "Ajouter") */
+.admin-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem; /* Plus d'espace */
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+}
+.admin-page-header h1 {
+    font-size: 2.5rem; /* Titre plus grand et plus gras */
+    font-weight: 700;
+    margin: 0;
+}
+/* Style du bouton "Ajouter une voiture" en forme de pilule */
+.admin-page-header .btn {
+    border-radius: 50px;
+    padding: 12px 25px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+
+/* Style de la table, plus épuré, sans bordures extérieures */
+.management-table {
+    width: 100%;
+    border-collapse: separate; /* Important pour l'espacement */
+    border-spacing: 0 1rem; /* Espace vertical entre les lignes ! */
+}
+/* On retire l'ombre et le fond de la table pour un look plus plat */
+.management-table {
+    box-shadow: none;
+    background-color: transparent;
+}
+.management-table thead th {
+    background-color: transparent; /* Pas de fond gris */
+    padding: 0 1.5rem 1rem; /* Padding en bas uniquement */
+    text-align: left;
+    font-weight: 600;
+    color: var(--gray-color);
+    text-transform: uppercase;
+    font-size: 0.8em;
+    border-bottom: 1px solid #eee;
+}
+/* Chaque ligne est maintenant une "carte" blanche */
+.management-table tbody tr {
+    background-color: #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); /* Chaque ligne a sa propre ombre */
+    border-radius: var(--border-radius);
+}
+.management-table tbody td {
+    padding: 1rem 1.5rem;
+    vertical-align: middle;
+    border: none; /* Plus de bordure entre les cellules */
+}
+/* Applique le border-radius aux premières et dernières cellules de chaque ligne */
+.management-table tbody td:first-child { border-top-left-radius: var(--border-radius); border-bottom-left-radius: var(--border-radius); }
+.management-table tbody td:last-child { border-top-right-radius: var(--border-radius); border-bottom-right-radius: var(--border-radius); }
+
+.table-car-image {
+    width: 80px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px; /* Coins arrondis pour l'image */
+}
+
+/* Style des boutons d'action comme dans l'image */
+.btn-edit {
+    background-color: #e9ecef; /* Gris clair */
+    color: var(--dark-color);
+    border: none;
+}
+.btn-edit:hover {
+    background-color: #d8dde1;
+}
+.btn-delete {
+    background-color: rgba(220, 53, 69, 0.1); /* Rouge très clair */
+    color: #dc3545; /* Texte rouge */
+    border: none;
+}
+.btn-delete:hover {
+    background-color: #dc3545;
+    color: white;
 }

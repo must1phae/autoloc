@@ -1,96 +1,125 @@
-// frontend/js/dashboard-admin.js - VERSION CORRIGÉE
+// frontend/js/dashboard-admin.js - VERSION ADAPTÉE À VOTRE BACKEND EXISTANT
 
 document.addEventListener('DOMContentLoaded', () => {
-
-    // =========================================================
-    // == 1. DÉCLARATIONS DES CONSTANTES (une seule fois en haut)
-    // =========================================================
     const API_URL = 'http://localhost/autoloc/backend/routes/api.php';
-    const carsTableBody = document.querySelector('#admin-cars-table tbody');
-    const logoutBtn = document.getElementById('logout-btn');
+    
+    // Éléments de la page principale
+    const carListTableBody = document.querySelector('#admin-cars-table tbody');
+    const addCarBtn = document.getElementById('add-car-btn');
 
+    // Éléments de la modale
+    const modalOverlay = document.getElementById('admin-modal-overlay');
+    const modalTitle = document.getElementById('modal-title');
+    const closeModalBtn = document.getElementById('admin-modal-close-btn');
+    const carForm = document.getElementById('car-form-modal');
 
-    // =========================================================
-    // == 2. DÉFINITION DES FONCTIONS
-    // =========================================================
-
-    // Fonction pour charger les données du tableau de bord
-    async function loadAdminDashboard() {
-        // Sécurité : si l'élément du tableau n'existe pas, on arrête pour éviter une erreur
-        if (!carsTableBody) {
-            console.error("L'élément '#admin-cars-table tbody' n'a pas été trouvé.");
-            return;
-        }
-
-        // Vérification de l'authentification
-        const authResponse = await fetch(`${API_URL}?action=checkAuth`);
-        const authResult = await authResponse.json();
-        
-        if (!authResult.isLoggedIn || authResult.user.role !== 'admin') {
-            window.location.href = 'auth.html';
-            return;
-        }
-
-        // Chargement de la liste des voitures
-        const carsResponse = await fetch(`${API_URL}?action=adminGetAllCars`);
-        const carsResult = await carsResponse.json();
-
-        if (carsResult.success) {
-            carsTableBody.innerHTML = '';
-            carsResult.data.forEach(car => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${car.id_voiture}</td>
-                    <td><img src="../../uploads/cars/${car.image}" alt="${car.marque}" width="100"></td>
-                    <td>${car.marque} ${car.modele}</td>
-                    <td>${car.prix_par_jour} €</td>
-                    <td><span class="status status-${car.statut.replace(' ', '-')}">${car.statut}</span></td>
-                    <td  class="actions">
-                        <a href="edit-car.html?id=${car.id_voiture}" class="btn-edit">Modifier</a>
-                        <button class="btn-delete" data-id="${car.id_voiture}">Supprimer</button>
-                    </td>
-                `;
-                carsTableBody.appendChild(row);
-            });
+    // --- CHARGEMENT INITIAL DES VOITURES ---
+    async function loadCars() {
+        if (!carListTableBody) return;
+        try {
+            const response = await fetch(`${API_URL}?action=getAllCars`);
+            const result = await response.json();
+            
+            carListTableBody.innerHTML = '';
+            if (result.success && result.data) {
+                result.data.forEach(car => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><img src="../../uploads/cars/${car.image}" alt="${car.marque}" class="table-car-image"></td>
+                        <td><strong>${car.marque}</strong> ${car.modele}</td>
+                        <td>${car.prix_par_jour} €</td>
+                        <td><span class="status status-${car.statut}">${car.statut}</span></td>
+                        <td class="action-buttons">
+                            <button class="btn-action btn-edit" data-id="${car.id_voiture}">Modifier</button>
+                            <button class="btn-action btn-delete" data-id="${car.id_voiture}">Supprimer</button>
+                        </td>
+                    `;
+                    carListTableBody.appendChild(row);
+                });
+            }
+        } catch (error) {
+            carListTableBody.innerHTML = '<tr><td colspan="5">Erreur de chargement des données.</td></tr>';
         }
     }
 
+    // --- GESTION DE LA MODALE ---
+    function openModal() { modalOverlay.classList.remove('modal-hidden'); }
+    function closeModal() { modalOverlay.classList.add('modal-hidden'); carForm.reset(); }
 
-    // =========================================================
-    // == 3. MISE EN PLACE DES ÉCOUTEURS D'ÉVÉNEMENTS
-    // =========================================================
+    addCarBtn.addEventListener('click', () => {
+        modalTitle.textContent = 'Ajouter une nouvelle voiture';
+        carForm.reset();
+        carForm.id_voiture_modal.value = '';
+        openModal();
+    });
 
-    // Écouteur pour la déconnexion
-    
+    carListTableBody.addEventListener('click', async (e) => {
+        const target = e.target;
 
-    // Écouteur pour les clics dans le tableau (pour la suppression)
-    if (carsTableBody) {
-        carsTableBody.addEventListener('click', async (e) => {
-            // On vérifie si la cible du clic est bien un bouton "Supprimer"
-            if (e.target.classList.contains('btn-delete')) {
-                const carId = e.target.dataset.id;
-                
-                if (confirm(`Voulez-vous vraiment supprimer la voiture n°${carId} ? Cette action est irréversible.`)) {
-                    const response = await fetch(`${API_URL}?action=adminDeleteCar`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id_voiture: carId })
-                    });
-                    const result = await response.json();
-                    alert(result.message); // Affiche le message de succès ou d'erreur
+        // Clic sur "Modifier"
+        if (target.classList.contains('btn-edit')) {
+            const carId = target.dataset.id;
+            const response = await fetch(`${API_URL}?action=getCarDetails&id=${carId}`);
+            const result = await response.json();
+            if (result.success) {
+                const car = result.data;
+                modalTitle.textContent = `Modifier : ${car.marque} ${car.modele}`;
+                carForm.id_voiture_modal.value = car.id_voiture;
+                carForm.marque_modal.value = car.marque;
+                carForm.modele_modal.value = car.modele;
+                carForm.type_modal.value = car.type;
+                carForm.prix_par_jour_modal.value = car.prix_par_jour;
+                carForm.annee_modal.value = car.annee;
+                carForm.statut_modal.value = car.statut;
+                openModal();
+            }
+        }
 
-                    if (result.success) {
-                        loadAdminDashboard(); // Recharge le tableau pour refléter la suppression
-                    }
+        // Clic sur "Supprimer"
+        if (target.classList.contains('btn-delete')) {
+            const carId = target.dataset.id;
+            const carName = target.closest('tr').querySelector('td:nth-child(2)').textContent.trim();
+            if (confirm(`Êtes-vous sûr de vouloir supprimer "${carName}" ?`)) {
+                // =========================================================
+                // == MODIFICATION : On envoie "id_voiture" au lieu de "id" ==
+                // =========================================================
+                const response = await fetch(`${API_URL}?action=adminDeleteCar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id_voiture: carId }) // <-- MODIFIÉ
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert(result.message);
+                    loadCars();
+                } else {
+                    alert(`Erreur : ${result.message}`);
                 }
             }
-        });
-    }
+        }
+    });
 
+    closeModalBtn.addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', (e) => e.target === modalOverlay && closeModal());
 
-    // =========================================================
-    // == 4. APPEL INITIAL
-    // =========================================================
-    loadAdminDashboard();
+    // --- SOUMISSION DU FORMULAIRE (AJOUT OU MODIFICATION) ---
+    carForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const carId = carForm.id_voiture_modal.value;
+        const url = carId ? `${API_URL}?action=adminUpdateCar` : `${API_URL}?action=adminAddCar`;
 
+        // =========================================================
+        // == MODIFICATION : On utilise une soumission de formulaire classique
+        // == pour gérer la redirection du backend.
+        // =========================================================
+        const form = e.target;
+        form.action = url; // On définit l'URL d'action dynamiquement
+        form.method = 'POST';
+        form.enctype = 'multipart/form-data'; // Important pour l'upload de fichier
+        
+        // On soumet le formulaire de manière traditionnelle, ce qui suivra la redirection du PHP.
+        form.submit(); 
+    });
+
+    loadCars();
 });

@@ -102,6 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 3. LANCEMENT DES FONCTIONS ---
-    setupNavbar();
+    setupNavbar(); 
     fetchAndDisplayCars();
 });

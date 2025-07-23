@@ -6,49 +6,83 @@
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-  <header class="main-header admin-header">
-    <div class="header-container">
-        <div class="logo">
-            <a href="dashboard-admin.html">AutoLoc <span>Admin</span></a>
+    <header class="main-header admin-header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="dashboard-admin.html">AutoLoc <span>Admin</span></a>
+            </div>
+            <!-- La nav est maintenant vide et sera remplie par admin-nav.js -->
+            <nav class="main-nav" id="main-navigation-admin"></nav>
+            <div class="user-actions">
+                <button id="logout-btn" class="btn btn-secondary">Déconnexion</button>
+            </div>
         </div>
-        <nav class="main-nav">
-            <ul>
-                <li><a href="dashboard-admin.html">Voitures</a></li>
-                <li><a href="reservations-list.html">Réservations</a></li>
-                <li><a href="user-list.html">Utilisateurs</a></li>  
-                 <li><a href="admin-messages.html">Messages</a></li>
-                <li><a href="verify-documents.html">Documents</a></li>
-              
-            </ul>
-        </nav>
-        <div class="user-actions">
-            <button id="logout-btn" class="btn btn-secondary">Déconnexion</button>
-        </div>
-    </div>
-</header>
+    </header>
 
-    <main>
-        <h3>Gestion du Parc Automobile</h3>
-        <a href="add-car.html" class="btn btn-primary">Ajouter une nouvelle voiture</a>
+    <main class="main-container">
+        <!-- En-tête de la page avec titre et bouton d'action -->
+        <div class="admin-page-header">
+            <h1>Gestion de la Flotte</h1>
+            <!-- MODIFICATION : Le lien <a> est devenu un bouton <button> avec un ID -->
+            <button id="add-car-btn" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" /></svg>
+                Ajouter une voiture
+            </button>
+        </div>
         
-    <table id="admin-cars-table" class="management-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Image</th>
-                    <th>Marque & Modèle</th>
-                    <th>Prix/jour</th>
-                    <th>Statut</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Les voitures seront chargées ici par JS -->
-            </tbody>
-        </table>
+        <!-- Le conteneur de la table reste le même -->
+        <div class="admin-table-container">
+            <table id="admin-cars-table" class="management-table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Marque & Modèle</th>
+                        <th>Prix/jour</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+               <tbody>
+    <!-- CECI EST LA BONNE FAÇON D'AFFICHER UN MESSAGE DANS UNE TABLE -->
+    <tr id="loading-row">
+        <td colspan="5" style="text-align: center;">Chargement...</td>
+    </tr>
+</tbody>
+            </table>
+        </div>
     </main>
     
+    <!-- =============================================================== -->
+    <!-- ==   AJOUT : STRUCTURE DE LA MODALE POUR AJOUT/MODIFICATION    == -->
+    <!-- =============================================================== -->
+    <div id="admin-modal-overlay" class="modal-hidden">
+        <div id="admin-modal">
+            <button id="admin-modal-close-btn" class="modal-close-btn" aria-label="Fermer">×</button>
+            <h3 id="modal-title">Ajouter une nouvelle voiture</h3>
+            <div id="admin-modal-content">
+                <form id="car-form-modal" class="creative-form">
+                    <!-- Champ caché pour l'ID en mode modification -->
+                    <input type="hidden" name="id_voiture" id="id_voiture_modal">
+                    
+                    <div class="form-row">
+                        <div class="input-group"><label for="marque_modal">Marque</label><input type="text" id="marque_modal" name="marque" required></div>
+                        <div class="input-group"><label for="modele_modal">Modèle</label><input type="text" id="modele_modal" name="modele" required></div>
+                    </div>
+                    <div class="input-group"><label for="type_modal">Type</label><input type="text" id="type_modal" name="type" placeholder="Berline, SUV..." required></div>
+                    <div class="form-row">
+                        <div class="input-group"><label for="prix_par_jour_modal">Prix/jour (€)</label><input type="number" id="prix_par_jour_modal" name="prix_par_jour" step="0.01" required></div>
+                        <div class="input-group"><label for="annee_modal">Année</label><input type="number" id="annee_modal" name="annee" required></div>
+                    </div>
+                    <div class="input-group"><label for="statut_modal">Statut</label><select name="statut" id="statut_modal" required><option value="disponible">Disponible</option><option value="maintenance">En maintenance</option><option value="réservée">Réservée</option><option value="désactivée">Désactivée</option></select></div>
+                    <div class="input-group"><label for="image_modal">Image (optionnel si modification)</label><input type="file" name="image" id="image_modal" class="custom-file-input"></div>
+                    
+                    <button type="submit" class="btn btn-primary btn-submit">Enregistrer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
     <script src="../js/dashboard-admin.js"></script>
-    <script src="../js/admin-nav.js"></script>     <!-- Script commun pour la navbar -->
+    <script src="../js/admin-nav.js"></script>
 </body>
 </html>
