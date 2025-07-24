@@ -1,14 +1,16 @@
 <?php 
 // Fichier : backend/routes/api.php
-
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 // Headers pour autoriser les requêtes cross-origin (CORS)
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
+ 
 session_start();
-
+require '../../vendor/autoload.php';
 require_once '../config/db.php';
 require_once '../models/User.php';
 require_once '../models/Car.php';
@@ -38,6 +40,39 @@ $reservationModel = new Reservation($pdo);
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 $method = $_SERVER['REQUEST_METHOD'];
 $data = json_decode(file_get_contents("php://input"), true);
+ 
+function sendPasswordResetEmail($userEmail, $token) {
+    $resetLink = "http://localhost/autoloc/frontend/pages/reset-password.html?token=" . $token;
+
+    $mail = new PHPMailer(true);
+    try {
+        // --- CONFIGURATION DE VOTRE SERVEUR SMTP (EXEMPLE POUR GMAIL) ---
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.gmail.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'mostaphaelghazal102030@gmail.com';     // VOTRE ADRESSE GMAIL
+        $mail->Password   = 'ojqv vktr hucv jkcp';        // VOTRE MOT DE PASSE D'APPLICATION GMAIL
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        $mail->Port       = 465;
+        $mail->CharSet    = 'UTF-8';
+
+        // Destinataires
+        $mail->setFrom('no-reply@autoloc.com', 'AutoLoc Support');
+        $mail->addAddress($userEmail);
+
+        // Contenu
+        $mail->isHTML(true);
+        $mail->Subject = 'Réinitialisation de votre mot de passe - AutoLoc';
+        $mail->Body    = "<p>Bonjour,</p><p>Cliquez sur le lien ci-dessous pour choisir un nouveau mot de passe. Ce lien expirera dans une heure.</p><a href='{$resetLink}' style='background-color:#111; color:white; padding:12px 25px; text-decoration:none; border-radius:50px;'>Réinitialiser mon mot de passe</a>";
+        
+        $mail->send();
+        return true;
+    } catch (Exception $e) {
+        error_log("PHPMailer Error: {$mail->ErrorInfo}");
+        return false;
+    }
+}
+
 function isAdmin() {
     return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
 }
@@ -588,6 +623,29 @@ case 'leaveReview':
                     echo json_encode(['success' => false, 'message' => 'Erreur de base de données.']);
                 }
             }
+        }
+        break;
+         case 'requestPasswordReset':
+        $data = json_decode(file_get_contents("php://input"), true);
+        $user = $userModel->findByEmail($data['email']);
+        if ($user) {
+            $token = $userModel->createPasswordResetToken($user['id_user']);
+            sendPasswordResetEmail($user['email'], $token);
+        }
+        echo json_encode(['success' => true, 'message' => 'Si un compte est associé à cette adresse, un e-mail de réinitialisation a été envoyé.']);
+        break;
+
+    case 'resetPassword':
+        $data = json_decode(file_get_contents("php://input"), true);
+        if (!empty($data['token']) && !empty($data['password']) && $data['password'] === $data['password_confirm']) {
+            $success = $userModel->resetPassword($data['token'], $data['password']);
+            if ($success) {
+                echo json_encode(['success' => true, 'message' => 'Votre mot de passe a été mis à jour.']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Lien invalide ou expiré.']);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Données invalides.']);
         }
         break;
         

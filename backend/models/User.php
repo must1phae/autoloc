@@ -123,6 +123,36 @@ class User {
             return false;
         }
     }
+    // ... (fonctions existantes) ...
+
+public function findByEmail($email) {
+    $sql = "SELECT * FROM utilisateur WHERE email = ?";
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([$email]);
+    return $stmt->fetch();
+}
+
+public function createPasswordResetToken($userId) {
+    $token = bin2hex(random_bytes(32));
+    $expiresAt = (new DateTime())->add(new DateInterval('PT1H'))->format('Y-m-d H:i:s'); // Expire dans 1 heure
+    $sql = "UPDATE utilisateur SET reset_token = ?, reset_token_expires_at = ? WHERE id_user = ?";
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([$token, $expiresAt, $userId]);
+    return $token;
+}
+
+public function resetPassword($token, $newPassword) {
+    $sql = "SELECT * FROM utilisateur WHERE reset_token = ? AND reset_token_expires_at > NOW()";
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([$token]);
+    $user = $stmt->fetch();
+    if (!$user) { return false; } // Token invalide ou expiré
+
+    $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+    $sql = "UPDATE utilisateur SET mot_de_passe = ?, reset_token = NULL, reset_token_expires_at = NULL WHERE id_user = ?";
+    $stmt = $this->pdo->prepare($sql);
+    return $stmt->execute([$hashedPassword, $user['id_user']]);
+}
     
 } // Fin de la classe User
 ?>

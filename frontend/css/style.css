@@ -2434,3 +2434,115 @@ body > main h2 {
     background-color: #dc3545;
     color: white;
 }
+/* Style du lien "Mot de passe oublié ?" */
+.forgot-password-link {
+    display: block; /* Pour qu'il prenne sa propre ligne */
+    text-align: right; /* Aligné à droite, sous le champ du mot de passe */
+    margin-top: -0.5rem; /* Le remonte un peu */
+     /* Espace avant le bouton "Se connecter" */
+    font-size: 0.9em;
+    color: var(--gray-color);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.forgot-password-link:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+/* Style pour le lien "Pas encore de compte ?" */
+ 
+/* ====================================================== */
+/* ==   STYLES POUR LES PAGES DE MOT DE PASSE OUBLIÉ     == */
+/* ====================================================== */
+
+/* 1. Conteneur principal pour centrer le formulaire sur la page */
+.auth-page .form-container {
+    max-width: 480px; /* Un peu plus large pour les textes d'instruction */
+    margin: 4rem auto;
+    padding: 3rem;
+    left: 20%;
+    right: 20%;
+    background-color: #fff;
+    border-radius: var(--border-radius);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    justify-content: center;
+     
+}
+
+
+/* 2. Titres et paragraphes dans les formulaires */
+.auth-page .form-container h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.auth-page .form-container p {
+    text-align: center;
+    color: var(--gray-color);
+    margin-bottom: 2rem;
+    line-height: 1.7;
+}
+
+
+/* 3. Styles des formulaires et de leurs champs */
+#forgot-password-form,
+#reset-password-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Espace entre les champs */
+}
+
+/* On réutilise les styles de .input-group si besoin */
+#forgot-password-form .input-group,
+#reset-password-form .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Style des champs de saisie */
+#forgot-password-form input[type="email"],
+#reset-password-form input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+#forgot-password-form input[type="email"]:focus,
+#reset-password-form input[type="password"]:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1);
+    outline: none;
+}
+
+
+/* 4. Boutons et liens */
+#forgot-password-form .btn,
+#reset-password-form .btn {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1rem;
+}
+
+/* Style pour le lien "Retour à la connexion" */
+.auth-page .form-container .auth-switch-link,
+.auth-page .form-container a[href="login.html"] {
+    display: block;
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: var(--gray-color);
+}
+.auth-page .form-container .auth-switch-link:hover,
+.auth-page .form-container a[href="auth.html"]:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
