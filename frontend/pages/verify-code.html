@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Vérification du Compte - AutoLoc</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="main-header public-header">
+        <div class="header-container">
+            <div class="logo"><a href="index.html">AutoLoc</a></div>
+        </div>
+    </header>
+
+    <main class="main-container auth-page">
+        <div class="form-container">
+            <form id="verify-code-form">
+                <h2>Vérifiez votre compte</h2>
+                <p>Nous avons envoyé un code à 6 chiffres à votre adresse e-mail. Veuillez le saisir ci-dessous pour activer votre compte.</p>
+                
+                <!-- Champ caché pour garder une trace de l'email de l'utilisateur -->
+                <input type="hidden" id="email" name="email">
+
+                <div class="input-group">
+                    <label for="verification_code">Code de vérification</label>
+                    <input type="text" id="verification_code" name="code" placeholder="_ _ _ _ _ _" maxlength="6" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Vérifier et Activer</button>
+            </form>
+            <div id="message" class="message"></div>
+        </div>
+    </main>
+    <script src="../js/verify.js"></script> <!-- Un nouveau script dédié -->
+</body>
+</html>

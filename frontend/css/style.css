@@ -763,12 +763,14 @@ img {
     /* On ajoute une transition pour une apparition en douceur */
     transition: opacity 0.3s ease-in-out;
     text-align: center;
+   
     width: 100%;
 }
 
 /* Style pour les messages de succès (texte vert) */
 .message.message-success {
     color: #28a745; /* Vert */
+    
 }
 
 /* Style pour les messages d'erreur (texte rouge) */
@@ -1826,6 +1828,7 @@ body > main h2 {
     /* Hérite du style .message, .message-success, .message-error */
     text-align: center;
     margin-top: 1.5rem;
+    
 }
 /* ====================================================== */
 /* ==   STYLES POUR LA FENÊTRE MODALE (VERSION ÉTENDUE) == */
@@ -2545,4 +2548,247 @@ body > main h2 {
 .auth-page .form-container a[href="auth.html"]:hover {
     color: var(--primary-color);
     text-decoration: underline;
+}
+.auth-page .form-container .forgot-password-form .message-success {
+    text-align: center;
+    margin-top: 1.5rem;
+    height: auto;
+    font-weight: 600;
+}
+/* ====================================================== */
+/* ==   STYLES CRÉATIFS POUR LE FORMULAIRE DANS LA MODALE == */
+/* ====================================================== */
+
+/* 1. Amélioration de la structure du formulaire */
+#car-form-modal.creative-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Espace vertical entre les groupes de champs */
+}
+
+#car-form-modal .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+#car-form-modal .input-group {
+    text-align: left; /* Aligne les labels à gauche */
+}
+
+#car-form-modal .input-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+
+/* 2. Style des champs de saisie avec icônes en fond */
+#marque_modal, #modele_modal, #type_modal,
+#prix_par_jour_modal, #annee_modal, #statut_modal {
+    width: 100%;
+    padding: 12px 15px 12px 45px; /* Espace à gauche pour l'icône */
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.2s ease-in-out;
+    background-repeat: no-repeat;
+    background-position: 15px center;
+    background-size: 20px;
+}
+
+/* Effet au focus pour tous les champs */
+#car-form-modal input:focus,
+#car-form-modal select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1);
+    outline: none;
+}
+
+/* 3. Icônes spécifiques pour chaque champ (via background-image) */
+/* On utilise des données SVG encodées pour ne pas dépendre de fichiers externes */
+#marque_modal {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23cccccc'%3E%3Cpath d='M9.43 5.43a.75.75 0 011.14 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.14-1.06L13.07 10 9.43 6.49a.75.75 0 010-1.06zM4.43 5.43a.75.75 0 011.14 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.14-1.06L7.07 10 4.43 6.49a.75.75 0 010-1.06z' /%3E%3C/svg%3E");
+}
+#type_modal {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23cccccc'%3E%3Cpath d='M2.5 4A1.5 1.5 0 014 2.5h12A1.5 1.5 0 0117.5 4v1.5a.75.75 0 01-1.5 0V4a.75.75 0 00-.75-.75H4.75A.75.75 0 004 4v12a.75.75 0 00.75.75h4.5a.75.75 0 010 1.5h-4.5A1.5 1.5 0 012.5 16V4z' /%3E%3Cpath d='M9.5 10.75a.75.75 0 01.75-.75h5.5a.75.75 0 010 1.5h-5.5a.75.75 0 01-.75-.75z' /%3E%3Cpath d='M11 6.5a.75.75 0 01.75-.75h3.5a.75.75 0 010 1.5h-3.5a.75.75 0 01-.75-.75z' /%3E%3Cpath d='M9.5 15a.75.75 0 01.75-.75h5.5a.75.75 0 010 1.5h-5.5A.75.75 0 019.5 15z' /%3E%3C/svg%3E");
+}
+#prix_par_jour_modal {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23cccccc'%3E%3Cpath d='M10.75 10.75a.75.75 0 01-1.5 0V8.25h-.75a.75.75 0 010-1.5h.75V5.5a.75.75 0 011.5 0v1.25h.75a.75.75 0 010 1.5h-.75v2.5z' /%3E%3Cpath fill-rule='evenodd' d='M2 10a8 8 0 1116 0 8 8 0 01-16 0zm2-1.5a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H4.75a.75.75 0 01-.75-.75z' clip-rule='evenodd' /%3E%3C/svg%3E");
+}
+#annee_modal {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23cccccc'%3E%3Cpath fill-rule='evenodd' d='M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm-1 5.5c0-.414.336-.75.75-.75h10.5a.75.75 0 010 1.5H5.5a.75.75 0 01-.75-.75z' clip-rule='evenodd' /%3E%3C/svg%3E");
+}
+/* Le champ Modèle et le Select n'ont pas d'icône, on retire le padding gauche */
+#modele_modal, #statut_modal {
+    padding-left: 15px;
+    background-image: none;
+}
+#statut_modal {
+    padding-right: 15px; /* Pour la flèche du select */
+}
+
+/* 4. Style créatif pour l'upload de fichier */
+#image_modal.custom-file-input {
+    opacity: 0;
+    position: absolute;
+    z-index: -1;
+    width: 0.1px;
+    height: 0.1px;
+    overflow: hidden;
+}
+#image_modal.custom-file-input + label {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 100%; min-height: 120px; padding: 1.5rem;
+    border: 2px dashed #ccc; border-radius: var(--border-radius);
+    background-color: #fafafa; cursor: pointer; transition: all 0.2s;
+    text-align: center; font-weight: 600; color: var(--gray-color);
+}
+#image_modal.custom-file-input:hover + label,
+#image_modal.custom-file-input:focus + label {
+    border-color: var(--primary-color);
+    background-color: #fff;
+}
+
+
+/* 5. Bouton de soumission */
+#car-form-modal .btn-submit {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+/* ====================================================== */
+/* ==   STYLES POUR LA PAGE DE VÉRIFICATION PAR CODE     == */
+/* ====================================================== */
+
+/* On réutilise les styles .auth-page et .form-container
+   déjà définis pour les pages de connexion. */
+
+/* Style spécifique pour le formulaire de vérification */
+#verify-code-form h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+#verify-code-form p {
+    color: var(--gray-color);
+    margin-bottom: 2rem;
+    line-height: 1.7;
+    font-size: 0.95rem;
+}
+
+#verify-code-form .input-group {
+    margin-bottom: 1.5rem;
+}
+
+#verify-code-form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+/* Style créatif pour le champ de saisie du code */
+#verification_code {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e9ecef;
+    border-radius: var(--border-radius);
+    font-size: 2rem; /* Grands chiffres pour une bonne lisibilité */
+    text-align: center;
+    letter-spacing: 0.5em; /* Espace les chiffres */
+    font-weight: 700;
+    color: var(--dark-color);
+    background-color: var(--light-gray-bg);
+    transition: all 0.2s;
+}
+
+#verification_code::placeholder {
+    color: #ccc;
+}
+
+#verification_code:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1);
+    outline: none;
+}/* ====================================================== */
+/* ==   STYLES CRÉATIFS POUR LES MESSAGES DE FEEDBACK    == */
+/* ====================================================== */
+
+/* Animation d'apparition pour les messages */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Style de base pour le conteneur du message */
+.message {
+    width: 100%; /* Prend toute la largeur de son conteneur */
+    padding: 1rem 1.5rem;
+    margin-top: 1.5rem;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    
+    /* Utilisation de flexbox pour aligner l'icône et le texte */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem; /* Espace entre l'icône et le texte */
+    
+    /* Applique l'animation d'apparition */
+    animation: fadeInDown 0.4s ease-out forwards;
+}
+
+/* On ajoute l'icône via un pseudo-élément ::before */
+.message::before {
+    content: '';
+    display: block;
+    flex-shrink: 0; /* Empêche l'icône de se rétrécir */
+    width: 20px;
+    height: 20px;
+    
+    /* La magie est ici : l'icône est un masque SVG coloré par le CSS */
+    background-color: currentColor; /* L'icône prendra la couleur du texte (vert ou rouge) */
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+}
+
+
+/* --- Variante pour le message de SUCCÈS --- */
+.message.message-success {
+    background-color: #f0fff4; /* Vert très pâle */
+    color: #15803d; /* Vert foncé pour le texte et l'icône */
+    border: 1px solid #a7f3d0;
+}
+/* On applique l'icône "coche" */
+.message.message-success::before {
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z' clip-rule='evenodd' /%3E%3C/svg%3E");
+}
+
+
+/* --- Variante pour le message d'ERREUR --- */
+.message.message-error {
+    background-color: #fff1f2; /* Rouge très pâle */
+    color: #be123c; /* Rouge foncé pour le texte et l'icône */
+    border: 1px solid #fecdd3;
+}
+/* On applique l'icône "croix" */
+.message.message-error::before {
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z' clip-rule='evenodd' /%3E%3C/svg%3E");
+}
+
+
+/* --- Animation de disparition (déjà existante, mais on la confirme) --- */
+.message.fade-out {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
 }

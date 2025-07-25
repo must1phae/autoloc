@@ -12,19 +12,47 @@ class User {
     /**
      * Inscrire un nouvel utilisateur
      */
+    /**
+     * MODIFIÉ : Inscrit un nouvel utilisateur avec un CODE de vérification.
+     * @return string|false Le code de vérification si l'inscription réussit, false sinon.
+     */
     public function register($nom, $prenom, $email, $mot_de_passe) {
         $hashed_password = password_hash($mot_de_passe, PASSWORD_DEFAULT);
-        $sql = "INSERT INTO utilisateur (nom, prenom, email, mot_de_passe, role) VALUES (?, ?, ?, ?, 'client')";
+        // On génère un code aléatoire à 6 chiffres
+        $verification_code = random_int(100000, 999999);
+
+        // La requête utilise maintenant la colonne "code_verification"
+        $sql = "INSERT INTO utilisateur (nom, prenom, email, mot_de_passe, role, code_verification, est_verifie) 
+                VALUES (?, ?, ?, ?, 'client', ?, FALSE)";
         
         try {
             $stmt = $this->pdo->prepare($sql);
-            return $stmt->execute([$nom, $prenom, $email, $hashed_password]);
-        } catch (PDOException $e) {
-            if ($e->errorInfo[1] == 1062) {
-                return false;
+            if ($stmt->execute([$nom, $prenom, $email, $hashed_password, $verification_code])) {
+                return $verification_code; // On retourne le code pour l'envoi de l'email
             }
+            return false;
+        } catch (PDOException $e) {
+            if ($e->errorInfo[1] == 1062) { return false; }
             throw $e;
         }
+    }
+     /**
+     * NOUVEAU : Vérifie le compte d'un utilisateur via son email et le code.
+     */
+    public function verifyCode($email, $code) {
+        $sql = "SELECT id_user FROM utilisateur WHERE email = ? AND code_verification = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$email, $code]);
+        $user = $stmt->fetch();
+
+        if (!$user) {
+            return false; // Email ou code incorrect
+        }
+
+        // Si le code est bon, on active le compte et on efface le code
+        $sql = "UPDATE utilisateur SET est_verifie = TRUE, code_verification = NULL WHERE id_user = ?";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([$user['id_user']]);
     }
 
     /**

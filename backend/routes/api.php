@@ -41,38 +41,46 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
 $method = $_SERVER['REQUEST_METHOD'];
 $data = json_decode(file_get_contents("php://input"), true);
  
+// Fichier : backend/routes/api.php
+
+// ====================================================================
+// ==   FONCTION 1 : POUR LE MOT DE PASSE OUBLIÉ                     ==
+// ====================================================================
 function sendPasswordResetEmail($userEmail, $token) {
     $resetLink = "http://localhost/autoloc/frontend/pages/reset-password.html?token=" . $token;
 
     $mail = new PHPMailer(true);
-    try {
-        // --- CONFIGURATION DE VOTRE SERVEUR SMTP (EXEMPLE POUR GMAIL) ---
-        $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com';
-        $mail->SMTPAuth   = true;
-        $mail->Username   = 'mostaphaelghazal102030@gmail.com';     // VOTRE ADRESSE GMAIL
-        $mail->Password   = 'ojqv vktr hucv jkcp';        // VOTRE MOT DE PASSE D'APPLICATION GMAIL
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-        $mail->Port       = 465;
-        $mail->CharSet    = 'UTF-8';
-
-        // Destinataires
+      try {
+        $mail->isSMTP(); $mail->Host = 'smtp.gmail.com'; $mail->SMTPAuth = true;
+        $mail->Username = 'mostaphaelghazal102030@gmail.com'; $mail->Password = 'ojqv vktr hucv jkcp';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; $mail->Port = 465; $mail->CharSet = 'UTF-8';
         $mail->setFrom('no-reply@autoloc.com', 'AutoLoc Support');
         $mail->addAddress($userEmail);
-
-        // Contenu
-        $mail->isHTML(true);
-        $mail->Subject = 'Réinitialisation de votre mot de passe - AutoLoc';
-        $mail->Body    = "<p>Bonjour,</p><p>Cliquez sur le lien ci-dessous pour choisir un nouveau mot de passe. Ce lien expirera dans une heure.</p><a href='{$resetLink}' style='background-color:#111; color:white; padding:12px 25px; text-decoration:none; border-radius:50px;'>Réinitialiser mon mot de passe</a>";
-        
-        $mail->send();
-        return true;
-    } catch (Exception $e) {
-        error_log("PHPMailer Error: {$mail->ErrorInfo}");
-        return false;
-    }
+        $mail->isHTML(true); $mail->Subject = 'Réinitialisation de votre mot de passe';
+        $mail->Body = "<p>Cliquez sur ce lien pour réinitialiser votre mot de passe (valide 1 heure):</p><a href='{$resetLink}'>Réinitialiser le mot de passe</a>";
+        $mail->send(); return true;
+    } catch (Exception $e) { error_log("PHPMailer Error: {$mail->ErrorInfo}"); return false; }
 }
 
+
+
+// ====================================================================
+// ==   FONCTION 2 : POUR LA VÉRIFICATION DE COMPTE                  ==
+// ====================================================================
+function sendVerificationEmail($userEmail, $code) {
+    $mail = new PHPMailer(true);
+      
+     try {
+        $mail->isSMTP(); $mail->Host = 'smtp.gmail.com'; $mail->SMTPAuth = true;
+        $mail->Username = 'mostaphaelghazal102030@gmail.com'; $mail->Password = 'ojqv vktr hucv jkcp';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; $mail->Port = 465; $mail->CharSet = 'UTF-8';
+        $mail->setFrom('no-reply@autoloc.com', 'AutoLoc Inscription');
+        $mail->addAddress($userEmail);
+        $mail->isHTML(true); $mail->Subject = 'Votre code de vérification AutoLoc';
+        $mail->Body = "<h1>Bienvenue !</h1><p>Votre code de vérification est :</p><h2 style='text-align:center;'>{$code}</h2>";
+        $mail->send(); return true;
+    } catch (Exception $e) { error_log("PHPMailer Error: {$mail->ErrorInfo}"); return false; }
+}
 function isAdmin() {
     return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
 }
@@ -96,13 +104,14 @@ switch ($action) {
         }
         break;
 
-    case 'register':
+     case 'register':
         if ($method == 'POST') {
-            // Validation simple des données
-            if (!empty($data['nom']) && !empty($data['prenom']) && !empty($data['email']) && !empty($data['password'])) {
-                $success = $userModel->register($data['nom'], $data['prenom'], $data['email'], $data['password']);
-                if ($success) {
-                    echo json_encode(['success' => true, 'message' => 'Inscription réussie. Vous pouvez maintenant vous connecter.']);
+            $data = json_decode(file_get_contents("php://input"), true);
+            if (!empty($data['nom']) && !empty($data['email']) && !empty($data['password'])) {
+                $code = $userModel->register($data['nom'], $data['prenom'], $data['email'], $data['password']);
+                if ($code) {
+                    sendVerificationEmail($data['email'], $code);
+                    echo json_encode(['success' => true, 'message' => 'Inscription réussie.']);
                 } else {
                     echo json_encode(['success' => false, 'message' => 'Cet email est déjà utilisé.']);
                 }
@@ -648,7 +657,22 @@ case 'leaveReview':
             echo json_encode(['success' => false, 'message' => 'Données invalides.']);
         }
         break;
-        
+        // cerification de email 
+        case 'verifyCode':
+        if ($method == 'POST') {
+            $data = json_decode(file_get_contents("php://input"), true);
+            if (!empty($data['email']) && !empty($data['code'])) {
+                $success = $userModel->verifyCode($data['email'], $data['code']);
+                if ($success) {
+                    echo json_encode(['success' => true, 'message' => 'Votre compte a été activé !']);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Code de vérification incorrect.']);
+                }
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Email ou code manquant.']);
+            }
+        }
+        break;
 } 
 ini_set('display_errors', 1);
 error_reporting(E_ALL);

@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 await fetch(`${API_URL}?action=logout`);
                 alert("Vous avez été déconnecté.");
                 // Redirige vers la page de connexion, ce qui est plus logique
-                window.location.href = 'login.html'; 
+                window.location.href = 'auth.html'; 
             });
         }
     }
