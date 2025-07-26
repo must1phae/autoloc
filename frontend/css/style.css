@@ -2497,6 +2497,7 @@ body > main h2 {
     display: flex;
     flex-direction: column;
     gap: 1.5rem; /* Espace entre les champs */
+    
 }
 
 /* On réutilise les styles de .input-group si besoin */
@@ -2755,7 +2756,7 @@ body > main h2 {
     height: 20px;
     
     /* La magie est ici : l'icône est un masque SVG coloré par le CSS */
-    background-color: currentColor; /* L'icône prendra la couleur du texte (vert ou rouge) */
+      /* L'icône prendra la couleur du texte (vert ou rouge) */
     mask-size: contain;
     mask-repeat: no-repeat;
     mask-position: center;
@@ -2791,4 +2792,38 @@ body > main h2 {
     opacity: 0;
     transform: translateY(-10px);
     transition: opacity 0.5s ease, transform 0.5s ease;
+}/* ====================================================== */
+/* ==   STYLE POUR LE BOUTON "RENVOYER L'EMAIL"          == */
+/* ====================================================== */
+
+.resend-container {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #eee;
+    text-align: center;
+}
+
+.resend-container p {
+    color: var(--gray-color);
+    margin-bottom: 1rem;
+    font-size: 0.9em;
+}
+
+#resend-email-btn {
+    /* Style d'un bouton secondaire */
+    background-color: transparent;
+    border: 1px solid #ccc;
+    color: var(--gray-color);
+}
+
+#resend-email-btn:not(:disabled):hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background-color: transparent;
+}
+
+/* Style du bouton quand il est désactivé */
+#resend-email-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
 }

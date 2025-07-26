@@ -641,7 +641,7 @@ case 'leaveReview':
             $token = $userModel->createPasswordResetToken($user['id_user']);
             sendPasswordResetEmail($user['email'], $token);
         }
-        echo json_encode(['success' => true, 'message' => 'Si un compte est associé à cette adresse, un e-mail de réinitialisation a été envoyé.']);
+        echo json_encode(['success' => true, 'message' => '  un e-mail de réinitialisation a été envoyé.']);
         break;
 
     case 'resetPassword':
