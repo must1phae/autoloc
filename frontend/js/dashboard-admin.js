@@ -1,4 +1,4 @@
-// frontend/js/dashboard-admin.js - VERSION ADAPTÉE À VOTRE BACKEND EXISTANT
+// frontend/js/dashboard-admin.js - VERSION MISE À JOUR AVEC STATS
 
 document.addEventListener('DOMContentLoaded', () => {
     const API_URL = 'http://localhost/autoloc/backend/routes/api.php';
@@ -7,13 +7,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const carListTableBody = document.querySelector('#admin-cars-table tbody');
     const addCarBtn = document.getElementById('add-car-btn');
 
-    // Éléments de la modale
+    // NOUVEAU : Sélecteurs pour les cartes de statistiques
+    const totalBookingsSpan = document.getElementById('total-bookings-stat');
+    const availableCarsSpan = document.getElementById('available-cars-stat');
+    const activeUsersSpan = document.getElementById('active-users-stat');
+
+    // Éléments de la modale (inchangés)
     const modalOverlay = document.getElementById('admin-modal-overlay');
     const modalTitle = document.getElementById('modal-title');
     const closeModalBtn = document.getElementById('admin-modal-close-btn');
     const carForm = document.getElementById('car-form-modal');
 
-    // --- CHARGEMENT INITIAL DES VOITURES ---
+    
+    // =========================================================
+    // ==     NOUVELLE FONCTION POUR CHARGER LES STATISTIQUES   ==
+    // =========================================================
+    async function loadStats() {
+        if (!totalBookingsSpan || !availableCarsSpan || !activeUsersSpan) return;
+
+        try {
+            const response = await fetch(`${API_URL}?action=getDashboardStats`);
+            const result = await response.json();
+
+            if (result.success) {
+                const stats = result.data;
+                totalBookingsSpan.textContent = stats.totalBookings;
+                availableCarsSpan.textContent = stats.availableCars;
+                activeUsersSpan.textContent = stats.activeUsers;
+            } else {
+                console.error("Erreur lors de la récupération des stats:", result.message);
+            }
+        } catch (error) {
+            console.error("Erreur réseau lors du chargement des stats:", error);
+        }
+    }
+
+
+    // --- CHARGEMENT INITIAL DES VOITURES (INCHANGÉ) ---
     async function loadCars() {
         if (!carListTableBody) return;
         try {
@@ -24,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (result.success && result.data) {
                 result.data.forEach(car => {
                     const row = document.createElement('tr');
+                    // Vos chemins et liens sont conservés
                     row.innerHTML = `
                         <td><img src="../../uploads/cars/${car.image}" alt="${car.marque}" class="table-car-image"></td>
                         <td><strong>${car.marque}</strong> ${car.modele}</td>
@@ -42,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- GESTION DE LA MODALE ---
+    // --- GESTION DE LA MODALE (INCHANGÉ) ---
     function openModal() { modalOverlay.classList.remove('modal-hidden'); }
     function closeModal() { modalOverlay.classList.add('modal-hidden'); carForm.reset(); }
 
@@ -52,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
         carForm.id_voiture_modal.value = '';
         openModal();
     });
-
     carListTableBody.addEventListener('click', async (e) => {
         const target = e.target;
 
@@ -120,6 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // On soumet le formulaire de manière traditionnelle, ce qui suivra la redirection du PHP.
         form.submit(); 
     });
-
+loadStats(); 
     loadCars();
 });

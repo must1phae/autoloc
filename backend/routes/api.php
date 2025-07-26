@@ -673,6 +673,47 @@ case 'leaveReview':
             }
         }
         break;
+       // Fichier : backend/routes/api.php
+
+
+    // ... (vos autres cases : getAllCars, adminAddCar, etc.)
+
+    case 'getDashboardStats':
+        // On vérifie si l'utilisateur est un admin pour sécuriser cette action
+        if (isAdmin()) { 
+            try {
+                // Requête pour le total des réservations
+                $totalBookings = $pdo->query("SELECT COUNT(*) FROM reservation")->fetchColumn();
+                
+                // Requête pour les voitures disponibles
+                $availableCars = $pdo->query("SELECT COUNT(*) FROM voiture WHERE statut = 'disponible'")->fetchColumn();
+                
+                // Requête pour les utilisateurs "actifs" (tous les clients)
+                $activeUsers = $pdo->query("SELECT COUNT(*) FROM utilisateur WHERE role = 'client'")->fetchColumn();
+                
+                // On renvoie les données en format JSON
+                echo json_encode([
+                    'success' => true,
+                    'data' => [
+                        'totalBookings' => $totalBookings,
+                        'availableCars' => $availableCars,
+                        'activeUsers' => $activeUsers
+                    ]
+                ]);
+            } catch (PDOException $e) {
+                // En cas d'erreur avec la base de données
+                http_response_code(500);
+                echo json_encode(['success' => false, 'message' => 'Erreur de base de données.']);
+            }
+        } else {
+            // Si un non-admin essaie d'accéder aux stats
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'Accès refusé.']);
+        }
+        break;
+
+    // ... (votre 'default' case)
+
 } 
 ini_set('display_errors', 1);
 error_reporting(E_ALL);

@@ -18,9 +18,42 @@
             </div>
         </div>
     </header>
+    
 
     <main class="main-container">
-        <!-- En-tête de la page avec titre et bouton d'action -->
+        <!-- En-tête de la page avec titre et bouton d'action -->   <section id="stats-cards-container" class="stats-grid">
+        <!-- Carte 1: Total des Réservations -->
+        <div class="stat-card">
+            <div class="stat-icon icon-booking">
+                <!-- Icone SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M3.5 4A1.5 1.5 0 015 2.5h10A1.5 1.5 0 0116.5 4v11.75a.75.75 0 01-1.5 0V4a.75.75 0 00-.75-.75H5a.75.75 0 00-.75.75v11.75a.75.75 0 01-1.5 0V4z" /><path d="M5.21 8.218a.75.75 0 011.06 0l1.97 1.97a.75.75 0 01-1.06 1.062L5.21 9.278a.75.75 0 010-1.06zM9.25 11.5a.75.75 0 01.75.75v.008a.75.75 0 01-1.5 0V12.25a.75.75 0 01.75-.75zM12.97 8.218a.75.75 0 011.06 1.06l-1.97 1.97a.75.75 0 11-1.06-1.06l1.97-1.97z" /></svg>
+            </div>
+            <div class="stat-info">
+                <span class="stat-title">Réservations Totales</span>
+                <span class="stat-value" id="total-bookings-stat">--</span>
+            </div>
+        </div>
+        <!-- Carte 2: Voitures Disponibles -->
+        <div class="stat-card">
+            <div class="stat-icon icon-cars">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M1.5 5.385a3.5 3.5 0 013.262-3.484l.267-.04c.371-.056.755-.056 1.126 0l.267.04A3.5 3.5 0 019.5 5.385V7a1 1 0 01-1 1H2.5a1 1 0 01-1-1V5.385zM10.5 5.385V7a1 1 0 001 1h6a1 1 0 001-1V5.385a3.5 3.5 0 00-3.086-3.484l-.267-.04a5.525 5.525 0 00-1.126 0l-.267.04A3.5 3.5 0 0010.5 5.385zM2.5 9.5a1 1 0 011-1h13a1 1 0 011 1v.002c-1.513.722-3.076 1.442-4.5 2.25a1 1 0 01-1 0c-1.424-.808-2.987-1.528-4.5-2.25A1 1 0 012.5 9.5zM1.5 12.885a3.5 3.5 0 013.262-3.484l.267-.04c.371-.056.755-.056 1.126 0l.267.04A3.5 3.5 0 019.5 12.885V14.5a1 1 0 01-1 1H2.5a1 1 0 01-1-1v-1.615zM10.5 12.885V14.5a1 1 0 001 1h6a1 1 0 001-1v-1.615a3.5 3.5 0 00-3.086-3.484l-.267-.04a5.525 5.525 0 00-1.126 0l-.267.04A3.5 3.5 0 0010.5 12.885z" clip-rule="evenodd" /></svg>
+            </div>
+            <div class="stat-info">
+                <span class="stat-title">Voitures Disponibles</span>
+                <span class="stat-value" id="available-cars-stat">--</span>
+            </div>
+        </div>
+        <!-- Carte 3: Utilisateurs Actifs -->
+        <div class="stat-card">
+            <div class="stat-icon icon-users">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.41-1.412a6.998 6.998 0 00-12.152 0z" /></svg>
+            </div>
+            <div class="stat-info">
+                <span class="stat-title">Utilisateurs Actifs</span>
+                <span class="stat-value" id="active-users-stat">--</span>
+            </div>
+        </div>
+    </section>
         <div class="admin-page-header">
             <h1>Gestion de la Flotte</h1>
             <!-- MODIFICATION : Le lien <a> est devenu un bouton <button> avec un ID -->
@@ -29,6 +62,7 @@
                 Ajouter une voiture
             </button>
         </div>
+       
         
         <!-- Le conteneur de la table reste le même -->
         <div class="admin-table-container">
