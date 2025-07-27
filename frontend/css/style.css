@@ -323,14 +323,7 @@ img {
 #profile-message, #upload-message { font-weight: 600; padding: 1rem; border-radius: 6px; margin-top: 1rem; }
 
 /* ==================== 6. CHATBOT & FOOTER ==================== */
-#chatbot-container { position: fixed; bottom: 20px; right: 20px; width: 350px; background: white; border-radius: var(--border-radius); box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2); overflow: hidden; z-index: 1001; }
-#chatbot-header { background-color: var(--primary-color); color: white; padding: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
-#chatbot-body { height: 400px; display: flex; flex-direction: column; }
-#chatbot-messages { flex-grow: 1; padding: 15px; overflow-y: auto; background-color: #f4f7f6; }
-#chatbot-input-container { display: flex; border-top: 1px solid #e9ecef; }
-#chatbot-input { flex-grow: 1; border: none; padding: 15px; font-size: 1rem; outline: none; }
-#chatbot-send-btn { background-color: var(--primary-color); color: white; border: none; padding: 0 20px; cursor: pointer; font-weight: 600; }
-
+ 
 .main-footer { background-color: var(--dark-color); color: #adb5bd; text-align: center; padding: 2rem 0; margin-top: 4rem; }
 
 /* ==================== 7. RESPONSIVE DESIGN (MOBILE) ==================== */
@@ -377,7 +370,7 @@ img {
     .car-card-content p { font-size: 0.9rem; margin-bottom: 0.75rem; }
     .car-card-content .btn { padding: 10px; font-size: 0.9rem; }
     .car-card img { height: 180px; }
-    #chatbot-container { width: 90%; bottom: 10px; right: 5%; }
+   
     
     /* -- Dashboard Mobile -- */
     .reservation-card { flex-direction: column; align-items: flex-start; }
@@ -2890,4 +2883,200 @@ body > main h2 {
     font-size: 2rem;
     font-weight: 700;
     color: var(--dark-color);
+}
+/* ====================================================== */
+/* ==   STYLES CRÉATIFS POUR LE CHATBOT FLOTTANT        == */
+/* ====================================================== */
+
+/* Conteneur principal qui gère la position et l'état ouvert/fermé */
+#chatbot-fab {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1001;
+}
+
+/* Le bouton flottant rond */
+#fab-button {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(45deg, #333, var(--primary-color));
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+#fab-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+/* Les deux icônes à l'intérieur du bouton */
+#fab-button svg {
+    width: 28px;
+    height: 28px;
+    color: white;
+    position: absolute;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* État initial des icônes */
+#fab-icon-chat { transform: rotate(0) scale(1); opacity: 1; }
+#fab-icon-close { transform: rotate(-90deg) scale(0); opacity: 0; }
+
+
+/* La fenêtre de chat */
+#chatbot-window {
+    position: absolute;
+    bottom: 80px; /* Se place au-dessus du bouton */
+    right: 0;
+    width: 350px;
+    height: 450px;
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    
+    /* Animation d'ouverture */
+    transform-origin: bottom right; /* L'animation part du coin en bas à droite */
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+/* En-tête de la fenêtre de chat */
+#chatbot-window #chatbot-header {
+    background: linear-gradient(45deg, #333, var(--primary-color));
+    color: white;
+    padding: 15px;
+    flex-shrink: 0;
+}
+#chatbot-window #chatbot-header h4 { font-size: 1.2rem; margin: 0; }
+#chatbot-window #chatbot-header span { font-size: 0.8rem; opacity: 0.8; }
+
+/* On réutilise les styles pour le corps du chat (bulles, input, etc.) */
+#chatbot-window #chatbot-body { 
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Prend toute la hauteur disponible dans #chatbot-window */
+    overflow: hidden; /* Empêche le corps entier de déborder */
+} 
+#chatbot-window #chatbot-messages {       flex-grow: 1; /* Prend toute la hauteur entre le header et l'input */
+    padding: 15px;
+    overflow-y: auto; /* Active la barre de défilement UNIQUEMENT ici */
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    
+    /* ========================================================= */
+    /* ==         LA CORRECTION CRUCIALE EST ICI              == */
+    /* ========================================================= */
+    min-height: 0; /* Force le conteneur à respecter les limites de flexbox */ }
+.bot-message, .user-message { padding: 10px 15px; border-radius: 18px; max-width: 80%; animation: fadeIn 0.3s ease-out; }
+.bot-message { background-color: var(--light-gray-bg); border-bottom-left-radius: 4px; align-self: flex-start; }
+.user-message { background-color: var(--primary-color); color: white; border-bottom-right-radius: 4px; align-self: flex-end; }
+  
+/* ====================================================== */
+/* ==   STYLES POUR LA ZONE DE SAISIE DU CHATBOT         == */
+/* ====================================================== */
+
+/* Conteneur principal de la zone de saisie */
+#chatbot-window #chatbot-input-container {
+     display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-top: 1px solid #eee;
+    background-color: #fff;
+    flex-shrink: 0; /* Empêche la zone de saisie de rétrécir */
+}
+
+/* Le champ de texte pour taper la question */
+#chatbot-window #chatbot-input {
+    flex-grow: 1; /* Prend tout l'espace disponible */
+    border: none;
+    background: transparent;
+    padding: 10px;
+    font-size: 1rem;
+    color: var(--dark-color);
+    outline: none; /* Pas de bordure bleue au focus */
+}
+
+/* Placeholder stylisé */
+#chatbot-window #chatbot-input::placeholder {
+    color: #bbb;
+}
+
+
+/* Le bouton d'envoi avec l'icône */
+#chatbot-window #chatbot-send-btn {
+    background: var(--primary-color);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Bouton parfaitement rond */
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s;
+}
+
+/* Icône SVG à l'intérieur du bouton */
+#chatbot-window #chatbot-send-btn svg {
+    width: 20px;
+    height: 20px;
+    color: white;
+}
+
+/* Effet de "rebond" au survol du bouton */
+#chatbot-window #chatbot-send-btn:hover {
+    transform: scale(1.1);
+    background-color: #333; /* Un peu plus foncé au survol */
+}
+
+/* Effet de pression au clic */
+#chatbot-window #chatbot-send-btn:active {
+    transform: scale(0.95);
+}
+
+/* --- LOGIQUE D'ANIMATION OUVERT/FERMÉ --- */
+
+/* État fermé (initial) */
+#chatbot-fab.is-closed #chatbot-window {
+    transform: scale(0);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* État ouvert */
+#chatbot-fab.is-open #fab-icon-chat {
+    transform: rotate(90deg) scale(0);
+    opacity: 0;
+}
+#chatbot-fab.is-open #fab-icon-close {
+    transform: rotate(0) scale(1);
+    opacity: 1;
+}
+#chatbot-fab.is-open #chatbot-window {
+    transform: scale(1);
+    opacity: 1;
+}
+/* Trouvez cette règle et modifiez-la */
+#chatbot-window #chatbot-messages {
+    flex-grow: 1; /* Prend la hauteur disponible */
+    padding: 15px;
+    overflow-y: auto; /* Permet le défilement vertical */
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    
+    /* ========================================================= */
+    /* ==         LA CORRECTION EST ICI                       == */
+    /* ========================================================= */
+    min-height: 0; /* Force le conteneur à respecter les limites de son parent */
 }

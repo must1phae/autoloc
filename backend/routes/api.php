@@ -43,6 +43,99 @@ $data = json_decode(file_get_contents("php://input"), true);
  
 // Fichier : backend/routes/api.php
 
+    function getProjectContext($pdo) {
+    // 1. Contexte général sur l'entreprise
+    $context = "Informations générales : AutoLoc est une agence de location de voitures. Pour réserver, le client doit fournir un permis de conduire et une pièce d'identité (CIN). L'annulation est flexible.\n\n";
+    
+    // 2. Contexte sur les voitures disponibles
+    $context .= "Voici la liste des voitures actuellement disponibles et leurs prix par jour :\n";
+    try {
+        $stmt = $pdo->query("SELECT marque, modele, prix_par_jour, type FROM voiture WHERE statut = 'disponible'");
+        $cars = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($cars as $car) {
+            $context .= "- {$car['marque']} {$car['modele']} ({$car['type']}) à {$car['prix_par_jour']} €/jour.\n";
+        }
+    } catch (PDOException $e) {
+        $context .= "Impossible de récupérer la liste des voitures en ce moment.\n";
+    }
+
+    // 3. Contexte sur l'utilisateur s'il est connecté
+    if (isset($_SESSION['user_id'])) {
+        $userId = $_SESSION['user_id'];
+        
+        try {
+            $stmtUser = $pdo->prepare("SELECT nom, prenom FROM utilisateur WHERE id_user = ?");
+            $stmtUser->execute([$userId]);
+            $user = $stmtUser->fetch(PDO::FETCH_ASSOC);
+            
+            if ($user) {
+                $context .= "\n--- CONTEXTE SPÉCIFIQUE À L'UTILISATEUR ---\n";
+                $context .= "L'utilisateur actuel est connecté. Son nom est {$user['prenom']} {$user['nom']}.\n";
+                
+                $stmtRes = $pdo->prepare("
+                    SELECT r.date_debut, r.date_fin, r.statut, v.marque, v.modele 
+                    FROM reservation r JOIN voiture v ON r.id_voiture = v.id_voiture 
+                    WHERE r.id_user = ? ORDER BY r.date_debut DESC LIMIT 3
+                ");
+                $stmtRes->execute([$userId]);
+                $reservations = $stmtRes->fetchAll(PDO::FETCH_ASSOC);
+
+                if ($reservations) {
+                    $context .= "Voici ses 3 dernières réservations :\n";
+                    foreach ($reservations as $res) {
+                        $context .= "- Une réservation pour une {$res['marque']} {$res['modele']} du {$res['date_debut']} au {$res['date_fin']}. Statut : {$res['statut']}.\n";
+                    }
+                } else {
+                    $context .= "L'utilisateur n'a aucune réservation pour le moment.\n";
+                }
+            }
+        } catch (PDOException $e) {
+            $context .= "Impossible de récupérer les informations de l'utilisateur.\n";
+        }
+    }
+    return $context;
+}
+
+/**
+ * Envoie un prompt à l'API Gemini en utilisant cURL (méthode robuste).
+ * @param string $prompt Le prompt complet à envoyer à l'IA.
+ * @return string La réponse textuelle de l'IA.
+ */
+function askGemini($prompt) {
+    $apiKey = "AIzaSyBl9EtpKCE0OIJrdPnsdyoFZsibwNLgOhc"; // 🔐 REMPLACEZ PAR VOTRE VRAIE CLÉ API
+    $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" . $apiKey;
+
+    $data = ['contents' => [['parts' => [['text' => $prompt]]]]];
+    $jsonData = json_encode($data);
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Utile pour XAMPP en local
+    
+    $result = curl_exec($ch);
+
+    if (curl_errno($ch)) {
+        error_log("cURL Error: " . curl_error($ch));
+        curl_close($ch);
+        return "Désolé, une erreur de communication réseau est survenue.";
+    }
+    curl_close($ch);
+    
+    $response = json_decode($result, true);
+
+    if (isset($response['error'])) {
+        error_log("Gemini API Error: " . $response['error']['message']);
+        return "Désolé, une erreur est survenue avec l'assistant IA.";
+    }
+    
+    return $response['candidates'][0]['content']['parts'][0]['text'] ?? "Je n'ai pas pu formuler de réponse.";
+}
+
+
 // ====================================================================
 // ==   FONCTION 1 : POUR LE MOT DE PASSE OUBLIÉ                     ==
 // ====================================================================
@@ -711,8 +804,90 @@ case 'leaveReview':
             echo json_encode(['success' => false, 'message' => 'Accès refusé.']);
         }
         break;
+ 
 
-    // ... (votre 'default' case)
+// DANS VOTRE "switch ($action) { ... }"
+// Fichier : backend/routes/api.php
+
+case 'chatbotQuery':
+    if ($method == 'POST') {
+        $data = json_decode(file_get_contents("php://input"), true);
+        $userQuestion = htmlspecialchars($data['question'] ?? '');
+        $history = $data['history'] ?? [];
+
+        $context = getProjectContext($pdo);
+        $historyString = "";
+        foreach ($history as $message) {
+            $role = ($message['role'] === 'user') ? 'Utilisateur' : 'AutoBot';
+            $historyString .= "{$role}: {$message['text']}\n";
+        }
+
+        // ====================================================================
+        // ==     NOUVEAU PROMPT AVEC DÉTECTION D'INTENTION (NIVEAU 3)       ==
+        // ====================================================================
+        $finalPrompt = "
+        Tu es AutoBot, un assistant expert de l'agence 'AutoLoc'. Ta mission est de répondre aux questions et de guider les utilisateurs.
+        Base-toi sur le CONTEXTE et l'HISTORIQUE pour formuler ta réponse.
+        
+        IMPORTANT : En plus de ta réponse, tu dois détecter si la question de l'utilisateur exprime une intention spécifique. Si c'est le cas, ajoute une commande spéciale à la fin de ta réponse. Les commandes possibles sont :
+          1.  Si l'utilisateur veut réserver une voiture spécifique, ajoute :
+        [ACTION:BOOK_CAR:ID_DE_LA_VOITURE]
+
+    2.  Si l'utilisateur demande plus d'informations sur une voiture spécifique (ex: 'parle-moi de la Clio'), ajoute :
+        [ACTION:SHOW_CAR_DETAILS:ID_DE_LA_VOITURE]
+
+    3.  Si l'utilisateur veut voir toutes les voitures, ajoute :
+        [ACTION:SHOW_ALL_CARS]
+        Si aucune de ces intentions n'est détectée, ne renvoie aucune commande.
+
+        Exemple de réponse avec commande :
+        'Excellent choix ! Le Dacia Duster est parfait pour la montagne. [ACTION:BOOK_CAR:2]'
+
+        CONTEXTE:
+        {$context}
+        ---
+        HISTORIQUE DE LA CONVERSATION:
+        {$historyString}
+        ---
+        DERNIÈRE QUESTION DE L'UTILISATEUR:
+        {$userQuestion}
+        ";
+
+        // --- L'appel à Gemini reste le même ---
+        $botResponse = askGemini($finalPrompt);
+        
+        echo json_encode(['success' => true, 'answer' => $botResponse]);
+    }
+    break;
+    
+    case 'getChatbotContext':
+        if ($method == 'GET') {
+            $contextText = "Informations générales : AutoLoc est une agence de location de voitures. Pour réserver, le client a besoin d'un permis de conduire et d'une pièce d'identité (CIN). L'annulation est flexible.\n\n";
+            $contextText .= "Voici la liste des voitures actuellement disponibles et leurs prix par jour :\n";
+
+            try {
+                // ASSUREZ-VOUS QUE CETTE REQUÊTE EST CORRECTE
+               $stmt = $pdo->query("SELECT id_voiture, marque, modele, prix_par_jour, type FROM voiture WHERE statut = 'disponible'");
+                $cars = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                // Si aucune voiture n'est trouvée, on le précise
+                if (count($cars) === 0) {
+                    $contextText .= "Actuellement, il n'y a pas de voitures spécifiques listées comme disponibles.";
+                } else {
+                    foreach ($cars as $car) {
+                     $context .= "- (ID: {$car['id_voiture']}) {$car['marque']} {$car['modele']} ({$car['type']}) à {$car['prix_par_jour']} €/jour.\n";
+                    }
+                }
+                echo json_encode(['success' => true, 'context' => $contextText]);
+
+            } catch (PDOException $e) {
+                // Log l'erreur pour le débogage côté serveur
+                error_log("Database error in getChatbotContext: " . $e->getMessage());
+                // Renvoie un message d'erreur clair au frontend
+                echo json_encode(['success' => false, 'context' => 'Impossible de récupérer les informations sur les voitures en raison d\'une erreur de base de données.']);
+            }
+        }
+        break;
 
 } 
 ini_set('display_errors', 1);
