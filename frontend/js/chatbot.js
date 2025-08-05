@@ -1,4 +1,4 @@
-// frontend/js/chatbot.js - VERSION COMPLÈTE FINALE AVEC LOGIQUE D'ACTION SUR MODALES
+// frontend/js/chatbot.js - VERSION COMPLÈTE AVEC CARTE RICHE INTÉGRÉE
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- 1. CONFIGURATION ---
@@ -27,12 +27,45 @@ document.addEventListener('DOMContentLoaded', () => {
         chatbotContainer.classList.toggle('is-closed');
     });
 
-    // Fonction pour afficher un message dans la fenêtre de chat
-    function displayMessage(text, sender) {
-        const formattedText = text.replace(/\n/g, '<br>').replace(/- /g, '• ');
+    /**
+     * Affiche un message dans la fenêtre de chat.
+     * Peut afficher du texte simple ou une "carte riche" pour une voiture.
+     * @param {string|object} content - Le texte du message ou l'objet de la voiture.
+     * @param {string} sender - 'user' ou 'bot'.
+     * @param {string} type - 'text' ou 'card'.
+     */
+    function displayMessage(content, sender, type = 'text') {
         const messageDiv = document.createElement('div');
         messageDiv.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
-        messageDiv.innerHTML = `<p>${formattedText}</p>`;
+
+        if (type === 'card' && sender === 'bot') {
+            // Si le contenu est une "carte", on utilise une structure HTML spéciale
+            messageDiv.classList.add('rich-card');
+            const car = content;
+            
+            // On utilise un chemin absolu pour plus de fiabilité
+            const imagePath = `/autoloc/uploads/cars/${car.image}`;
+            
+            messageDiv.innerHTML = `
+                <img src="${imagePath}" alt="${car.marque} ${car.modele}" class="rich-card-image">
+                <div class="rich-card-content">
+                    <h4>${car.marque} ${car.modele}</h4>
+                    <div class="rich-card-specs">
+                        <span>Année: ${car.annee}</span>
+                        <span>Type: ${car.type}</span>
+                    </div>
+                    <div class="rich-card-footer">
+                        <span class="rich-card-price">${car.prix_par_jour} €/jour</span>
+                        <button class="btn btn-primary btn-sm btn-reserve" data-id="${car.id_voiture}" data-name="${car.marque} ${car.modele}" data-price="${car.prix_par_jour}">Réserver</button>
+                    </div>
+                </div>
+            `;
+        } else {
+            // Comportement normal pour l'affichage de texte
+            const formattedText = content.replace(/\n/g, '<br>').replace(/- /g, '• ');
+            messageDiv.innerHTML = `<p>${formattedText}</p>`;
+        }
+
         messagesContainer.appendChild(messageDiv);
         // Fait défiler automatiquement jusqu'au dernier message
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -49,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
         conversationHistory.push({ role: 'user', text: userQuestion });
 
         try {
-            // On envoie la question ET l'historique à notre propre API PHP
             const response = await fetch(`${API_URL_AUTOLOC}?action=chatbotQuery`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -61,28 +93,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
             
             if (result.success) {
-                let botResponseText = result.answer;
-                const actionRegex = /\[ACTION:([A-Z_]+):?([^\]]*)?\]/;
-                const match = botResponseText.match(actionRegex);
+                // On affiche d'abord la réponse textuelle de l'IA
+                displayMessage(result.answer, 'bot');
+                conversationHistory.push({ role: 'bot', text: result.answer });
 
-                if (match) {
-                    // Si une action est détectée, on l'isole
-                    botResponseText = botResponseText.replace(actionRegex, '').trim();
-                    const action = match[1];
-                    const value = match[2];
-
-                    // On affiche d'abord la réponse textuelle du bot
-                    displayMessage(botResponseText, 'bot');
-                    conversationHistory.push({ role: 'bot', text: botResponseText });
-
-                    // On exécute l'action après un court délai pour que l'utilisateur puisse lire
-                    setTimeout(() => {
-                        executeAction(action, value);
-                    }, 1000);
-                } else {
-                    // Comportement normal si aucune action n'est détectée
-                    displayMessage(botResponseText, 'bot');
-                    conversationHistory.push({ role: 'bot', text: botResponseText });
+                // ENSUITE, on vérifie s'il y a une action à effectuer
+                if (result.action) {
+                    const action = result.action;
+                    
+                    // Si le backend nous a envoyé les données d'une voiture, on affiche la carte
+                    if (action.type === 'DISPLAY_CAR_CARD') {
+                        setTimeout(() => { // On attend un instant pour un effet plus naturel
+                            displayMessage(action.data, 'bot', 'card');
+                        }, 500);
+                    } 
+                    // Si le backend demande une redirection
+                    else if (action.type === 'SHOW_ALL_CARS') {
+                        setTimeout(() => {
+                            window.location.href = '../pages/cars-list.html';
+                        }, 1200);
+                    }
                 }
             } else {
                 displayMessage(result.message || "Désolé, une erreur est survenue.", 'bot');
@@ -95,39 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 4. GESTIONNAIRE D'ACTIONS ---
-    /**
-     * Exécute les actions demandées par l'IA (comme ouvrir une modale).
-     */
-    
-async function executeAction(action, value) {
-    const chatbotContainer = document.getElementById('chatbot-fab');
-    chatbotContainer.classList.remove('is-open');
-    chatbotContainer.classList.add('is-closed');
-
-    if (action === 'SHOW_ALL_CARS') {
-        window.location.href = '../pages/cars-list.html';
-        return;
-    }
-    
-    if (action === 'BOOK_CAR' || action === 'SHOW_CAR_DETAILS') {
-        // VALIDATION : On s'assure que la valeur est un nombre valide
-        const carId = parseInt(value, 10);
-        if (isNaN(carId) || carId <= 0) {
-            console.error("L'IA a renvoyé une valeur d'ID invalide :", value);
-            displayMessage("Je n'ai pas pu identifier la voiture. Pouvez-vous être plus précis ?", 'bot');
-            return;
-        }
-
-        if (typeof window.openDetailsModal === 'function') {
-            window.openDetailsModal(carId);
-        } else {
-            console.error("La fonction openDetailsModal n'est pas disponible.");
-        }
-    }
-}
-
-    // --- 5. ÉVÉNEMENTS ---
+    // --- 4. ÉVÉNEMENTS ---
     sendBtn.addEventListener('click', sendMessage);
     input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {

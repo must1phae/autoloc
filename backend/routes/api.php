@@ -20,6 +20,7 @@ require_once '../models/Document.php';
 require_once '../models/Avis.php';
 // Inclure le nouveau modèle
 require_once '../models/Message.php';
+
 // ... (vos autres require_once)
 
 // Initialiser le nouveau modèle
@@ -809,6 +810,7 @@ case 'leaveReview':
 // DANS VOTRE "switch ($action) { ... }"
 // Fichier : backend/routes/api.php
 
+
 case 'chatbotQuery':
     if ($method == 'POST') {
         $data = json_decode(file_get_contents("php://input"), true);
@@ -826,18 +828,22 @@ case 'chatbotQuery':
         // ==     NOUVEAU PROMPT AVEC DÉTECTION D'INTENTION (NIVEAU 3)       ==
         // ====================================================================
         
+
 $finalPrompt = "
-Tu es AutoBot, un assistant expert. Ta mission est de répondre et de détecter des intentions.
+Tu es AutoBot, un assistant expert et amical de l'agence de location 'AutoLoc'.
+Ta mission est de répondre aux questions et de guider les utilisateurs.
 
-IMPORTANT : Si tu détectes une intention, tu DOIS ajouter une commande à la fin de ta réponse.
-La commande DOIT respecter ce format : [ACTION:NOM_ACTION:VALEUR]
+RÈGLES STRICTES POUR LES COMMANDES D'ACTION :
+1. Tu ne dois ajouter une commande que si l'intention de l'utilisateur est EXPLICITE et SANS AMBIGUÏTÉ.
+2. Pour les salutations simples comme 'Bonjour', 'Salut', 'hi', 'ça va ?', réponds simplement par une salutation SANS AJOUTER DE COMMANDE.
+3. La commande DOIT respecter ce format : [ACTION:NOM_ACTION:VALEUR]
+La VALEUR doit être UNIQUEMENT le numéro de l'ID de la voiture trouvé dans le contexte. Si l'utilisateur mentionne un modèle qui est une partie du nom complet dans le contexte (ex: 'Clio' pour 'Renault Clio'), considère que c'est une correspondance valide.
+COMMANDES POSSIBLES :
+- [ACTION:BOOK_CAR:ID_NUMERIQUE] : Si l'utilisateur veut RÉSERVER une voiture spécifique. (Ex: 'je veux louer la Clio', 'réserver la voiture ID 2').
+- [ACTION:SHOW_CAR_DETAILS:ID_NUMERIQUE] : Si l'utilisateur demande des DÉTAILS sur une voiture spécifique. (Ex: 'parle-moi du Duster', 'infos sur la voiture ID 3').
+- [ACTION:SHOW_ALL_CARS] : Si l'utilisateur demande à VOIR TOUTES les voitures. (Ex: 'quel est votre catalogue', 'montrez-moi vos véhicules').
 
-Les commandes possibles sont :
-- [ACTION:BOOK_CAR:ID_NUMERIQUE] (Ex: [ACTION:BOOK_CAR:2])
-- [ACTION:SHOW_CAR_DETAILS:ID_NUMERIQUE] (Ex: [ACTION:SHOW_CAR_DETAILS:3])
-- [ACTION:SHOW_ALL_CARS]
-
-La VALEUR pour BOOK_CAR et SHOW_CAR_DETAILS doit être UNIQUEMENT le numéro de l'ID de la voiture trouvé dans le contexte, sans aucun autre texte.
+La VALEUR doit être UNIQUEMENT le numéro de l'ID de la voiture trouvé dans le contexte.
 
 CONTEXTE:
 {$context}
@@ -847,12 +853,40 @@ HISTORIQUE DE LA CONVERSATION:
 ---
 DERNIÈRE QUESTION DE L'UTILISATEUR:
 {$userQuestion}
-";
-
-        // --- L'appel à Gemini reste le même ---
+";// 1. On récupère la réponse de l'IA dans la variable $botResponse
         $botResponse = askGemini($finalPrompt);
+         
+        // 2. On utilise cette même variable $botResponse pour l'analyse
+        $actionRegex = '/\[ACTION:([A-Z_]+):?([^\]]*)?\]/';
+        preg_match($actionRegex, $botResponse, $match); // <-- CORRIGÉ
+
+        // 3. On prépare la réponse de base en utilisant aussi $botResponse
+        $responseData = [
+            'success' => true,
+            'answer' => trim(preg_replace($actionRegex, '', $botResponse)), // <-- CORRIGÉ et trim() pour enlever les espaces
+            'action' => null
+        ];
+
+        // 4. La logique suivante pour détecter l'action reste la même
+        if ($match) {
+            $action = $match[1];
+            $value = $match[2];
+            
+            if (($action === 'SHOW_CAR_DETAILS' || $action === 'BOOK_CAR') && is_numeric($value)) {
+                $carDetails = $carModel->getById($value);
+                if ($carDetails) {
+                    $responseData['action'] = [
+                        'type' => 'DISPLAY_CAR_CARD',
+                        'data' => $carDetails
+                    ];
+                }
+            } else if ($action === 'SHOW_ALL_CARS') {
+                $responseData['action'] = ['type' => 'SHOW_ALL_CARS'];
+            }
+        }
         
-        echo json_encode(['success' => true, 'answer' => $botResponse]);
+        // 5. On renvoie la réponse complète
+        echo json_encode($responseData);
     }
     break;
     
@@ -891,7 +925,6 @@ case 'getChatbotContext':
     }
     break;
 
-} 
-ini_set('display_errors', 1);
+} ini_set('display_errors', 1);
 error_reporting(E_ALL);
 ?>
