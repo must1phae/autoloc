@@ -207,16 +207,22 @@
 
     <!-- ======================= SCRIPTS JAVASCRIPT ======================= -->
     <!-- Les chemins doivent aussi être ajustés -->
-    <script src="../js/main.js"></script>
+  <!-- 1. Librairies externes (si vous les utilisez sur cette page) -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/fr.js"></script>
+
+    <!-- 2. Scripts qui DÉFINISSENT des fonctions globales -->
+    <script src="../js/app.js"></script>         <!-- Gère la navbar -->
+    <script src="../js/modal.js"></script>       <!-- DÉFINIT openDetailsModal -->
+    <script src="../js/reservation.js"></script> <!-- DÉFINIT openReservationModal -->
+
+    <!-- 3. Scripts spécifiques au contenu de la page -->
+    <script src="../js/main.js"></script>        <!-- Gère la liste des voitures de l'accueil -->
+    
+    <!-- 4. Le chatbot, qui UTILISE les fonctions des autres, est chargé EN DERNIER -->
     <script src="../js/chatbot.js"></script>
-     <script src="../js/modal.js"></script>
-       <script src="../js/reservation.js"></script>
- <!-- Flatpickr CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<!-- Flatpickr JS -->
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <!-- Pour la langue française -->
 <script src="https://npmcdn.com/flatpickr/dist/l10n/fr.js"></script>
- <script src="../js/app.js"></script>
+  
 </body>
 </html>

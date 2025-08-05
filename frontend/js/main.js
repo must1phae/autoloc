@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (authResult.success && authResult.isLoggedIn) {
             const user = authResult.user;
             const dashboardLink = user.role === 'admin' ? 'dashboard-admin.html' : 'dashboard-client.html';
-            userActionsHtml = `<div class="user-profile-icon"><a href="/${dashboardLink}"><span>${user.prenom.charAt(0).toUpperCase()}</span></a></div>`;
+            userActionsHtml = `<div class="user-profile-icon"><a href="../pages/${dashboardLink}"><span>${user.prenom.charAt(0).toUpperCase()}</span></a></div>`;
         } else {
            const authLink = isSubPage ? 'auth.html' : 'auth.html';
             

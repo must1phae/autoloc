@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Ouvre la modale, affiche le formulaire et initialise le calendrier ---
     async function openReservationModal(carId, carName, carPrice) {
         if (!reservationModalOverlay) return;
-
+window.openReservationModal = openReservationModal;
         // 1. Afficher la modale et la structure du formulaire
         reservationModalOverlay.classList.remove('modal-hidden');
         reservationModalContent.innerHTML = `
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const dateFinInput = document.getElementById('date_fin');
         dateDebutInput._flatpickr.config.onChange.push(updateReservationSummary);
         dateFinInput._flatpickr.config.onChange.push(updateReservationSummary);
-    }
+    }    window.openReservationModal = openReservationModal;
 
     // --- Initialise les calendriers Flatpickr avec les dates désactivées ---
     async function initializeCalendars(carId) {

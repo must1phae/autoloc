@@ -1,4 +1,4 @@
-// frontend/js/modal.js - VERSION MISE À JOUR AVEC DÉTAILS ÉTENDUS ET AVIS
+// frontend/js/modal.js - VERSION FINALE AVEC CORRECTION DE LA VARIABLE
 
 document.addEventListener('DOMContentLoaded', () => {
     const API_URL = 'http://localhost/autoloc/backend/routes/api.php';
@@ -18,30 +18,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Fonction pour ouvrir et remplir la modale (VERSION MODIFIÉE) ---
+    // --- Fonction pour ouvrir et remplir la modale ---
     async function openModalWithCarDetails(carId) {
         if (!modalOverlay) return;
 
-        // 1. Afficher la modale avec un message de chargement
         modalOverlay.classList.remove('modal-hidden');
         modalContentContainer.innerHTML = '<div class="loader"></div>';
         
         try {
-            // ====================================================================
-            // ==   MODIFICATION 1 : On appelle les deux API en parallèle        ==
-            // ====================================================================
             const [carResponse, reviewsResponse] = await Promise.all([
                 fetch(`${API_URL}?action=getCarDetails&id=${carId}`),
-                fetch(`${API_URL}?action=getCarReviews&id=${carId}&limit=3`) // Demande les 3 derniers avis
+                fetch(`${API_URL}?action=getCarReviews&id=${carId}&limit=3`)
             ]);
             
             const carResult = await carResponse.json();
-            const reviewsResult = await reviewsResponse.json();
+            
+            // ===============================================
+            // ==         LA CORRECTION EST ICI             ==
+            // ===============================================
+            const reviewsResult = await reviewsResponse.json(); // On utilise la bonne variable
 
             if (carResult.success) {
                 const car = carResult.data;
                 
-                // --- Construction de la section des avis ---
                 let reviewsHtml = '<p>Aucun avis pour le moment.</p>';
                 if (reviewsResult.success && reviewsResult.data.length > 0) {
                     reviewsHtml = reviewsResult.data.map(review => `
@@ -55,9 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     `).join('');
                 }
 
-                // ====================================================================
-                // ==   MODIFICATION 2 : On utilise la nouvelle structure HTML riche ==
-                // ====================================================================
                 modalContentContainer.innerHTML = `
                     <div class="modal-car-details-grid">
                         <div class="modal-car-image">
@@ -74,7 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
                            <button class="btn btn-primary btn-reserve" data-id="${car.id_voiture}" data-name="${car.marque} ${car.modele}" data-price="${car.prix_par_jour}">Réserver maintenant</button>
                         </div>
                     </div>
-
                     <div class="modal-reviews-section">
                         <h3>Derniers avis des clients</h3>
                         <div class="modal-reviews-grid">
@@ -90,6 +85,9 @@ document.addEventListener('DOMContentLoaded', () => {
             modalContentContainer.innerHTML = `<p>Une erreur de connexion est survenue.</p>`;
         }
     }
+    
+    // On expose la fonction à la portée globale
+    window.openDetailsModal = openModalWithCarDetails;
     
     // --- LOGIQUE DE FERMETURE DE LA MODALE (INCHANGÉE) ---
     function closeModal() {

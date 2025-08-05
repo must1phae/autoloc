@@ -9,12 +9,15 @@ $pass = '';
 
 $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
 
+// backend/config/db.php
+// backend/config/db.php
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     PDO::ATTR_EMULATE_PREPARES   => false,
+    // LA CORRECTION EST ICI : Force les noms de colonnes à être en minuscules
+    PDO::ATTR_CASE               => PDO::CASE_LOWER
 ];
-
 try {
     $pdo = new PDO($dsn, $user, $pass, $options);
 } catch (PDOException $e) {

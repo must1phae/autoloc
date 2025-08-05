@@ -825,33 +825,29 @@ case 'chatbotQuery':
         // ====================================================================
         // ==     NOUVEAU PROMPT AVEC DÉTECTION D'INTENTION (NIVEAU 3)       ==
         // ====================================================================
-        $finalPrompt = "
-        Tu es AutoBot, un assistant expert de l'agence 'AutoLoc'. Ta mission est de répondre aux questions et de guider les utilisateurs.
-        Base-toi sur le CONTEXTE et l'HISTORIQUE pour formuler ta réponse.
         
-        IMPORTANT : En plus de ta réponse, tu dois détecter si la question de l'utilisateur exprime une intention spécifique. Si c'est le cas, ajoute une commande spéciale à la fin de ta réponse. Les commandes possibles sont :
-          1.  Si l'utilisateur veut réserver une voiture spécifique, ajoute :
-        [ACTION:BOOK_CAR:ID_DE_LA_VOITURE]
+$finalPrompt = "
+Tu es AutoBot, un assistant expert. Ta mission est de répondre et de détecter des intentions.
 
-    2.  Si l'utilisateur demande plus d'informations sur une voiture spécifique (ex: 'parle-moi de la Clio'), ajoute :
-        [ACTION:SHOW_CAR_DETAILS:ID_DE_LA_VOITURE]
+IMPORTANT : Si tu détectes une intention, tu DOIS ajouter une commande à la fin de ta réponse.
+La commande DOIT respecter ce format : [ACTION:NOM_ACTION:VALEUR]
 
-    3.  Si l'utilisateur veut voir toutes les voitures, ajoute :
-        [ACTION:SHOW_ALL_CARS]
-        Si aucune de ces intentions n'est détectée, ne renvoie aucune commande.
+Les commandes possibles sont :
+- [ACTION:BOOK_CAR:ID_NUMERIQUE] (Ex: [ACTION:BOOK_CAR:2])
+- [ACTION:SHOW_CAR_DETAILS:ID_NUMERIQUE] (Ex: [ACTION:SHOW_CAR_DETAILS:3])
+- [ACTION:SHOW_ALL_CARS]
 
-        Exemple de réponse avec commande :
-        'Excellent choix ! Le Dacia Duster est parfait pour la montagne. [ACTION:BOOK_CAR:2]'
+La VALEUR pour BOOK_CAR et SHOW_CAR_DETAILS doit être UNIQUEMENT le numéro de l'ID de la voiture trouvé dans le contexte, sans aucun autre texte.
 
-        CONTEXTE:
-        {$context}
-        ---
-        HISTORIQUE DE LA CONVERSATION:
-        {$historyString}
-        ---
-        DERNIÈRE QUESTION DE L'UTILISATEUR:
-        {$userQuestion}
-        ";
+CONTEXTE:
+{$context}
+---
+HISTORIQUE DE LA CONVERSATION:
+{$historyString}
+---
+DERNIÈRE QUESTION DE L'UTILISATEUR:
+{$userQuestion}
+";
 
         // --- L'appel à Gemini reste le même ---
         $botResponse = askGemini($finalPrompt);
@@ -860,34 +856,40 @@ case 'chatbotQuery':
     }
     break;
     
-    case 'getChatbotContext':
-        if ($method == 'GET') {
-            $contextText = "Informations générales : AutoLoc est une agence de location de voitures. Pour réserver, le client a besoin d'un permis de conduire et d'une pièce d'identité (CIN). L'annulation est flexible.\n\n";
-            $contextText .= "Voici la liste des voitures actuellement disponibles et leurs prix par jour :\n";
+  // Fichier : backend/routes/api.php
+// Fichier : backend/routes/api.php
 
-            try {
-                // ASSUREZ-VOUS QUE CETTE REQUÊTE EST CORRECTE
-               $stmt = $pdo->query("SELECT id_voiture, marque, modele, prix_par_jour, type FROM voiture WHERE statut = 'disponible'");
-                $cars = $stmt->fetchAll(PDO::FETCH_ASSOC);
+case 'getChatbotContext':
+    if ($method == 'GET') {
+        // On initialise notre variable qui contiendra tout le contexte.
+        $contextText = "Informations générales : AutoLoc est une agence de location de voitures. Pour réserver, le client a besoin d'un permis de conduire et d'une pièce d'identité (CIN). L'annulation est flexible.\n\n";
+        $contextText .= "Voici la liste des voitures actuellement disponibles et leurs prix par jour :\n";
 
-                // Si aucune voiture n'est trouvée, on le précise
-                if (count($cars) === 0) {
-                    $contextText .= "Actuellement, il n'y a pas de voitures spécifiques listées comme disponibles.";
-                } else {
-                    foreach ($cars as $car) {
-                     $context .= "- (ID: {$car['id_voiture']}) {$car['marque']} {$car['modele']} ({$car['type']}) à {$car['prix_par_jour']} €/jour.\n";
-                    }
+        try {
+            // La requête est correcte, elle sélectionne bien id_voiture.
+            $stmt = $pdo->query("SELECT id_voiture, marque, modele, prix_par_jour, type FROM voiture WHERE statut = 'disponible'");
+            $cars = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (count($cars) === 0) {
+                $contextText .= "Actuellement, il n'y a pas de voitures spécifiques listées comme disponibles.";
+            } else {
+                foreach ($cars as $car) {
+                    // ===============================================
+                    // ==         LA CORRECTION EST ICI             ==
+                    // ===============================================
+                    // On ajoute les infos à la bonne variable : $contextText
+                    $contextText .= "- (ID: {$car['id_voiture']}) {$car['marque']} {$car['modele']} ({$car['type']}) à {$car['prix_par_jour']} €/jour.\n";
                 }
-                echo json_encode(['success' => true, 'context' => $contextText]);
-
-            } catch (PDOException $e) {
-                // Log l'erreur pour le débogage côté serveur
-                error_log("Database error in getChatbotContext: " . $e->getMessage());
-                // Renvoie un message d'erreur clair au frontend
-                echo json_encode(['success' => false, 'context' => 'Impossible de récupérer les informations sur les voitures en raison d\'une erreur de base de données.']);
             }
+            // On renvoie la variable qui contient TOUT.
+            echo json_encode(['success' => true, 'context' => $contextText]);
+
+        } catch (PDOException $e) {
+            error_log("Database error in getChatbotContext: " . $e->getMessage());
+            echo json_encode(['success' => false, 'context' => 'Erreur de base de données.']);
         }
-        break;
+    }
+    break;
 
 } 
 ini_set('display_errors', 1);
