@@ -66,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <span><strong>Type :</strong> ${car.type}</span>
                                 <span><strong>Statut :</strong> <span class="status status-${car.statut}">${car.statut}</span></span>
                             </div>
+                                   <p class="car-description">${car.description || 'Aucune description disponible.'}</p>
                             <p class="modal-price">${car.prix_par_jour} €<span>/jour</span></p>
                            <button class="btn btn-primary btn-reserve" data-id="${car.id_voiture}" data-name="${car.marque} ${car.modele}" data-price="${car.prix_par_jour}">Réserver maintenant</button>
                         </div>

@@ -3126,3 +3126,48 @@ body > main h2 {
     padding: 8px 16px;
     font-size: 0.85rem;
 }
+/* ====================================================== */
+/* ==   STYLE POUR LE CHAMP DE DESCRIPTION AVEC IA       == */
+/* ====================================================== */
+
+.textarea-with-button {
+    position: relative;
+}
+
+.textarea-with-button textarea {
+    width: 100%;
+    padding: 12px;
+    padding-right: 50px; /* Espace à droite pour le bouton */
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    font-size: 1rem;
+    resize: vertical;
+    transition: all 0.2s;
+}
+.textarea-with-button textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1);
+    outline: none;
+}
+
+.btn-ai {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem; /* Taille de l'emoji */
+    padding: 5px;
+    transition: transform 0.2s, opacity 0.2s;
+}
+.btn-ai:hover {
+    transform: scale(1.2);
+}
+.btn-ai.is-loading {
+    animation: spin 1s linear infinite;
+    opacity: 0.5;
+    cursor: wait;
+}
+/* On réutilise l'animation spin déjà définie */

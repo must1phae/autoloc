@@ -108,6 +108,15 @@
                         <div class="input-group"><label for="annee_modal">Année</label><input type="number" id="annee_modal" name="annee" required></div>
                     </div>
                     <div class="input-group"><label for="statut_modal">Statut</label><select name="statut" id="statut_modal" required><option value="disponible">Disponible</option><option value="maintenance">En maintenance</option><option value="réservée">Réservée</option><option value="désactivée">Désactivée</option></select></div>
+                      <div class="input-group">
+        <label for="description_modal">Description</label>
+        <div class="textarea-with-button">
+            <textarea id="description_modal" name="description" rows="4" placeholder="Décrivez les points forts de la voiture ou cliquez sur l'icône pour générer une description..."></textarea>
+            <button type="button" id="generate-description-btn" class="btn-ai" title="Générer avec l'IA">
+                ✨
+            </button>
+        </div>
+    </div>
                     <div class="input-group"><label for="image_modal">Image (optionnel si modification)</label><input type="file" name="image" id="image_modal" class="custom-file-input"></div>
                     
                     <button type="submit" class="btn btn-primary btn-submit">Enregistrer</button>

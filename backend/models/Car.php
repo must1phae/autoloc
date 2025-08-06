@@ -1,5 +1,5 @@
 <?php
-// Fichier : backend/models/Car.php
+// Fichier : backend/models/Car.php - VERSION MISE À JOUR
 
 class Car { 
     private $pdo;
@@ -8,73 +8,60 @@ class Car {
         $this->pdo = $pdo;
     }
 
-    /**
-     * Obtenir les voitures disponibles, avec une limite optionnelle.
-     * @param int|null $limit Le nombre maximum de voitures à retourner.
-     * @return array
-     */
-    public function getAllAvailable($limit = null) {
-        // On commence la requête de base
-        $sql = "SELECT * FROM voiture WHERE statut = 'disponible' ORDER BY id_voiture DESC";
+    // --- Fonctions publiques (pour les clients) ---
 
-        // Si une limite est fournie et est un nombre, on l'ajoute à la requête
+    public function getAllAvailable($limit = null) {
+        $sql = "SELECT * FROM voiture WHERE statut = 'disponible' ORDER BY id_voiture DESC";
         if ($limit !== null && is_numeric($limit)) {
             $sql .= " LIMIT " . intval($limit);
         }
-
         $stmt = $this->pdo->query($sql);
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
     public function getById($id) {
+        // On s'assure de sélectionner la nouvelle colonne 'description'
         $sql = "SELECT * FROM voiture WHERE id_voiture = ?";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$id]);
-        return $stmt->fetch();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-     // ... (vos fonctions getAllAvailable() et getById() existent déjà)
 
-    /**
-     * NOUVELLE FONCTION (POUR ADMIN)
-     * Récupère TOUTES les voitures, peu importe leur statut.
-     */
+    // --- Fonctions d'administration ---
+
     public function getAllForAdmin() {
         $sql = "SELECT * FROM voiture ORDER BY id_voiture DESC";
         $stmt = $this->pdo->query($sql);
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
-     * NOUVELLE FONCTION (POUR ADMIN)
      * Crée une nouvelle voiture dans la base de données.
+     * @param string $description La description de la voiture.
      */
-   /**
-     * MODIFICATION ICI : On ajoute le paramètre $statut
-     * Crée une nouvelle voiture dans la base de données.
-     */
-    public function create($marque, $modele, $type, $prix_par_jour, $annee, $image, $statut) {
-        // La requête SQL insère maintenant le statut fourni par l'admin
-        $sql = "INSERT INTO voiture (marque, modele, type, prix_par_jour, annee, image, statut) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try {
-            $stmt = $this->pdo->prepare($sql);
-            // On ajoute $statut à la liste des paramètres
-            return $stmt->execute([$marque, $modele, $type, $prix_par_jour, $annee, $image, $statut]);
-        } catch (PDOException $e) {
-            error_log($e->getMessage());
-            return false;
-        }
+    // MODIFICATION : Ajout du paramètre $description
+  public function create($marque, $modele, $type, $prix_par_jour, $annee, $image, $statut, $description) {
+    // La requête SQL doit inclure la colonne 'description'
+    $sql = "INSERT INTO voiture (marque, modele, type, prix_par_jour, annee, image, statut, description) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    try {
+        $stmt = $this->pdo->prepare($sql);
+        // On ajoute $description à la liste des paramètres à exécuter
+        return $stmt->execute([$marque, $modele, $type, $prix_par_jour, $annee, $image, $statut, $description]);
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
+        return false;
     }
-
+}
 
     /**
-     * NOUVELLE FONCTION (POUR ADMIN)
      * Met à jour les informations d'une voiture.
+     * @param string $description La nouvelle description de la voiture.
+     * @param string|null $newImageName Le nom du nouveau fichier image, ou null si l'image ne change pas.
      */
-     /**
-     * MODIFICATION ICI : On ajoute le paramètre $description
-     * Met à jour les informations d'une voiture.
-     */
-    public function update($id_voiture, $marque, $modele, $type, $prix_par_jour, $annee, $statut, $description) {
-        // La requête UPDATE inclut maintenant la colonne 'description'
+    // MODIFICATION : Ajout de $description et $newImageName pour plus de flexibilité
+    public function update($id_voiture, $marque, $modele, $type, $prix_par_jour, $annee, $statut, $description, $newImageName = null) {
+        // On construit la requête de base
         $sql = "UPDATE voiture 
                 SET 
                     marque = ?, 
@@ -83,26 +70,38 @@ class Car {
                     prix_par_jour = ?, 
                     annee = ?, 
                     statut = ?, 
-                    description = ? 
-                WHERE 
-                    id_voiture = ?";
+                    description = ? ";
+        $params = [$marque, $modele, $type, $prix_par_jour, $annee, $statut, $description];
+
+        // On ajoute la mise à jour de l'image SEULEMENT si un nouveau fichier est fourni
+        if ($newImageName !== null) {
+            $sql .= ", image = ? ";
+            $params[] = $newImageName;
+        }
+
+        $sql .= "WHERE id_voiture = ?";
+        $params[] = $id_voiture;
+
         try {
             $stmt = $this->pdo->prepare($sql);
-            // On ajoute $description à la liste des paramètres à exécuter
-            return $stmt->execute([$marque, $modele, $type, $prix_par_jour, $annee, $statut, $description, $id_voiture]);
+            return $stmt->execute($params);
         } catch (PDOException $e) {
-            error_log($e->getMessage());
+            error_log("Erreur lors de la mise à jour de la voiture : " . $e->getMessage());
             return false;
         }
     }
 
+    /**
+     * Supprime une voiture de la base de données.
+     */
     public function delete($id_voiture) {
-        // Avant de supprimer, on peut vouloir supprimer l'image associée du serveur
+        // Logique de suppression de l'image (inchangée)
         $car = $this->getById($id_voiture);
-        if ($car && $car['image'] !== 'default.jpg') {
-            $image_path = "../../frontend/uploads/cars/" . $car['image'];
+        if ($car && isset($car['image']) && $car['image'] && $car['image'] !== 'default.jpg') {
+            // Chemin plus robuste
+            $image_path = dirname(__DIR__, 2) . "/uploads/cars/" . $car['image'];
             if (file_exists($image_path)) {
-                unlink($image_path); // Supprime le fichier image
+                @unlink($image_path); // Le @ supprime les warnings si la suppression échoue
             }
         }
         
@@ -111,11 +110,9 @@ class Car {
             $stmt = $this->pdo->prepare($sql);
             return $stmt->execute([$id_voiture]);
         } catch (PDOException $e) {
-            // Gérer les erreurs, par ex. si la voiture est dans une réservation active (contrainte de clé étrangère)
-            error_log($e->getMessage());
+            error_log("Erreur lors de la suppression de la voiture : " . $e->getMessage());
             return false;
         }
     }
 }
-
 ?>

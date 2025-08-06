@@ -17,7 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalTitle = document.getElementById('modal-title');
     const closeModalBtn = document.getElementById('admin-modal-close-btn');
     const carForm = document.getElementById('car-form-modal');
-
+const generateDescBtn = document.getElementById('generate-description-btn');
+const descriptionTextarea = document.getElementById('description_modal');
     
     // =========================================================
     // ==     NOUVELLE FONCTION POUR CHARGER LES STATISTIQUES   ==
@@ -101,6 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 carForm.prix_par_jour_modal.value = car.prix_par_jour;
                 carForm.annee_modal.value = car.annee;
                 carForm.statut_modal.value = car.statut;
+                  carForm.description_modal.value = car.description || '';
                 openModal();
             }
         }
@@ -131,25 +133,81 @@ document.addEventListener('DOMContentLoaded', () => {
 
     closeModalBtn.addEventListener('click', closeModal);
     modalOverlay.addEventListener('click', (e) => e.target === modalOverlay && closeModal());
+ if (generateDescBtn) {
+        generateDescBtn.addEventListener('click', async () => {
+            const marque = carForm.marque_modal.value;
+            const modele = carForm.modele_modal.value;
+            const type = carForm.type_modal.value;
+            const annee = carForm.annee_modal.value;
 
+            if (!marque || !modele) {
+                alert("Veuillez d'abord renseigner la marque et le modèle.");
+                return;
+            }
+
+            generateDescBtn.classList.add('is-loading');
+            descriptionTextarea.value = "Génération en cours...";
+
+            try {
+                const response = await fetch(`${API_URL}?action=generateCarDescription`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ marque, modele, type, annee })
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    descriptionTextarea.value = result.description;
+                } else {
+                    descriptionTextarea.value = '';
+                    alert(`Erreur : ${result.description}`);
+                }
+            } catch (error) {
+                descriptionTextarea.value = '';
+                alert("Erreur de connexion avec le service de génération.");
+            } finally {
+                generateDescBtn.classList.remove('is-loading');
+            }
+        });
+    }
     // --- SOUMISSION DU FORMULAIRE (AJOUT OU MODIFICATION) ---
-    carForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const carId = carForm.id_voiture_modal.value;
-        const url = carId ? `${API_URL}?action=adminUpdateCar` : `${API_URL}?action=adminAddCar`;
+   carForm.addEventListener('submit', async (e) => {
+    e.preventDefault(); // Empêche la soumission classique
 
-        // =========================================================
-        // == MODIFICATION : On utilise une soumission de formulaire classique
-        // == pour gérer la redirection du backend.
-        // =========================================================
-        const form = e.target;
-        form.action = url; // On définit l'URL d'action dynamiquement
-        form.method = 'POST';
-        form.enctype = 'multipart/form-data'; // Important pour l'upload de fichier
-        
-        // On soumet le formulaire de manière traditionnelle, ce qui suivra la redirection du PHP.
-        form.submit(); 
-    });
+    // On récupère les données du formulaire, y compris l'image
+    const formData = new FormData(carForm);
+    const carId = carForm.id_voiture_modal.value;
+    const url = carId ? `${API_URL}?action=adminUpdateCar` : `${API_URL}?action=adminAddCar`;
+    
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            body: formData // Avec FormData, pas besoin de headers Content-Type
+        });
+
+        // On vérifie si la réponse est bien du JSON avant de la lire
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+            const result = await response.json();
+            
+            if (result.success) {
+                alert(result.message); // Affiche la pop-up de succès
+                closeModal(); // Ferme la modale
+                loadCars();   // Recharge la liste des voitures dans le tableau
+            } else {
+                alert(`Erreur : ${result.message}`);
+            }
+        } else {
+            // Si le serveur n'a pas renvoyé de JSON (erreur PHP par exemple)
+            const textResponse = await response.text();
+            console.error("Réponse inattendue du serveur:", textResponse);
+            alert("Une erreur inattendue est survenue. Consultez la console pour plus de détails.");
+        }
+    } catch (error) {
+        console.error("Erreur de connexion:", error);
+        alert('Une erreur de connexion est survenue.');
+    }
+});
 loadStats(); 
     loadCars();
 });

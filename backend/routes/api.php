@@ -406,37 +406,51 @@ case 'createReservation':
         break;
 
     case 'adminAddCar':
-        if (isAdmin() && $method == 'POST') {
+    // On vérifie si l'utilisateur est un admin et si la méthode est POST
+    if (isAdmin() && $method == 'POST') {
+        
+        // 1. On récupère toutes les données du formulaire, y compris la nouvelle description
+        $marque = $_POST['marque'] ?? '';
+        $modele = $_POST['modele'] ?? '';
+        $type = $_POST['type'] ?? '';
+        $prix = $_POST['prix_par_jour'] ?? 0;
+        $annee = $_POST['annee'] ?? 0;
+        $statut = $_POST['statut'] ?? 'disponible';
+        $description = $_POST['description'] ?? ''; // <-- NOUVEAU : On récupère la description
+
+        // 2. On gère l'upload de l'image
+        $image_name = 'default.jpg'; 
+        if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+            $target_dir = "../../uploads/cars/"; // Assurez-vous que ce chemin est correct
+            // Créer un nom de fichier unique pour éviter les conflits
+            $image_name = uniqid('car_', true) . '.' . pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION);
+            $target_file = $target_dir . $image_name;
             
-            // On récupère les données du formulaire
-            $marque = $_POST['marque'];
-            $modele = $_POST['modele'];
-            $type = $_POST['type'];
-            $prix = $_POST['prix_par_jour'];
-            $annee = $_POST['annee'];
-            $statut = $_POST['statut']; // <-- ON RÉCUPÈRE LE NOUVEAU CHAMP
-
-            $image_name = 'default.jpg'; 
-
-            if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-                // ... (votre code d'upload d'image reste le même)
-                $target_dir = "../../uploads/cars/";
-                $image_name = uniqid() . '-' . basename($_FILES["image"]["name"]);
-                $target_file = $target_dir . $image_name;
-                move_uploaded_file($_FILES["image"]["tmp_name"], $target_file);
+            // On déplace le fichier uploadé
+            if (!move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+                // En cas d'échec de l'upload, on renvoie une erreur
+                echo json_encode(['success' => false, 'message' => "Erreur lors de l'upload de l'image."]);
+                exit();
             }
-            
-            // On passe le statut à la fonction create()
-            $success = $carModel->create($marque, $modele, $type, $prix, $annee, $image_name, $statut);
-
-            if ($success) {
-                header('Location: ../../frontend/pages/dashboard-admin.html?message=success');
-            } else {
-                header('Location: ../../frontend/pages/add-car.html?message=error');
-            }
-            exit();
         }
-        break;
+        
+        // 3. On appelle la fonction create() du modèle avec TOUS les paramètres
+        // Votre fonction create() dans Car.php n'a pas encore le paramètre description,
+        // nous devons d'abord la mettre à jour. (Je vais supposer que vous avez la version que je vous ai donnée)
+        $success = $carModel->create($marque, $modele, $type, $prix, $annee, $image_name, $statut, $description);
+
+        // 4. CORRECTION : On renvoie une réponse JSON, pas une redirection
+        if ($success) {
+        echo json_encode(['success' => true, 'message' => 'Voiture ajoutée avec succès !']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Erreur lors de l\'ajout.']);
+    }
+    } else {
+        // Si l'utilisateur n'est pas admin ou si la méthode n'est pas POST
+        http_response_code(403); // Forbidden
+        echo json_encode(['success' => false, 'message' => 'Accès non autorisé.']);
+    }
+    break;
         
     // Vous ajouterez 'adminUpdateCar' et 'adminDeleteCar' sur le même principe.
       case 'adminUpdateCar':
@@ -811,63 +825,81 @@ case 'leaveReview':
 // Fichier : backend/routes/api.php
 
 
+
 case 'chatbotQuery':
     if ($method == 'POST') {
+        // 1. Récupérer les données envoyées par le JavaScript
         $data = json_decode(file_get_contents("php://input"), true);
         $userQuestion = htmlspecialchars($data['question'] ?? '');
         $history = $data['history'] ?? [];
 
-        $context = getProjectContext($pdo);
+        // 2. Récupérer le contexte du projet (voitures, utilisateur, etc.)
+        // (Assurez-vous que la fonction getProjectContext($pdo) est bien définie avant le switch)
+        $context = getProjectContext($pdo); 
+
+        // 3. Formater l'historique pour le prompt
         $historyString = "";
         foreach ($history as $message) {
             $role = ($message['role'] === 'user') ? 'Utilisateur' : 'AutoBot';
             $historyString .= "{$role}: {$message['text']}\n";
         }
 
-        // ====================================================================
-        // ==     NOUVEAU PROMPT AVEC DÉTECTION D'INTENTION (NIVEAU 3)       ==
-        // ====================================================================
-        
+        // 4. Construire le prompt final et détaillé pour l'IA
+        $finalPrompt = "
+        Tu es AutoBot, un assistant expert et amical de l'agence de location 'AutoLoc'.
+        Ta mission est de répondre aux questions et de guider les utilisateurs.
 
-$finalPrompt = "
-Tu es AutoBot, un assistant expert et amical de l'agence de location 'AutoLoc'.
-Ta mission est de répondre aux questions et de guider les utilisateurs.
+        RÈGLES STRICTES POUR LES COMMANDES D'ACTION :
+        1. Tu ne dois ajouter une commande que si l'intention de l'utilisateur est EXPLICITE et SANS AMBIGUÏTÉ.
+        2. Pour les salutations simples comme 'Bonjour', 'Salut', 'hi', 'ça va ?', réponds simplement par une salutation SANS AJOUTER DE COMMANDE.
+        3. La commande DOIT respecter ce format : [ACTION:NOM_ACTION:VALEUR]
+        4. La VALEUR pour BOOK_CAR et SHOW_CAR_DETAILS doit être UNIQUEMENT le numéro de l'ID de la voiture trouvé dans le contexte.
 
-RÈGLES STRICTES POUR LES COMMANDES D'ACTION :
-1. Tu ne dois ajouter une commande que si l'intention de l'utilisateur est EXPLICITE et SANS AMBIGUÏTÉ.
-2. Pour les salutations simples comme 'Bonjour', 'Salut', 'hi', 'ça va ?', réponds simplement par une salutation SANS AJOUTER DE COMMANDE.
-3. La commande DOIT respecter ce format : [ACTION:NOM_ACTION:VALEUR]
-La VALEUR doit être UNIQUEMENT le numéro de l'ID de la voiture trouvé dans le contexte. Si l'utilisateur mentionne un modèle qui est une partie du nom complet dans le contexte (ex: 'Clio' pour 'Renault Clio'), considère que c'est une correspondance valide.
-COMMANDES POSSIBLES :
-- [ACTION:BOOK_CAR:ID_NUMERIQUE] : Si l'utilisateur veut RÉSERVER une voiture spécifique. (Ex: 'je veux louer la Clio', 'réserver la voiture ID 2').
-- [ACTION:SHOW_CAR_DETAILS:ID_NUMERIQUE] : Si l'utilisateur demande des DÉTAILS sur une voiture spécifique. (Ex: 'parle-moi du Duster', 'infos sur la voiture ID 3').
-- [ACTION:SHOW_ALL_CARS] : Si l'utilisateur demande à VOIR TOUTES les voitures. (Ex: 'quel est votre catalogue', 'montrez-moi vos véhicules').
+        COMMANDES POSSIBLES :
+        - [ACTION:BOOK_CAR:ID_NUMERIQUE] : Si l'utilisateur veut RÉSERVER une voiture spécifique.
+        - [ACTION:SHOW_CAR_DETAILS:ID_NUMERIQUE] : Si l'utilisateur demande des DÉTAILS sur une voiture spécifique.
+        - [ACTION:SHOW_ALL_CARS] : Si l'utilisateur demande à VOIR TOUTES les voitures.
 
-La VALEUR doit être UNIQUEMENT le numéro de l'ID de la voiture trouvé dans le contexte.
+        CONTEXTE:
+        {$context}
+        ---
+        HISTORIQUE DE LA CONVERSATION:
+        {$historyString}
+        ---
+        DERNIÈRE QUESTION DE L'UTILISATEUR:
+        {$userQuestion}
+        ";
 
-CONTEXTE:
-{$context}
----
-HISTORIQUE DE LA CONVERSATION:
-{$historyString}
----
-DERNIÈRE QUESTION DE L'UTILISATEUR:
-{$userQuestion}
-";// 1. On récupère la réponse de l'IA dans la variable $botResponse
+        // 5. Appeler l'IA pour obtenir la réponse
+        // (Assurez-vous que la fonction askGemini($prompt) est bien définie avant le switch)
         $botResponse = askGemini($finalPrompt);
-         
-        // 2. On utilise cette même variable $botResponse pour l'analyse
-        $actionRegex = '/\[ACTION:([A-Z_]+):?([^\]]*)?\]/';
-        preg_match($actionRegex, $botResponse, $match); // <-- CORRIGÉ
+        
+        // 6. NOUVEAU : Enregistrer la conversation dans la base de données
+        try {
+            if (!isset($_SESSION['chatbot_session_id'])) {
+                $_SESSION['chatbot_session_id'] = uniqid('chat_', true);
+            }
+            $sessionId = $_SESSION['chatbot_session_id'];
+            $userId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
 
-        // 3. On prépare la réponse de base en utilisant aussi $botResponse
+            $sql = "INSERT INTO conversation_chatbot (session_id, id_user, prompt_utilisateur, reponse_bot) VALUES (?, ?, ?, ?)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$sessionId, $userId, $userQuestion, $botResponse]);
+        } catch (PDOException $e) {
+            error_log("Erreur d'enregistrement de la conversation chatbot : " . $e->getMessage());
+        }
+        
+        // 7. Analyser la réponse de l'IA pour extraire les actions
+        $actionRegex = '/\[ACTION:([A-Z_]+):?([^\]]*)?\]/';
+        preg_match($actionRegex, $botResponse, $match);
+
+        // 8. Préparer la réponse JSON pour le frontend
         $responseData = [
             'success' => true,
-            'answer' => trim(preg_replace($actionRegex, '', $botResponse)), // <-- CORRIGÉ et trim() pour enlever les espaces
+            'answer' => trim(preg_replace($actionRegex, '', $botResponse)),
             'action' => null
         ];
 
-        // 4. La logique suivante pour détecter l'action reste la même
         if ($match) {
             $action = $match[1];
             $value = $match[2];
@@ -885,7 +917,7 @@ DERNIÈRE QUESTION DE L'UTILISATEUR:
             }
         }
         
-        // 5. On renvoie la réponse complète
+        // 9. Renvoyer la réponse finale au JavaScript
         echo json_encode($responseData);
     }
     break;
@@ -924,6 +956,42 @@ case 'getChatbotContext':
         }
     }
     break;
+       case 'generateCarDescription':
+        if ($method == 'POST') {
+            $data = json_decode(file_get_contents("php://input"), true);
+
+            // On récupère les infos déjà saisies par l'admin
+            $marque = htmlspecialchars($data['marque'] ?? '');
+            $modele = htmlspecialchars($data['modele'] ?? '');
+            $type = htmlspecialchars($data['type'] ?? '');
+            $annee = htmlspecialchars($data['annee'] ?? '');
+
+            if (empty($marque) || empty($modele)) {
+                echo json_encode(['success' => false, 'description' => 'Veuillez au moins renseigner la marque et le modèle.']);
+                exit();
+            }
+
+            // On construit un prompt spécifique pour la description
+            $prompt = "
+            Tu es un expert en marketing automobile pour une agence de location nommée AutoLoc.
+            Rédige une description courte (2-3 phrases), attractive et engageante pour la voiture suivante.
+            Mets en avant les points forts probables de ce type de véhicule (confort, sportivité, espace, économie...).
+            
+            Informations sur la voiture :
+            - Marque : {$marque}
+            - Modèle : {$modele}
+            - Type : {$type}
+            - Année : {$annee}
+
+            Le ton doit être professionnel mais séduisant. Ne retourne que le texte de la description, sans introduction ni conclusion.
+            ";
+            
+            // On réutilise notre fonction existante pour appeler Gemini
+            $description = askGemini($prompt);
+
+            echo json_encode(['success' => true, 'description' => trim($description)]);
+        }
+        break;
 
 } ini_set('display_errors', 1);
 error_reporting(E_ALL);
