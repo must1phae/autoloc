@@ -453,33 +453,42 @@ case 'createReservation':
     break;
         
     // Vous ajouterez 'adminUpdateCar' et 'adminDeleteCar' sur le même principe.
-      case 'adminUpdateCar':
-        if (isAdmin() && $method == 'POST') {
-            // On récupère les données du formulaire
-            $id = $_POST['id_voiture'];
-            $marque = $_POST['marque'];
-            $modele = $_POST['modele'];
-            $type = $_POST['type'];
-            $prix = $_POST['prix_par_jour'];
-            $annee = $_POST['annee'];
-            $statut = $_POST['statut'];
-            
-            // ===============================================
-            // == RÉCUPÉRATION DU NOUVEAU CHAMP DESCRIPTION ==
-            // ===============================================
-            $description = $_POST['description'];
+   case 'adminUpdateCar':
+    if (isAdmin() && $method == 'POST' && !empty($_POST['id_voiture'])) {
+        
+        $carId = $_POST['id_voiture'];
+        $newImageName = null;
 
-            // On passe la nouvelle variable à la fonction du modèle
-            $success = $carModel->update($id, $marque, $modele, $type, $prix, $annee, $statut, $description);
-
-            if ($success) {
-                header('Location: ../../frontend/pages/dashboard-admin.html?message=update_success');
-            } else {
-                header('Location: ../../frontend/pages/edit-car.html?id=' . $id . '&message=error');
-            }
-            exit();
+        if (isset($_FILES['image']) && $_FILES['image']['error'] == 0 && !empty($_FILES['image']['name'])) {
+            $target_dir = "../../uploads/cars/";
+            $newImageName = uniqid('car_', true) . '.' . pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION);
+            $target_file = $target_dir . $newImageName;
+            move_uploaded_file($_FILES["image"]["tmp_name"], $target_file);
         }
-        break;
+
+        // CORRECTION : On utilise l'opérateur ?? pour éviter les erreurs "Undefined array key"
+        $success = $carModel->update(
+            $carId,
+            $_POST['marque'] ?? '',
+            $_POST['modele'] ?? '',
+            $_POST['type'] ?? '',
+            $_POST['prix_par_jour'] ?? 0,
+            $_POST['annee'] ?? 0,
+            $_POST['statut'] ?? 'disponible',
+            $_POST['description'] ?? '', // <-- SÉCURISÉ
+            $newImageName
+        );
+
+        if ($success) {
+            echo json_encode(['success' => true, 'message' => 'Voiture modifiée avec succès.']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Erreur lors de la modification de la voiture.']);
+        }
+    } else {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'Accès non autorisé ou données manquantes.']);
+    }
+    break;
 
     case 'adminDeleteCar':
         if (isAdmin() && $method == 'POST') {

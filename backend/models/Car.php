@@ -74,10 +74,14 @@ class Car {
         $params = [$marque, $modele, $type, $prix_par_jour, $annee, $statut, $description];
 
         // On ajoute la mise à jour de l'image SEULEMENT si un nouveau fichier est fourni
-        if ($newImageName !== null) {
-            $sql .= ", image = ? ";
-            $params[] = $newImageName;
-        }
+       // =========================================================
+    // ==     LOGIQUE CLÉ : On ajoute l'image à la requête      ==
+    // ==     SEULEMENT si un nouveau nom de fichier est passé.   ==
+    // =========================================================
+    if ($newImageName !== null) {
+        $sql .= ", image = ? ";
+        $params[] = $newImageName; // On ajoute le nom de l'image aux paramètres
+    }
 
         $sql .= "WHERE id_voiture = ?";
         $params[] = $id_voiture;
