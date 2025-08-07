@@ -23,7 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
             { href: 'reservations-list.html', label: 'Réservations' },
             { href: 'user-list.html', label: 'Utilisateurs' },
             { href: 'admin-messages.html', label: 'Messages' },
-            { href: 'verify-documents.html', label: 'Documents' }
+            { href: 'verify-documents.html', label: 'Documents' },
+            { href: 'booking-traffic.html', label: 'Trafic de Réservations' }
         ];
 
         // On génère le HTML pour les liens et on ajoute la classe 'active' au bon

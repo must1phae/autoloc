@@ -1001,6 +1001,147 @@ case 'getChatbotContext':
             echo json_encode(['success' => true, 'description' => trim($description)]);
         }
         break;
+     
+// Fichier : backend/routes/api.php
+// Fichier : backend/routes/api.php
+// À l'intérieur de votre switch ($action)
+
+case 'getBookingTraffic':
+    if (isAdmin()) { // On s'assure que seul un admin peut accéder
+        try {
+            // 1. Récupérer les filtres optionnels depuis l'URL
+            $carType = $_GET['type'] ?? 'all';
+            $period = $_GET['period'] ?? 'all';
+
+            // 2. Construire la requête SQL de base avec une jointure
+            $sql = "SELECT r.date_debut 
+                    FROM reservation r 
+                    JOIN voiture v ON r.id_voiture = v.id_voiture";
+            
+            // On prépare les tableaux pour les conditions et les paramètres
+            $conditions = [];
+            $params = [];
+
+            // Ajouter dynamiquement la condition pour le type de voiture
+            if ($carType !== 'all') {
+                $conditions[] = "v.type = ?";
+                $params[] = $carType;
+            }
+
+            // Ajouter dynamiquement la condition pour la période
+            if ($period === 'last30') {
+                $conditions[] = "r.date_debut >= CURDATE() - INTERVAL 30 DAY";
+            } elseif ($period === 'last90') {
+                $conditions[] = "r.date_debut >= CURDATE() - INTERVAL 90 DAY";
+            }
+            
+            // Si des filtres sont actifs, on les ajoute à la requête SQL
+            if (!empty($conditions)) {
+                $sql .= " WHERE " . implode(" AND ", $conditions);
+            }
+
+            // 3. Exécuter la requête pour obtenir les dates de réservation
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            $dates = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+            
+            // 4. Agréger les données : compter le nombre de réservations par jour
+            $bookingsPerDay = [];
+            foreach ($dates as $date) {
+                $day = (new DateTime($date))->format('Y-m-d');
+                if (!isset($bookingsPerDay[$day])) {
+                    $bookingsPerDay[$day] = 0;
+                }
+                $bookingsPerDay[$day]++;
+            }
+
+            // 5. Formater les données historiques pour le graphique ApexCharts
+            $seriesData = [];
+            foreach ($bookingsPerDay as $day => $count) {
+                $seriesData[] = ['x' => $day, 'y' => $count];
+            }
+
+            // 6. Prédiction intelligente avec l'IA
+            $today = new DateTime();
+            $historicalDataString = "";
+            foreach($bookingsPerDay as $day => $count) {
+                $historicalDataString .= "{$day}: {$count} réservations\n";
+            }
+            if (empty($historicalDataString)) {
+                $historicalDataString = "Aucune donnée de réservation historique disponible.";
+            }
+
+            $predictionPrompt = "
+            Tu es un analyste de données expert pour une agence de location de voitures.
+            Ta mission est de prédire la demande de réservations pour les 7 prochains jours.
+            
+            Informations à ta disposition :
+            - CONTEXTE ACTUEL : Nous sommes un " . $today->format('l') . " du mois de " . $today->format('F') . ".
+            - DONNÉES HISTORIQUES (date: nombre de réservations) :
+            {$historicalDataString}
+
+            TÂCHE :
+            Analyse les tendances (hebdomadaires, saisonnières) et prédis le nombre de réservations pour les 7 prochains jours.
+            Ta réponse doit être UNIQUEMENT un tableau JSON valide au format suivant :
+            [{\"date\":\"YYYY-MM-DD\",\"prediction\":X}, ...]";
+            
+            // On appelle l'IA
+            $predictionsJsonString = askGemini($predictionPrompt);
+            $predictionsRaw = json_decode($predictionsJsonString, true);
+
+            // 7. Formater la réponse de l'IA ou utiliser le plan B
+            $predictions = [];
+            if (is_array($predictionsRaw)) {
+                foreach ($predictionsRaw as $pred) {
+                    if (isset($pred['date']) && isset($pred['prediction'])) {
+                        $predictions[] = ['x' => $pred['date'], 'y' => $pred['prediction']];
+                    }
+                }
+            } else {
+                // Plan B : Simulation simple si l'IA échoue
+                error_log("Réponse de l'IA pour la prédiction n'est pas un JSON valide : " . $predictionsJsonString);
+                $lastDayCount = end($bookingsPerDay) ?: 1;
+                for ($i = 1; $i <= 7; $i++) {
+                    $nextDay = (new DateTime("now +{$i} days"))->format('Y-m-d');
+                    $predictions[] = ['x' => $nextDay, 'y' => max(0, $lastDayCount + rand(-1, 2))];
+                }
+            }
+
+            // 8. Renvoyer toutes les données au format JSON
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'historical' => $seriesData,
+                    'predictions' => $predictions
+                ]
+            ]);
+
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erreur de base de données.']);
+        }
+    } else {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'Accès refusé.']);
+    }
+    break;
+// N'oubliez pas d'ajouter aussi ce nouveau 'case' pour peupler le filtre
+case 'getCarTypes':
+    if (isAdmin()) {
+        try {
+            $stmt = $pdo->query("SELECT DISTINCT type FROM voiture WHERE type IS NOT NULL AND type != '' ORDER BY type ASC");
+            $types = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+            echo json_encode(['success' => true, 'data' => $types]);
+        } catch (PDOException $e) {
+            echo json_encode(['success' => false, 'message' => 'Erreur de base de données.']);
+        }
+    } else {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'Accès refusé.']);
+    }
+    break;
+// N'oubliez pas d'ajouter aussi ce nouveau 'case' pour peupler le filtre
+ 
 
 } ini_set('display_errors', 1);
 error_reporting(E_ALL);

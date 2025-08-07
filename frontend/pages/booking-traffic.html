@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Trafic des Réservations - Admin</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+     <header class="main-header admin-header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="dashboard-admin.html">AutoLoc <span>Admin</span></a>
+            </div>
+            <!-- La nav est maintenant vide, car le JS va la remplir -->
+<nav class="main-nav" id="main-navigation-admin"></nav>
+            <div class="user-actions">
+                <button id="logout-btn" class="btn btn-secondary">Déconnexion</button>
+            </div>
+        </div>
+    </header>
+
+
+    <main class="main-container">
+        <div class="admin-page-header">
+            <h1>Trafic des Réservations</h1>
+            <button id="export-pdf-btn" class="btn btn-secondary">Exporter en PDF</button>
+        </div>
+<div class="traffic-filters">
+        <div class="filter-group">
+            <label for="filter-car-type">Type de Véhicule :</label>
+            <select id="filter-car-type" class="filter-select">
+                <option value="all">Tous les types</option>
+                <!-- Les options seront remplies par JS -->
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="filter-period">Période :</label>
+            <select id="filter-period" class="filter-select">
+                <option value="all">Toute la période</option>
+                <option value="last30">30 derniers jours</option>
+                <option value="last90">90 derniers jours</option>
+            </select>
+        </div>
+    </div>
+
+        <!-- Le conteneur où le graphique sera dessiné -->
+        <div id="heatmap-chart-container">
+            <p class="loader"> </p>
+        </div>
+    </main>
+
+    <!-- Librairies externes nécessaires -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script> <!-- Pour les graphiques -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> <!-- Pour l'export PDF -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script> <!-- Pour convertir le graphique en image -->
+
+    <!-- Vos scripts -->
+    <script src="../js/booking-traffic.js"></script>
+    <script src="../js/admin-nav.js"></script>
+</body>
+</html>

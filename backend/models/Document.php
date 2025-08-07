@@ -32,7 +32,12 @@ class Document {
         $stmt->execute([$id_user]);
         return $stmt->fetchAll();
     }
-    
+    public function getById($docId) {
+    $sql = "SELECT * FROM document WHERE id_doc = ?";
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([$docId]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
     /**
      * (POUR ADMIN) Récupère tous les documents en attente de validation.
      */

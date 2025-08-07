@@ -3151,19 +3151,20 @@ body > main h2 {
 }
 
 .btn-ai {
-    position: absolute;
+    
     right: 10px;
     top: 10px;
-    
+    border: #000 1px solid;
     background-color: transparent;
-    border: none;
+    border-radius: 30px;
+    
     cursor: pointer;
     font-size: 1.5rem; /* Taille de l'emoji */
     padding: 5px;
     transition: transform 0.2s, opacity 0.2s;
 }
 .btn-ai:hover {
-    transform: scale(1.2);
+    transform: scale(1.01);
 }
 .btn-ai.is-loading {
     animation: spin 1s linear infinite;
@@ -3171,3 +3172,147 @@ body > main h2 {
     cursor: wait;
 }
 /* On réutilise l'animation spin déjà définie */
+/* ====================================================== */
+/* ==   STYLES POUR LA PAGE TRAFIC DES RÉSERVATIONS      == */
+/* ====================================================== */
+.traffic-filters {
+    padding: 1rem;
+    background-color: var(--light-gray-bg);
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem;
+}
+
+#heatmap-chart-container {
+    padding: 1rem;
+    background-color: #fff;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+/* Style pour la légende et les labels d'ApexCharts */
+.apexcharts-legend-text, .apexcharts-xaxis-label, .apexcharts-yaxis-label {
+    font-family: var(--font-family) !important;
+}/* ====================================================== */
+/* ==         STYLES POUR LE FOOTER CRÉATIF (CORRIGÉ)    == */
+/* ====================================================== */
+
+.main-footer {
+    background-color: var(--dark-color);
+    color: #adb5bd;
+    padding: 4rem 0 0;
+    margin-top: 4rem;
+}
+
+/* MODIFICATION : On utilise le .container qui est déjà centré */
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2.5rem;
+    padding-bottom: 3rem;
+    /* On utilise le conteneur standard de votre site pour le centrage */
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.footer-column h4 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #303030;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+.footer-column h4::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 30px;
+    height: 2px;
+    /* MODIFICATION : On utilise une couleur visible sur fond noir, comme le blanc ou un gris clair */
+    background-color: #fff;
+}
+
+.footer-logo {
+    font-size: 1.8rem !important;
+    color: #000000 !important; /* Logo en blanc pour être visible */
+}
+.footer-logo::after { display: none !important; }
+
+.footer-column p {
+    line-height: 1.8;
+}
+
+.footer-links li, .footer-contact li {
+    margin-bottom: 0.75rem;
+}
+.footer-links a, .footer-contact a {
+    color: #737272;
+    transition: all 0.2s ease-in-out;
+}
+.footer-links a:hover {
+    color: #101010;
+    padding-left: 5px;
+}
+
+/* Style des infos de contact avec icônes */
+.footer-contact li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.footer-contact svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    /* MODIFICATION : On met les icônes en blanc pour qu'elles ressortent */
+    color: #6c6c6c;
+}
+
+/* Style des icônes de réseaux sociaux */
+.social-links {
+    display: flex;
+    gap: 1rem;
+}
+.social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: #ffffff; /* Fond gris foncé pour les cercles */
+    border-radius: 50%;
+    color: #000000;
+    transition: all 0.2s ease-in-out;
+}
+.social-links a:hover {
+    background-color: #000000; /* Fond blanc au survol */
+    color: white; /* Icône noire au survol */
+    transform: translateY(-3px);
+}
+.social-links svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Barre de copyright en bas */
+.footer-bottom {
+    padding: 1.5rem 0;
+    text-align: center;
+    border-top: 1px solid #343a40;
+    font-size: 0.9em;
+}
+
+/* Responsive Design pour le footer */
+@media (max-width: 768px) {
+    .footer-grid {
+        text-align: center;
+    }
+    .footer-column h4::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .footer-contact li, .social-links {
+        justify-content: center;
+    }
+}
