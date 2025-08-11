@@ -119,5 +119,38 @@ class Reservation {
             return false;
         }
     }
+    
+    // =========================================================
+    // ==         LA FONCTION MANQUANTE À AJOUTER ICI         ==
+    // =========================================================
+    /**
+     * Récupère les détails complets d'une réservation par son ID.
+     * Inclut les informations sur la voiture et l'utilisateur.
+     * @param int $reservationId L'ID de la réservation à trouver.
+     * @return array|false Les détails de la réservation, ou false si non trouvée.
+     */
+    public function getById($reservationId) {
+        $sql = "SELECT 
+                    r.*, 
+                    v.marque, v.modele, 
+                    u.prenom, u.nom 
+                FROM 
+                    reservation r
+                JOIN 
+                    voiture v ON r.id_voiture = v.id_voiture
+                JOIN 
+                    utilisateur u ON r.id_user = u.id_user
+                WHERE 
+                    r.id_reservation = ?";
+        
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$reservationId]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Erreur dans Reservation::getById() : " . $e->getMessage());
+            return false;
+        }
+    }
 }
 ?>

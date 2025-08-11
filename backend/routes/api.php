@@ -175,6 +175,19 @@ function sendVerificationEmail($userEmail, $code) {
         $mail->send(); return true;
     } catch (Exception $e) { error_log("PHPMailer Error: {$mail->ErrorInfo}"); return false; }
 }
+/**
+ * Crée une nouvelle notification pour un utilisateur.
+ * @param PDO $pdo L'objet de connexion.
+ * @param int $userId L'ID de l'utilisateur.
+ * @param string $message Le texte de la notification.
+ * @param string $type Le type ('success', 'info', etc.).
+ * @param string|null $link Un lien optionnel.
+ */
+function createNotification($pdo, $userId, $message, $type = 'info', $link = null) {
+    $sql = "INSERT INTO notifications (id_user, message, type, lien) VALUES (?, ?, ?, ?)";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$userId, $message, $type, $link]);
+}
 function isAdmin() {
     return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
 }
@@ -579,17 +592,79 @@ case 'createReservation':
         }
         break;
 
-    case 'adminUpdateReservationStatus':
-        if (isAdmin() && $method == 'POST') {
-            $data = json_decode(file_get_contents("php://input"), true);
-            $success = $reservationModel->updateStatus($data['id_reservation'], $data['statut']);
-            if ($success) {
-                echo json_encode(['success' => true, 'message' => 'Statut de la réservation mis à jour.']);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Erreur lors de la mise à jour.']);
-            }
+case 'adminUpdateReservationStatus':
+    if (isAdmin() && $method == 'POST') {
+        $data = json_decode(file_get_contents("php://input"), true);
+        
+        // On récupère les données envoyées par le JavaScript
+        $reservationId = $data['id_reservation'] ?? null;
+        $newStatus = $data['statut'] ?? null;
+
+        // Validation simple
+        if (!$reservationId || !$newStatus) {
+            echo json_encode(['success' => false, 'message' => 'Données manquantes.']);
+            exit();
         }
-        break;
+
+        // On met à jour le statut dans la base de données
+        $success = $reservationModel->updateStatus($reservationId, $newStatus);
+        
+        if ($success) {
+            // =========================================================
+            // ==     MODIFICATION : On génère une notification       ==
+            // =========================================================
+            try {
+                // 1. On récupère les détails de la réservation pour connaître l'ID de l'utilisateur
+                $reservation = $reservationModel->getById($reservationId);
+                if ($reservation) {
+                    $userId = $reservation['id_user'];
+                    $carInfo = $reservation['marque'] . ' ' . $reservation['modele'];
+                    $message = '';
+                    $type = 'info';
+
+                    // 2. On prépare un message personnalisé en fonction du nouveau statut
+                    switch ($newStatus) {
+                        case 'confirmée':
+                            $message = "Bonne nouvelle ! Votre réservation pour la {$carInfo} a été confirmée.";
+                            $type = 'success';
+                            break;
+                        case 'annulée':
+                            $message = "Attention : Votre réservation pour la {$carInfo} a été annulée.";
+                            $type = 'warning';
+                            break;
+                        case 'terminée':
+                            // On peut choisir de ne pas notifier pour "terminée", ou envoyer un message de remerciement
+                             $message = "Merci d'avoir loué la {$carInfo} avec AutoLoc !";
+                             break;
+                    }
+
+                    // 3. Si un message a été défini, on crée la notification
+                    if (!empty($message)) {
+                        createNotification(
+                            $pdo, 
+                            $userId, 
+                            $message, 
+                            $type, 
+                            'pages/dashboard-client.html' // Lien vers la page des réservations
+                        );
+                    }
+                }
+            } catch (Exception $e) {
+                // Si la création de la notification échoue, on l'enregistre dans les logs
+                // mais on ne bloque pas la réponse de succès pour l'admin.
+                error_log("Erreur de création de notification : " . $e->getMessage());
+            }
+
+            echo json_encode(['success' => true, 'message' => 'Statut de la réservation mis à jour.']);
+
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Erreur lors de la mise à jour.']);
+        }
+    } else {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'Accès refusé.']);
+    }
+    break;
          // ===============================================
     // ==         NOUVELLES ROUTES DOCUMENTS        ==
     // ===============================================
@@ -1141,7 +1216,34 @@ case 'getCarTypes':
     }
     break;
 // N'oubliez pas d'ajouter aussi ce nouveau 'case' pour peupler le filtre
- 
+ case 'getUserNotifications':
+        if (isset($_SESSION['user_id'])) {
+            $userId = $_SESSION['user_id'];
+            // On récupère les 10 dernières notifications
+            $sql = "SELECT * FROM notifications WHERE id_user = ? ORDER BY date_creation DESC LIMIT 10";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$userId]);
+            $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // On compte aussi le nombre de notifications non lues
+            $sqlUnread = "SELECT COUNT(*) FROM notifications WHERE id_user = ? AND est_lu = FALSE";
+            $stmtUnread = $pdo->prepare($sqlUnread);
+            $stmtUnread->execute([$userId]);
+            $unreadCount = $stmtUnread->fetchColumn();
+
+            echo json_encode(['success' => true, 'data' => $notifications, 'unreadCount' => $unreadCount]);
+        }
+        break;
+
+    case 'markNotificationsAsRead':
+        if (isset($_SESSION['user_id'])) {
+            $userId = $_SESSION['user_id'];
+            $sql = "UPDATE notifications SET est_lu = TRUE WHERE id_user = ? AND est_lu = FALSE";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$userId]);
+            echo json_encode(['success' => true]);
+        }
+        break;
 
 } ini_set('display_errors', 1);
 error_reporting(E_ALL);

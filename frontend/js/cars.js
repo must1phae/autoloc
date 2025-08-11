@@ -17,11 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const authResult = await authResponse.json();
 
         // Liens de base pour la navigation
-        let baseNavLinks = `
-            <li><a href="index.html">Accueil</a></li>
-            <li><a href="cars-list.html" class="active">Louer une Voiture</a></li>
-            <li><a href="contact.html">Contact</a></li>
-        `;
+        
         
         let userActionsHtml = '';
 
