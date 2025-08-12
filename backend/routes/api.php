@@ -41,7 +41,7 @@ $reservationModel = new Reservation($pdo);
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 $method = $_SERVER['REQUEST_METHOD'];
 $data = json_decode(file_get_contents("php://input"), true);
- 
+ $reservationModel->updateExpiredReservations();
 // Fichier : backend/routes/api.php
 
     function getProjectContext($pdo) {
@@ -191,6 +191,7 @@ function createNotification($pdo, $userId, $message, $type = 'info', $link = nul
 function isAdmin() {
     return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
 }
+
 switch ($action) {
     case 'getAllCars':
         if ($method == 'GET') {

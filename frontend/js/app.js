@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         } else {
             // --- CAS UTILISATEUR NON CONNECTÉ (INCHANGÉ) ---
-            const authLink = isSubPage ? 'auth.html' : `pages/auth.html`;
+            const authLink = isSubPage ? 'auth.html' : `auth.html`;
             userActionsHtml = `
                 <div class="auth-buttons">
                     <a href="${authLink}" class="btn btn-primary">Connexion / Inscription</a>

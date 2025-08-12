@@ -152,5 +152,66 @@ class Reservation {
             return false;
         }
     }
+    // Fichier : backend/models/Reservation.php
+
+/**
+ * Met à jour automatiquement les statuts des réservations :
+ * 1. Passe les réservations confirmées dont la date de fin est passée à "terminée".
+ * 2. Annule les réservations en attente dont la date de début est passée.
+ */
+public function updateExpiredReservations() {
+    $this->pdo->beginTransaction();
+    try {
+        // --- CAS 1 : Gérer les réservations terminées ---
+        $sqlSelectFinished = "SELECT id_reservation, id_voiture FROM reservation WHERE statut = 'confirmée' AND date_fin < NOW()";
+        $stmtSelectFinished = $this->pdo->query($sqlSelectFinished);
+        $reservationsToFinish = $stmtSelectFinished->fetchAll(PDO::FETCH_ASSOC);
+
+        if (!empty($reservationsToFinish)) {
+            $reservationIdsToFinish = array_column($reservationsToFinish, 'id_reservation');
+            $carIdsToFree = array_unique(array_column($reservationsToFinish, 'id_voiture')); // array_unique pour éviter les doublons
+
+            // Met à jour les réservations
+            $placeholders = implode(',', array_fill(0, count($reservationIdsToFinish), '?'));
+            $sqlFinish = "UPDATE reservation SET statut = 'terminée' WHERE id_reservation IN ({$placeholders})";
+            $stmtFinish = $this->pdo->prepare($sqlFinish);
+            $stmtFinish->execute($reservationIdsToFinish);
+            
+            // Met à jour les voitures, en s'assurant qu'elles ne sont pas dans une autre réservation active
+            $placeholdersCars = implode(',', array_fill(0, count($carIdsToFree), '?'));
+            $sqlFreeCars = "UPDATE voiture v
+                            SET v.statut = 'disponible'
+                            WHERE v.id_voiture IN ({$placeholdersCars})
+                            AND NOT EXISTS (
+                                SELECT 1 FROM reservation r
+                                WHERE r.id_voiture = v.id_voiture
+                                AND r.statut = 'confirmée'
+                            )";
+            $stmtFreeCars = $this->pdo->prepare($sqlFreeCars);
+            $stmtFreeCars->execute(array_values($carIdsToFree));
+        }
+
+        // --- CAS 2 : Gérer les réservations en attente et expirées ---
+        $sqlSelectExpiredPending = "SELECT id_reservation FROM reservation WHERE statut = 'en attente' AND date_debut < CURDATE()";
+        $stmtSelectExpiredPending = $this->pdo->query($sqlSelectExpiredPending);
+        $reservationsToCancel = $stmtSelectExpiredPending->fetchAll(PDO::FETCH_COLUMN, 0);
+
+        if (!empty($reservationsToCancel)) {
+            $placeholders = implode(',', array_fill(0, count($reservationsToCancel), '?'));
+            $sqlCancel = "UPDATE reservation SET statut = 'annulée' WHERE id_reservation IN ({$placeholders})";
+            $stmtCancel = $this->pdo->prepare($sqlCancel);
+            $stmtCancel->execute($reservationsToCancel);
+        }
+
+        $this->pdo->commit();
+        
+        return (isset($reservationsToFinish) ? count($reservationsToFinish) : 0) + (isset($reservationsToCancel) ? count($reservationsToCancel) : 0);
+
+    } catch (Exception $e) {
+        $this->pdo->rollBack();
+        error_log("Erreur lors de la mise à jour automatique des statuts : " . $e->getMessage());
+        return 0;
+    }
+}
 }
 ?>
