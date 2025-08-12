@@ -188,6 +188,44 @@ function createNotification($pdo, $userId, $message, $type = 'info', $link = nul
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$userId, $message, $type, $link]);
 }
+/**
+ * Envoie l'e-mail de réponse de l'admin à l'utilisateur.
+ */
+function sendAdminReplyEmail($userEmail, $originalSubject, $replyMessage) {
+    $mail = new PHPMailer(true);
+    try {
+        // --- CONFIGURATION DE VOTRE SERVEUR SMTP (comme pour le mot de passe oublié) ---
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.gmail.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'mostaphaelghazal102030@gmail.com';
+        $mail->Password   = 'ojqv vktr hucv jkcp';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        $mail->Port       = 465;
+        $mail->CharSet    = 'UTF-8';
+
+        $mail->setFrom('support@autoloc.com', 'Support AutoLoc');
+        $mail->addAddress($userEmail);
+        $mail->addReplyTo('support@autoloc.com', 'Support AutoLoc');
+
+        $mail->isHTML(true);
+        $mail->Subject = 'Re: ' . $originalSubject; // Ajoute "Re:" au sujet original
+        $mail->Body    = "
+            <p>Bonjour,</p>
+            <p>Voici la réponse à votre demande concernant \"{$originalSubject}\" :</p>
+            <blockquote style='border-left: 2px solid #ccc; padding-left: 15px; margin-left: 5px;'>
+                <p>{$replyMessage}</p>
+            </blockquote>
+            <p>Cordialement,<br>L'équipe AutoLoc</p>
+        ";
+        
+        $mail->send();
+        return true;
+    } catch (Exception $e) {
+        error_log("Erreur PHPMailer (réponse admin) : {$mail->ErrorInfo}");
+        return false;
+    }
+}
 function isAdmin() {
     return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
 }
@@ -666,6 +704,36 @@ case 'adminUpdateReservationStatus':
         echo json_encode(['success' => false, 'message' => 'Accès refusé.']);
     }
     break;
+     case 'adminReplyToMessage':
+        if (isAdmin() && $method == 'POST') {
+            $data = json_decode(file_get_contents("php://input"), true);
+            $messageId = $data['id_message'] ?? null;
+            $replyText = $data['reply_text'] ?? '';
+
+            if (!$messageId || empty($replyText)) {
+                echo json_encode(['success' => false, 'message' => 'Données invalides.']);
+                exit();
+            }
+
+            // 1. Récupérer le message original pour avoir l'email du destinataire
+            $originalMessage = $messageModel->getById($messageId);
+            if (!$originalMessage) {
+                echo json_encode(['success' => false, 'message' => 'Message original non trouvé.']);
+                exit();
+            }
+
+            // 2. Envoyer l'email
+            $emailSent = sendAdminReplyEmail($originalMessage['email_expediteur'], $originalMessage['sujet'], $replyText);
+
+            if ($emailSent) {
+                // 3. Si l'email est parti, marquer le message comme "répondu"
+                $messageModel->markAsReplied($messageId);
+                echo json_encode(['success' => true, 'message' => 'Réponse envoyée avec succès.']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Erreur lors de l\'envoi de l\'email.']);
+            }
+        }
+        break;
          // ===============================================
     // ==         NOUVELLES ROUTES DOCUMENTS        ==
     // ===============================================

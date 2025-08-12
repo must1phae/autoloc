@@ -36,5 +36,23 @@ class Message {
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([$messageId]);
     }
+    /**
+     * Récupère un message spécifique par son ID.
+     */
+    public function getById($messageId) {
+        $sql = "SELECT * FROM messages WHERE id_message = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$messageId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Met à jour le statut d'un message pour le marquer comme répondu.
+     */
+    public function markAsReplied($messageId) {
+        $sql = "UPDATE messages SET est_repondu = TRUE WHERE id_message = ?";
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute([$messageId]);
+    }
 }
 ?>
