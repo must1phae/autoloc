@@ -734,6 +734,22 @@ case 'adminUpdateReservationStatus':
             }
         }
         break;
+        // histortique global de reservation 
+case 'getGlobalHistory':
+    if (isAdmin()) {
+        try {
+            $sql = "SELECT * FROM historique_global ORDER BY date_modification DESC";
+            $stmt = $pdo->query($sql);
+            $history = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode(['success' => true, 'data' => $history]);
+        } catch (PDOException $e) {
+            echo json_encode(['success' => false, 'message' => 'Erreur de base de données.']);
+        }
+    } else {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'Accès refusé.']);
+    }
+    break;
          // ===============================================
     // ==         NOUVELLES ROUTES DOCUMENTS        ==
     // ===============================================

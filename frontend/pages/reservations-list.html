@@ -21,7 +21,14 @@
 
     <main>
         <h2>Liste de Toutes les Réservations</h2>
-        
+          <button id="view-history-btn" class="btn btn-secondary">
+            <!-- Icône optionnelle pour le style -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clip-rule="evenodd" />
+            </svg>
+            Voir l'Historique Complet
+        </button>
+    </div>
         <table id="reservations-table" class="management-table">
             <thead>
                 <tr>
@@ -38,6 +45,24 @@
             </tbody>
         </table>
     </main>
+    <div id="history-modal-overlay" class="modal-hidden">
+    <div id="history-modal">
+        <button id="history-modal-close-btn" class="modal-close-btn">&times;</button>
+        <h3 id="history-modal-title">Historique Global des Réservations</h3>
+        <div id="history-content"></div>
+        <div class="modal-actions">
+            <!-- ... boutons d'export ... -->
+               <button id="export-pdf-history-btn" class="btn btn-secondary">Exporter en PDF</button>
+            <button id="export-excel-history-btn" class="btn btn-secondary">Exporter en Excel</button>
+        </div>
+    </div>
+</div>
+   <!-- Librairie pour créer des fichiers Excel -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+      <!-- Librairie pour créer des PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+      <!-- Librairie pour "photographier" un élément HTML en image -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script src="../js/admin-nav.js"></script>          <!-- Script commun pour la navbar -->
     <script src="../js/reservation-management.js"></script>
 </body>
