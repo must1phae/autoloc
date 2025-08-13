@@ -3407,6 +3407,55 @@ body > main h2 {
     margin-top: 0.5rem;
     font-weight: 600;
 }
+
+/* ====================================================== */
+/* ==   STYLE CRÉATIF POUR LE BOUTON D'HISTORIQUE        == */
+/* ====================================================== */
+
+/* Cible le bouton par son ID pour un style spécifique */
+#view-history-btn {
+    /* 1. Aligner l'icône et le texte */
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem; /* Espace entre l'icône et le texte */
+
+    /* 2. On affine le style de base (hérité de .btn et .btn-secondary) */
+    padding: 10px 22px; /* Un peu plus large pour l'icône */
+    font-size: 0.9rem;
+    font-weight: 600;
+    
+    /* 3. On améliore la transition pour les effets créatifs */
+    transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Transition plus naturelle */
+}
+
+/* Style de l'icône SVG à l'intérieur du bouton */
+#view-history-btn svg {
+    /* La couleur de l'icône s'adaptera automatiquement à la couleur du texte (noir puis blanc au survol) */
+    fill: currentColor;
+    transition: transform 0.3s;
+}
+
+/* --- Effets de survol créatifs --- */
+#view-history-btn:hover {
+    /* Le :hover de .btn-secondary change déjà le fond en noir et le texte en blanc, ce qui est parfait. */
+    
+    /* On ajoute un effet de "lévitation" */
+    transform: translateY(-3px);
+    
+    /* On ajoute une ombre douce pour renforcer l'effet de profondeur */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* L'icône tourne légèrement au survol pour un effet dynamique */
+#view-history-btn:hover svg {
+    transform: rotate(-45deg);
+}
+
+/* Effet de "pression" au clic */
+#view-history-btn:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: none; /* On retire l'ombre au clic */
+}
 /* ====================================================== */
 /* ==   STYLES POUR LA MODALE D'HISTORIQUE (CORRIGÉ)     == */
 /* ====================================================== */

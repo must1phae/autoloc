@@ -34,6 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (result.success) {
                 result.data.forEach(res => {
                     const row = document.createElement('tr');
+                     const statutActuel = res.statut || res.statut_reservation;
+
                     row.innerHTML = `
                         <td>${res.id_reservation}</td>
                         <td class="client-info">${res.prenom} ${res.nom}</td>
@@ -42,13 +44,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td>${res.montant_total} €</td>
                         <td>
                             <select class="status-select" data-id="${res.id_reservation}">
-                                <option value="en attente" ${res.statut === 'en attente' ? 'selected' : ''}>En attente</option>
-                                <option value="confirmée" ${res.statut === 'confirmée' ? 'selected' : ''}>Confirmée</option>
-                                <option value="annulée" ${res.statut === 'annulée' ? 'selected' : ''}>Annulée</option>
-                                <option value="terminée" ${res.statut === 'terminée' ? 'selected' : ''}>Terminée</option>
+                                <option value="en attente" ${statutActuel === 'en attente' ? 'selected' : ''}>En attente</option>
+                                <option value="confirmée" ${statutActuel === 'confirmée' ? 'selected' : ''}>Confirmée</option>
+                                <option value="annulée" ${statutActuel === 'annulée' ? 'selected' : ''}>Annulée</option>
+                                <option value="terminée" ${statutActuel === 'terminée' ? 'selected' : ''}>Terminée</option>
                             </select>
                         </td>
-                        <!-- Rappel : Le bouton "Historique" par ligne n'est plus nécessaire ici -->
                     `;
                     reservationsTableBody.appendChild(row);
                 });
