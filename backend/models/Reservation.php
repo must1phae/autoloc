@@ -213,5 +213,47 @@ public function updateExpiredReservations() {
         return 0;
     }
 }
+/**
+ * Annule une réservation pour un utilisateur donné, après avoir vérifié les conditions.
+ */
+public function cancelByUser($reservationId, $userId) {
+    // 1. Récupérer la réservation pour vérifier qu'elle appartient bien à l'utilisateur et les conditions de date
+    $sqlSelect = "SELECT * FROM reservation WHERE id_reservation = ? AND id_user = ?";
+    $stmtSelect = $this->pdo->prepare($sqlSelect);
+    $stmtSelect->execute([$reservationId, $userId]);
+    $reservation = $stmtSelect->fetch(PDO::FETCH_ASSOC);
+
+    if (!$reservation) {
+        return ['success' => false, 'message' => 'Réservation non trouvée ou ne vous appartient pas.'];
+    }
+
+    // 2. Vérifier que le statut est bien "confirmée"
+    if ($reservation['statut'] !== 'confirmée') {
+        return ['success' => false, 'message' => 'Seules les réservations confirmées peuvent être annulées.'];
+    }
+
+    // 3. VÉRIFICATION DE SÉCURITÉ : La date de début doit être dans plus de 24 heures
+    $startDate = new DateTime($reservation['date_debut']);
+    $now = new DateTime();
+    $interval = $now->diff($startDate);
+    $hoursUntilStart = ($interval->days * 24) + $interval->h;
+    
+    if ($now > $startDate || $hoursUntilStart <= 24) {
+        return ['success' => false, 'message' => "Il est trop tard pour annuler cette réservation (moins de 24h avant le départ)."];
+    }
+
+    // 4. Si toutes les conditions sont remplies, on met à jour le statut
+    $sqlUpdate = "UPDATE reservation SET statut = 'annulée' WHERE id_reservation = ?";
+    $stmtUpdate = $this->pdo->prepare($sqlUpdate);
+    if ($stmtUpdate->execute([$reservationId])) {
+        // On peut aussi mettre à jour le statut de la voiture ici pour la rendre disponible
+        $carId = $reservation['id_voiture'];
+        $sqlCar = "UPDATE voiture SET statut = 'disponible' WHERE id_voiture = ?";
+        $this->pdo->prepare($sqlCar)->execute([$carId]);
+
+        return ['success' => true];
+    } else {
+        return ['success' => false, 'message' => 'Erreur de base de données.'];
+    }}
 }
 ?>

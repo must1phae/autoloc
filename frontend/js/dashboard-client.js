@@ -85,39 +85,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Fonction réutilisable pour afficher une liste de réservations ---
     function renderReservations(reservations, container, emptyMessage) {
-        container.innerHTML = ''; // On vide le conteneur avant de le remplir
+        container.innerHTML = '';
 
         if (reservations.length > 0) {
             reservations.forEach(res => {
-                let actionButton = '';
-                // Le bouton s'affiche si la réservation est terminée
+                let actionButtons = ''; // Conteneur pour les boutons
+
+                // --- NOUVEAU : Logique d'affichage du bouton "Annuler" ---
+                const startDate = new Date(res.date_debut);
+                const now = new Date();
+                const hoursUntilStart = (startDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+
+                if (res.statut_reservation === 'confirmée' && hoursUntilStart > 24) {
+                    actionButtons += `<button class="btn-action btn-cancel" data-id="${res.id_reservation}">Annuler</button>`;
+                }
+
+                // --- Logique du bouton "Laisser un avis" (inchangée) ---
                 if (res.statut_reservation === 'terminée') {
-                    actionButton = `<button class="btn-review" data-car-id="${res.id_voiture}" data-car-name="${res.marque} ${res.modele}">Laisser un avis</button>`;
+                    actionButtons += `<button class="btn-action btn-review" data-id="${res.id_reservation}" data-car-id="${res.id_voiture}" data-car-name="${res.marque} ${res.modele}">Laisser un avis</button>`;
                 }
 
                 const reservationCard = document.createElement('div');
                 reservationCard.className = 'reservation-card';
                 
-                // Votre HTML pour la carte de réservation est conservé
+                // On utilise un chemin absolu pour l'image pour plus de robustesse
+                const imagePath = `/autoloc/uploads/cars/${res.image}`;
+
                 reservationCard.innerHTML = `
-                     <img src="../../uploads/cars/${res.image}" alt="${res.marque}">
+                    <img src="${imagePath}" alt="${res.marque}">
                     <div class="reservation-details">
                         <h4>${res.marque} ${res.modele}</h4>
                         <p>Du <strong>${new Date(res.date_debut).toLocaleDateString('fr-FR')}</strong> au <strong>${new Date(res.date_fin).toLocaleDateString('fr-FR')}</strong></p>
                         <p>Statut : <span class="status status-${res.statut_reservation.replace(' ', '-')}">${res.statut_reservation}</span></p>
-                        <div class="reservation-actions">${actionButton}</div>
+                        <div class="reservation-actions">${actionButtons}</div>
                     </div>
                 `; 
                 container.appendChild(reservationCard);
             });
         } else {
-            // Affiche un message si la section (à venir ou historique) est vide
             container.innerHTML = `<div class="no-data-message"><p>${emptyMessage}</p></div>`;
         }
     }
     
     // --- Écouteur global pour les boutons "Laisser un avis" ---
-    document.querySelector('.dashboard-content').addEventListener('click', async (e) => {
+      document.querySelector('.dashboard-content').addEventListener('click', async (e) => {
+        const target = e.target;
         if (e.target.classList.contains('btn-review')) {
             const button = e.target;
             const carId = button.dataset.carId;
@@ -144,7 +156,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(result.message || 'Une erreur est survenue.');
             }
         }
+         // --- NOUVEAU : Gère le clic sur "Annuler" ---
+        if (target.classList.contains('btn-cancel')) {
+            const reservationId = target.dataset.id;
+            
+            if (confirm("Êtes-vous sûr de vouloir annuler cette réservation ? Cette action est irréversible.")) {
+                try {
+                    const response = await fetch(`${API_URL}?action=cancelReservation`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id_reservation: reservationId })
+                    });
+                    const result = await response.json();
+
+                    if (result.success) {
+                        alert("Votre réservation a été annulée avec succès.");
+                        loadAndDisplayReservations(); // On rafraîchit la liste
+                    } else {
+                        alert(`Erreur : ${result.message}`);
+                    }
+                } catch (error) {
+                    alert("Une erreur de connexion est survenue.");
+                }
+            }
+        }
     });
+     
 
     // --- Lancement de l'initialisation de la page ---
     initializeDashboard();

@@ -617,6 +617,7 @@ case 'createReservation':
         http_response_code(404);
         echo json_encode(['success' => false, 'message' => 'Action non reconnue.']);
         break;
+
          // ===============================================
     // ==   NOUVELLES ROUTES GESTION RÉSERVATIONS   ==
     // ===============================================
@@ -989,7 +990,24 @@ case 'leaveReview':
         }
         break;
  
+case 'cancelReservation':
+        // Action réservée aux utilisateurs connectés
+        if ($method == 'POST' && isset($_SESSION['user_id'])) {
+            $data = json_decode(file_get_contents("php://input"), true);
+            $reservationId = $data['id_reservation'] ?? null;
+            $userId = $_SESSION['user_id'];
 
+            if ($reservationId) {
+                $result = $reservationModel->cancelByUser($reservationId, $userId);
+                echo json_encode($result);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'ID de réservation manquant.']);
+            }
+        } else {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'Vous devez être connecté.']);
+        }
+        break;
 // DANS VOTRE "switch ($action) { ... }"
 // Fichier : backend/routes/api.php
 
